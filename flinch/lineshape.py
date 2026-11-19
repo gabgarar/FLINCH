@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+from scipy.interpolate import CubicSpline
 from scipy.optimize import least_squares
 
 CONTINUUM_KMS = (20.0, 60.0)  # distance from the line centre used as continuum
@@ -95,5 +96,7 @@ def shifted_profiles(ccfs: np.ndarray, start: float, step: float, half_width_kms
     for k, ccf in enumerate(ccfs):
         profile = normalize(velocity, ccf)
         centre, _, _ = gaussian_fit(velocity, profile)
-        out[k] = np.interp(centre + grid, velocity, profile)
+        # A cubic spline: linear interpolation of a line sampled every 0.25 km/s is wrong by up
+        # to a few parts in 10^4 at the core, more than the changes looked for.
+        out[k] = CubicSpline(velocity, profile)(centre + grid)
     return grid, out

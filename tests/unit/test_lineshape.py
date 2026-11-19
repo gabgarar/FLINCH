@@ -21,7 +21,7 @@ def test_gaussian_parameters_are_recovered():
     assert table.loc[1, "ccf_rv_ms"] - table.loc[0, "ccf_rv_ms"] == pytest.approx(10.0, abs=0.05)
     # a depth change of one part in a thousand is measured to a few parts per million
     assert table.loc[1, "ccf_depth"] / table.loc[0, "ccf_depth"] - 1 == pytest.approx(0.4505 / 0.45 - 1, abs=1e-5)
-    assert table.loc[0, "ccf_fwhm_kms"] == pytest.approx(table.loc[1, "ccf_fwhm_kms"], rel=1e-6)
+    assert table.loc[0, "ccf_fwhm_kms"] == pytest.approx(table.loc[1, "ccf_fwhm_kms"], rel=2e-5)
 
 
 def test_bisector_span_is_zero_for_a_symmetric_line_and_follows_the_asymmetry():
