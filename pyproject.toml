@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+# "flinch" is taken on PyPI by an unrelated package, hence the distribution name.
+name = "flinch-rv"
+version = "0.1.0"
+description = "FLINCH: FLare-INduced CHanges in Sun-as-a-star radial velocities"
+readme = "README.md"
+license = "BSD-3-Clause"
+license-files = ["LICENSE"]
+authors = [{ name = "Gabriel García" }]
+keywords = ["solar physics", "solar flares", "radial velocity", "Sun-as-a-star", "exoplanets"]
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "h5py>=3.8",
+]
+
+[project.optional-dependencies]
+analysis = ["scipy>=1.10", "matplotlib>=3.7", "astropy>=5.3"]
+notebooks = ["ipykernel"]
+dev = ["pytest>=7"]
+
+[tool.setuptools.packages.find]
+include = ["flinch*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
