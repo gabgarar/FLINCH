@@ -173,3 +173,45 @@ def scaled_amplitude(delta, weight, sigma: float) -> tuple[float, float]:
     if norm == 0.0:
         return np.nan, np.nan
     return float(np.sum(weight[keep] * delta[keep]) / norm), float(sigma / np.sqrt(norm))
+
+
+def power_series(jd, values, max_gap_s: float = 125.0) -> tuple[Series, Series]:
+    """Series of squared residuals and of squared differences between consecutive spectra.
+
+    The mean square over a window measures the power of the fluctuations, which at this
+    cadence is dominated by the solar five-minute oscillations. The squared difference of two
+    consecutive spectra (kept only when they are less than ``max_gap_s`` apart, and dated at
+    their mid-point) weights the high-frequency end, up to the Nyquist frequency of 6 mHz.
+    """
+    jd = np.asarray(jd, dtype=float)
+    values = np.asarray(values, dtype=float)
+    order = np.argsort(jd, kind="stable")
+    jd, values = jd[order], values[order]
+    consecutive = np.diff(jd) * 86400.0 < max_gap_s
+    return (
+        Series(jd, values**2),
+        Series(0.5 * (jd[1:] + jd[:-1])[consecutive], np.diff(values)[consecutive] ** 2),
+    )
+
+
+def measure_power(
+    events: pd.DataFrame, squares: Series, differences: Series, windows: Windows = Windows()
+) -> pd.DataFrame:
+    """Change of the fluctuation power of each event, as natural logarithms of power ratios.
+
+    ``log_power``     mean square after the peak (the ``post`` window) over the pre-event one.
+    ``log_power_hf``  the same for the squared differences of consecutive spectra.
+    ``power_measured`` enough points in both windows.
+    """
+    start, peak = event_times(events)
+    out = events.copy()
+    need = max(windows.min_pre, windows.min_post)
+    measured = np.ones(len(events), dtype=bool)
+    for column, series in (("log_power", squares), ("log_power_hf", differences)):
+        n_pre, pre = series.window(start + windows.pre[0] * MINUTE, start + windows.pre[1] * MINUTE)
+        n_post, post = series.window(peak + windows.post[0] * MINUTE, peak + windows.post[1] * MINUTE)
+        with np.errstate(invalid="ignore", divide="ignore"):
+            out[column] = np.log(post / pre)
+        measured &= (n_pre >= need) & (n_post >= need)
+    out["power_measured"] = measured & np.isfinite(out["log_power"]) & np.isfinite(out["log_power_hf"])
+    return out

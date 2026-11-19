@@ -58,12 +58,16 @@ def run(
     after_min: float = 45.0,
     workers: int = 3,
     min_class: str = "M1.0",
+    core_before_min: float = 10.0,
+    core_after_min: float = 15.0,
 ) -> None:
     """Fetch spectrum extracts flare by flare until the time or the file budget runs out.
 
     Each flare gets the window from ``before_min`` minutes before its start to ``after_min``
-    minutes after its peak, taking every ``step``-th spectrum. Extracts already on disk are
-    skipped, so the campaign can be stopped and run again, with a smaller ``step`` to fill in.
+    minutes after its peak. Every spectrum is taken in the core of the flare (from
+    ``core_before_min`` minutes before the start to ``core_after_min`` after the peak, where
+    things change within a minute) and every ``step``-th one outside it. Extracts already on
+    disk are skipped, so the campaign can be stopped and run again.
     """
     deadline = time.monotonic() + hours * 3600.0
     events = select_events(min_class)
@@ -80,7 +84,11 @@ def run(
             name = event_name(row)
             start = row.jd_start if row.jd_start == row.jd_start else row.jd_peak - 10.0 * MINUTE
             try:
-                files = spectra.list_files(start - before_min * MINUTE, row.jd_peak + after_min * MINUTE).iloc[::step]
+                files = spectra.list_files(start - before_min * MINUTE, row.jd_peak + after_min * MINUTE)
+                core = (files["obsjd"] >= start - core_before_min * MINUTE) & (
+                    files["obsjd"] <= row.jd_peak + core_after_min * MINUTE
+                )
+                files = files[core | (np.arange(len(files)) % step == 0)]
             except Exception as exc:  # noqa: BLE001  (network trouble: go on with the next flare)
                 log(f"{name}: could not list files ({type(exc).__name__}: {exc})")
                 continue

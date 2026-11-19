@@ -75,3 +75,26 @@ def test_scaled_amplitude_and_mean():
     mean, sem, n = epoch.mean_and_error([1.0, 2.0, 3.0, np.nan])
     assert (mean, n) == (pytest.approx(2.0), 3)
     assert sem == pytest.approx(1.0 / np.sqrt(3.0))
+
+
+def test_power_measures_an_increase_of_the_oscillation_amplitude():
+    jd = observations()
+    start, peak = T0 + 150 * MINUTE, T0 + 160 * MINUTE
+    phase = 2 * np.pi * (jd - T0) * 86400.0 / 300.0  # a five-minute oscillation
+    amplitude = np.where(jd > peak, 2.0, 1.0)  # doubles after the flare peak
+    squares, differences = epoch.power_series(jd, amplitude * np.sin(phase))
+    events = pd.DataFrame({"jd_start": [start, T0 + 60 * MINUTE], "jd_peak": [peak, T0 + 70 * MINUTE]})
+    out = epoch.measure_power(events, squares, differences)
+    assert out["power_measured"].all()
+    # the power grows fourfold for the first event and stays the same for the second
+    assert out.loc[0, "log_power"] == pytest.approx(np.log(4.0), abs=0.15)
+    assert out.loc[0, "log_power_hf"] == pytest.approx(np.log(4.0), abs=0.15)
+    assert out.loc[1, "log_power"] == pytest.approx(0.0, abs=0.15)
+
+
+def test_power_series_skips_differences_across_gaps():
+    jd = T0 + np.array([0.0, 83.0, 166.0, 1000.0, 1083.0]) / 86400.0
+    _, differences = epoch.power_series(jd, [0.0, 1.0, 3.0, 10.0, 11.0])
+    count, mean = differences.window(np.array([T0 - 1.0]), np.array([T0 + 1.0]))
+    assert count[0] == 3  # the pair across the 834 s gap is left out
+    assert mean[0] == pytest.approx((1.0 + 4.0 + 1.0) / 3.0)

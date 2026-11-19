@@ -69,7 +69,11 @@ def cmd_pilot(args: argparse.Namespace) -> int:
     out["summary"].to_csv(directory / "pilot_summary.csv", index=False)
     out["tests"].to_csv(directory / "pilot_tests.csv", index=False)
     out["profiles"].to_csv(directory / "pilot_profiles.csv", index=False)
-    print(f"\nTables written to {directory}")
+    from . import plots
+
+    plots.plot_profiles(out["profiles"], directory / "figures" / "pilot_profiles.png")
+    plots.plot_events(out["flares"], out["controls"], directory / "figures" / "pilot_events.png")
+    print(f"\nTables and figures written to {directory}")
     return 0
 
 

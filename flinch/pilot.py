@@ -10,6 +10,8 @@ from .timeutil import MINUTE
 X1_FLUX = 1.0e-4  # W m^-2
 PROFILE_EDGES_MIN = np.arange(-60.0, 90.1, 5.0)
 BANDS = ("M1-M4", "M5-M9", "X")
+# Subsets shown as stacked profiles: label and minimum peak flux.
+PROFILE_SUBSETS = (("M and X", 1.0e-5), ("M5 and above", 5.0e-5), ("X", 1.0e-4))
 
 
 def major_flare_sample(flares: pd.DataFrame, observation_jd: np.ndarray) -> pd.DataFrame:
@@ -41,7 +43,7 @@ def rotation_weight(events: pd.DataFrame) -> np.ndarray:
 
 
 def summarize(flares: pd.DataFrame, controls: pd.DataFrame, column: str = "delta") -> pd.DataFrame:
-    """Mean velocity change of flares and controls, per class band and for the whole sample."""
+    """Mean of ``column`` for flares and controls, per class band and for the whole sample."""
     rows = []
     bands_f = flares["goes_class"].map(coverage.class_band)
     bands_c = controls["goes_class"].map(coverage.class_band)
@@ -71,14 +73,16 @@ def summarize(flares: pd.DataFrame, controls: pd.DataFrame, column: str = "delta
     return pd.DataFrame(rows)
 
 
-def stacked_profile(events: pd.DataFrame, series: epoch.Series, label: str) -> pd.DataFrame:
+def stacked_profile(events: pd.DataFrame, series: epoch.Series, subset: str, sample: str) -> pd.DataFrame:
     matrix = epoch.profiles(events, series, PROFILE_EDGES_MIN)
     centres = 0.5 * (PROFILE_EDGES_MIN[:-1] + PROFILE_EDGES_MIN[1:])
     count = np.sum(np.isfinite(matrix), axis=0)
     with np.errstate(invalid="ignore"):
         mean = np.nanmean(matrix, axis=0)
         sem = np.nanstd(matrix, axis=0, ddof=1) / np.sqrt(np.maximum(count, 1))
-    return pd.DataFrame({"sample": label, "minutes": centres, "mean": mean, "sem": sem, "n": count})
+    return pd.DataFrame(
+        {"subset": subset, "sample": sample, "events": len(events), "minutes": centres, "mean": mean, "sem": sem, "n": count}
+    )
 
 
 def inject(observations: pd.DataFrame, events: pd.DataFrame, amplitude_ms: float) -> pd.DataFrame:
@@ -102,34 +106,48 @@ def run(per_flare: int = 10, seed: int = 0, injection_ms: float = 1.0) -> dict:
     observations = quality.prepare(raw)
     good = observations[observations["good"]]
     series = epoch.Series(good["jd"], good["res"])
+    squares, differences = epoch.power_series(good["jd"], good["res"])
 
     all_flares = goes.load_flares()
     sample = major_flare_sample(all_flares, raw["obsjd"].to_numpy())
     flares = epoch.measure(sample, series)
     flares = flares[flares["measured"]].reset_index(drop=True)
+    flares = epoch.measure_power(flares, squares, differences)
 
     candidates = epoch.draw_controls(flares, sample["jd_peak"].to_numpy(), seed=seed)
     controls = epoch.select_controls(epoch.measure(candidates, series), per_flare=per_flare)
+    controls = epoch.measure_power(controls, squares, differences)
 
     noise = float(controls["delta"].std(ddof=1))
+
+    def power(column):
+        return lambda e: float(e.loc[e["power_measured"], column].mean())
+
     statistics = {
-        "mean": lambda e: float(e["delta"].mean()),
-        "per_X1": lambda e: epoch.scaled_amplitude(e["delta"], flux_weight(e), noise)[0],
-        "rotation_per_X1": lambda e: epoch.scaled_amplitude(e["delta"], rotation_weight(e), noise)[0],
-        "mean_decay": lambda e: float(e["delta_decay"].mean()),
+        "mean change (m/s)": lambda e: float(e["delta"].mean()),
+        "change per X1 flare (m/s)": lambda e: epoch.scaled_amplitude(e["delta"], flux_weight(e), noise)[0],
+        "rotation term per X1 at the limb (m/s)": lambda e: epoch.scaled_amplitude(
+            e["delta"], rotation_weight(e), noise
+        )[0],
+        "mean change in the decay phase (m/s)": lambda e: float(e["delta_decay"].mean()),
+        "log power ratio after/before": power("log_power"),
+        "log power ratio, high frequency": power("log_power_hf"),
     }
     tests = []
     for name, statistic in statistics.items():
         null = matched_null(controls, statistic, seed=seed)
         value = statistic(flares)
+        centre, spread = float(null.mean()), float(null.std(ddof=1))
         tests.append(
             {
                 "statistic": name,
                 "flares": value,
-                "null_mean": float(null.mean()),
-                "null_std": float(null.std(ddof=1)),
-                "z": (value - float(null.mean())) / float(null.std(ddof=1)),
-                "p_two_sided": float(np.mean(np.abs(null - null.mean()) >= abs(value - null.mean()))),
+                "null_mean": centre,
+                "null_std": spread,
+                "excess": value - centre,
+                "z": (value - centre) / spread,
+                "p_two_sided": float(np.mean(np.abs(null - centre) >= abs(value - centre))),
+                "limit_95": abs(value - centre) + 1.645 * spread,  # one-sided 95 % limit on the size of the excess
             }
         )
 
@@ -143,17 +161,10 @@ def run(per_flare: int = 10, seed: int = 0, injection_ms: float = 1.0) -> dict:
     kept = recovered["measured"].to_numpy()
     efficiency = float((recovered.loc[kept, "delta"].mean() - isolated.loc[kept, "delta"].mean()) / injection_ms)
 
-    x_class = flares["goes_class"].str[0] == "X"
-    strong = flares["peak_flux"] >= 5.0e-5
-    profiles = pd.concat(
-        [
-            stacked_profile(flares, series, "flares M and X"),
-            stacked_profile(flares[strong], series, "flares M5 and above"),
-            stacked_profile(flares[x_class], series, "flares X"),
-            stacked_profile(controls, series, "controls"),
-        ],
-        ignore_index=True,
-    )
+    profiles = []
+    for label, minimum in PROFILE_SUBSETS:
+        profiles.append(stacked_profile(flares[flares["peak_flux"] >= minimum], series, label, "flares"))
+        profiles.append(stacked_profile(controls[controls["peak_flux"] >= minimum], series, label, "controls"))
     return {
         "observations": observations,
         "flares": flares,
@@ -163,7 +174,7 @@ def run(per_flare: int = 10, seed: int = 0, injection_ms: float = 1.0) -> dict:
             flares[flares["measured_two_sided"]], controls[controls["measured_two_sided"]], "delta_two_sided"
         ),
         "tests": pd.DataFrame(tests),
-        "profiles": profiles,
+        "profiles": pd.concat(profiles, ignore_index=True),
         "numbers": {
             "spectra": len(observations),
             "good_spectra": int(observations["good"].sum()),
