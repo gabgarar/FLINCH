@@ -42,7 +42,8 @@ def control_events(events: pd.DataFrame, max_shift_days: int = 12, margin_min: f
     """One flare-free epoch per flare: the same time of day on the nearest suitable day.
 
     A day is suitable when no M or X flare peaks within ``margin_min`` minutes of the shifted
-    window and the spectrograph took at least 90 % of the spectra expected in it. The control
+    window and the spectrograph took at least 90 % as many spectra in it as in the window of the
+    flare itself (which can be cut short by the start or the end of the observing day). The control
     keeps the class and position of its flare (to pair them) and is named after it.
     """
     observations = np.sort(neid.read_solar_table()["obsjd"].to_numpy())
@@ -52,7 +53,7 @@ def control_events(events: pd.DataFrame, max_shift_days: int = 12, margin_min: f
     for row in events.itertuples():
         start = row.jd_start if row.jd_start == row.jd_start else row.jd_peak - 10.0 * MINUTE
         low, high = start - 30.0 * MINUTE, row.jd_peak + 45.0 * MINUTE
-        expected = (high - low) * 86400.0 / 83.0
+        expected = max(10, coverage.count_between(observations, low, high))
         for shift in (s * d for d in range(1, max_shift_days + 1) for s in (1, -1)):
             quiet = coverage.count_between(major, low + shift - margin_min * MINUTE, high + shift + margin_min * MINUTE) == 0
             observed = coverage.count_between(observations, low + shift, high + shift)
