@@ -92,7 +92,7 @@ def cmd_spectra(args: argparse.Namespace) -> int:
 def cmd_campaign(args: argparse.Namespace) -> int:
     from . import campaign
 
-    campaign.run(hours=args.hours, max_files=args.max_files, step=args.step, workers=args.workers)
+    campaign.run(hours=args.hours, max_files=args.max_files, step=args.step, workers=args.workers, kind=args.kind)
     return 0
 
 
@@ -122,6 +122,7 @@ def main(argv: list[str] | None = None) -> int:
     camp.add_argument("--max-files", type=int, default=600, help="file budget, 113 MB each (default 600)")
     camp.add_argument("--step", type=int, default=3, help="take every n-th spectrum (default 3)")
     camp.add_argument("--workers", type=int, default=3, help="simultaneous downloads (default 3)")
+    camp.add_argument("--kind", choices=["flares", "controls"], default="flares", help="flare windows, or flare-free windows for the flares already fetched")
     camp.set_defaults(run=cmd_campaign)
     args = parser.parse_args(argv)
     return args.run(args)

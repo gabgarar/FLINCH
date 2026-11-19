@@ -156,3 +156,45 @@ def plot_events(flares: pd.DataFrame, controls: pd.DataFrame, path: Path) -> Pat
         fig.savefig(path, dpi=160)
         plt.close(fig)
     return path
+
+
+def plot_event(changes: pd.DataFrame, title: str, path: Path, quantities=None) -> Path:
+    """Change of each spectral quantity through one flare, as small multiples on a common time axis."""
+    from .response import QUANTITIES
+
+    quantities = quantities or QUANTITIES
+    columns = 4
+    rows = int(np.ceil(len(quantities) / columns))
+    start_min = float((changes["min_peak"] - changes["min_start"]).iloc[0])  # flare start, in minutes from the peak
+    with plt.rc_context(style()):
+        fig, axes = plt.subplots(rows, columns, figsize=(3.6 * columns, 2.55 * rows + 0.6), sharex=True)
+        axes = np.atleast_1d(axes).ravel()
+        for ax, (column, label, unit) in zip(axes, quantities):
+            sigma = float(changes[f"{column}_sigma"].iloc[0])
+            if np.isfinite(sigma):
+                ax.axhspan(-sigma, sigma, color=INK_MUTED, alpha=0.14, linewidth=0)
+            ax.axhline(0.0, color=AXIS, linewidth=1.0)
+            ax.axvline(start_min, color=AXIS, linewidth=1.0)
+            ax.axvline(0.0, color=AXIS, linewidth=1.0)
+            ax.plot(changes["min_peak"], changes[column], color=FLARES, linewidth=1.4, marker="o", markersize=4.2, markeredgecolor=SURFACE, markeredgewidth=0.8)
+            ax.set_title(f"{label} ({unit})", fontsize=9.5)
+        for ax in axes[len(quantities):]:
+            ax.set_visible(False)
+        for ax in axes[max(0, len(quantities) - columns): len(quantities)]:
+            ax.set_xlabel("Minutes from the X-ray peak")
+        top = axes[0].get_ylim()[1]
+        axes[0].text(start_min, top, " start", fontsize=8, color=INK_SECONDARY, va="top", ha="left")
+        axes[0].text(0.0, top, " peak", fontsize=8, color=INK_SECONDARY, va="top", ha="left")
+        fig.suptitle(title, x=0.012, y=0.995, ha="left", fontsize=12, fontweight="semibold", color=INK)
+        fig.text(
+            0.012, 0.955,
+            "Change with respect to the spectra before the flare start. Grey band: scatter of those spectra. "
+            "ppt: parts per thousand; ppm: parts per million.",
+            ha="left", va="top", fontsize=8.8, color=INK_SECONDARY,
+        )
+        fig.tight_layout(rect=(0, 0, 1, 0.93))
+        path = Path(path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(path, dpi=130)
+        plt.close(fig)
+    return path

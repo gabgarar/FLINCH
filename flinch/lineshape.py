@@ -48,11 +48,16 @@ def bisector_span(velocity: np.ndarray, profile: np.ndarray, top=(0.10, 0.40), b
 
     The levels are fractions of the line depth, measured from the continuum.
     """
-    i_min = int(np.argmin(profile))
-    depth = 1.0 - profile[i_min]
+    # Work on a finely resampled profile: taking the minimum and the wings from the 0.25 km/s
+    # samples makes the span jump by more than 1 m/s whenever the lowest sample changes.
+    coarse_min = velocity[int(np.argmin(profile))]
+    fine_v = np.arange(coarse_min - 15.0, coarse_min + 15.0, 0.005)
+    fine_p = CubicSpline(velocity, profile)(fine_v)
+    i_min = int(np.argmin(fine_p))
+    depth = 1.0 - fine_p[i_min]
     levels = 1.0 - depth * np.linspace(0.05, 0.95, 91)
-    blue_v, blue_p = velocity[: i_min + 1][::-1], profile[: i_min + 1][::-1]  # from the core outwards
-    red_v, red_p = velocity[i_min:], profile[i_min:]
+    blue_v, blue_p = fine_v[: i_min + 1][::-1], fine_p[: i_min + 1][::-1]  # from the core outwards
+    red_v, red_p = fine_v[i_min:], fine_p[i_min:]
     # Keep the monotonic part of each wing, so that np.interp gets increasing abscissae.
     blue_end = int(np.argmax(blue_p >= levels[0])) + 1 if np.any(blue_p >= levels[0]) else len(blue_p)
     red_end = int(np.argmax(red_p >= levels[0])) + 1 if np.any(red_p >= levels[0]) else len(red_p)

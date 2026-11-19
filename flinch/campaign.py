@@ -38,6 +38,46 @@ def select_events(min_class: str = "M1.0") -> pd.DataFrame:
     return covered.sort_values("peak_flux", ascending=False, ignore_index=True)
 
 
+def control_events(events: pd.DataFrame, max_shift_days: int = 12, margin_min: float = 60.0) -> pd.DataFrame:
+    """One flare-free epoch per flare: the same time of day on the nearest suitable day.
+
+    A day is suitable when no M or X flare peaks within ``margin_min`` minutes of the shifted
+    window and the spectrograph took at least 90 % of the spectra expected in it. The control
+    keeps the class and position of its flare (to pair them) and is named after it.
+    """
+    observations = np.sort(neid.read_solar_table()["obsjd"].to_numpy())
+    flares = goes.load_flares()
+    major = np.sort(flares.loc[flares["goes_class"].str[0].isin(["M", "X"]), "jd_peak"].to_numpy())
+    rows = []
+    for row in events.itertuples():
+        start = row.jd_start if row.jd_start == row.jd_start else row.jd_peak - 10.0 * MINUTE
+        low, high = start - 30.0 * MINUTE, row.jd_peak + 45.0 * MINUTE
+        expected = (high - low) * 86400.0 / 83.0
+        for shift in (s * d for d in range(1, max_shift_days + 1) for s in (1, -1)):
+            quiet = coverage.count_between(major, low + shift - margin_min * MINUTE, high + shift + margin_min * MINUTE) == 0
+            observed = coverage.count_between(observations, low + shift, high + shift)
+            if quiet and observed >= 0.9 * expected:
+                control = row._asdict()
+                control.pop("Index", None)
+                control.update(jd_start=start + shift, jd_peak=row.jd_peak + shift, parent=event_name(row), shift_days=shift)
+                rows.append(control)
+                break
+    return pd.DataFrame(rows)
+
+
+def control_name(row) -> str:
+    return f"{row.parent}_control{int(row.shift_days):+d}d"
+
+
+def write_manifest(rows: list[dict]) -> None:
+    """Record of every window fetched: name, kind, times and the flare it belongs to."""
+    path = data_dir() / "spectra" / "events.csv"
+    new = pd.DataFrame(rows)
+    if path.exists():
+        new = pd.concat([pd.read_csv(path), new], ignore_index=True).drop_duplicates("name", keep="last")
+    new.to_csv(path, index=False)
+
+
 def keep_awake(enable: bool) -> None:
     """Ask Windows not to sleep while the campaign runs (no effect elsewhere)."""
     if sys.platform != "win32":
@@ -60,6 +100,7 @@ def run(
     min_class: str = "M1.0",
     core_before_min: float = 10.0,
     core_after_min: float = 15.0,
+    kind: str = "flares",
 ) -> None:
     """Fetch spectrum extracts flare by flare until the time or the file budget runs out.
 
@@ -68,20 +109,28 @@ def run(
     ``core_before_min`` minutes before the start to ``core_after_min`` after the peak, where
     things change within a minute) and every ``step``-th one outside it. Extracts already on
     disk are skipped, so the campaign can be stopped and run again.
+
+    With ``kind`` = "controls" the same windows are fetched on a flare-free day for every
+    flare that already has spectra (see ``control_events``).
     """
     deadline = time.monotonic() + hours * 3600.0
     events = select_events(min_class)
     root = data_dir() / "spectra"
+    if kind == "controls":
+        fetched_flares = [len(list((root / event_name(r)).glob("neidL2_*.npz"))) >= 10 for r in events.itertuples()]
+        events = control_events(events[fetched_flares])
+    name_of = control_name if kind == "controls" else event_name
+    manifest = []
     scratch = Path(tempfile.gettempdir()) / "flinch_spectra"
     scratch.mkdir(parents=True, exist_ok=True)
     fetched = 0
     keep_awake(True)
-    log(f"campaign: {len(events)} flares, budget {hours} h / {max_files} files, step {step}")
+    log(f"campaign: {len(events)} {kind}, budget {hours} h / {max_files} files, step {step}")
     try:
         for row in events.itertuples():
             if time.monotonic() > deadline or fetched >= max_files:
                 break
-            name = event_name(row)
+            name = name_of(row)
             start = row.jd_start if row.jd_start == row.jd_start else row.jd_peak - 10.0 * MINUTE
             try:
                 files = spectra.list_files(start - before_min * MINUTE, row.jd_peak + after_min * MINUTE)
@@ -111,6 +160,14 @@ def run(
             with ThreadPoolExecutor(max_workers=workers) as pool:
                 done = sum(pool.map(task, todo))
             fetched += done
+            manifest.append(
+                {
+                    "name": name, "kind": kind, "parent": getattr(row, "parent", name),
+                    "jd_start": start, "jd_peak": row.jd_peak, "goes_class": row.goes_class,
+                    "peak_flux": row.peak_flux, "x_norm": row.x_norm, "y_norm": row.y_norm, "r_norm": row.r_norm,
+                }
+            )
+            write_manifest(manifest)
             have = len(list(directory.glob("neidL2_*.npz")))
             rate = (time.monotonic() - began) / max(done, 1)
             log(f"{name}: +{done} (now {have} of {len(files)}), {rate:.0f} s per file, total fetched {fetched}")
