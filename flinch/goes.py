@@ -16,7 +16,8 @@ ARCHIVE = "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites
 # GOES-16 covers 2017-02 to 2025-04; GOES-18 from 2022-06 onwards. The first one is the primary list.
 SATELLITES = (16, 18)
 _CLASS_BASE = {"A": 1e-8, "B": 1e-7, "C": 1e-6, "M": 1e-5, "X": 1e-4}
-_MISSION_FILE = re.compile(r'href="(sci_xrsf-l2-flsum_g\d\d_s\d{8}_e\d{8}_v[\d-]+\.nc)"')
+# Products: "flsum" (start, peak and end of each flare) and "flloc" (its position on the disc).
+PRODUCTS = ("flsum", "flloc")
 
 
 def class_to_flux(goes_class: str) -> float:
@@ -32,24 +33,55 @@ def flux_to_class(flux: float) -> str:
     return f"A{flux / _CLASS_BASE['A']:.1f}"
 
 
-def flsum_directory(satellite: int) -> str:
-    return f"{ARCHIVE}/goes{satellite}/l2/data/xrsf-l2-flsum_science/"
+def product_directory(satellite: int, product: str) -> str:
+    return f"{ARCHIVE}/goes{satellite}/l2/data/xrsf-l2-{product}_science/"
 
 
-def find_flsum_url(satellite: int) -> str:
-    """URL of the mission-long flare summary of a satellite (the file name carries its end date)."""
-    directory = flsum_directory(satellite)
-    names = _MISSION_FILE.findall(fetch_text(directory))
+def find_product_url(satellite: int, product: str) -> str:
+    """URL of the mission-long file of a product (the file name carries its end date)."""
+    directory = product_directory(satellite, product)
+    pattern = rf'href="(sci_xrsf-l2-{product}_g\d\d_s\d{{8}}_e\d{{8}}_v[\d-]+\.nc)"'
+    names = re.findall(pattern, fetch_text(directory))
     if not names:
-        raise RuntimeError(f"no mission-long flare summary found in {directory}")
+        raise RuntimeError(f"no mission-long {product} file found in {directory}")
     return directory + sorted(names)[-1]
 
 
-def download_flsum(satellite: int, directory: Path | None = None, overwrite: bool = False) -> Path:
-    """Download the mission-long flare summary of ``satellite``; returns the local path."""
+def download_product(
+    satellite: int, product: str, directory: Path | None = None, overwrite: bool = False
+) -> Path:
+    """Download the mission-long file of ``product`` for ``satellite``; returns the local path."""
     directory = Path(directory or data_dir() / "goes")
-    url = find_flsum_url(satellite)
+    url = find_product_url(satellite, product)
     return download(url, directory / url.rsplit("/", 1)[-1], overwrite=overwrite)
+
+
+def read_flloc(path: Path) -> pd.DataFrame:
+    """Read a flare location file: one row per ``flare_id`` with its position on the disc.
+
+    ``x_norm`` and ``y_norm`` are helioprojective coordinates in units of the solar radius
+    (x positive towards the west limb, the receding one). ``r_norm`` is the distance to the disc
+    centre. Positions come from the quadrant diode of the X-ray sensor and are unreliable for
+    weak flares; entries without a position are NaN.
+    """
+    with h5py.File(path, "r") as handle:
+        xy = handle["flloc_xy"][:].astype(float)
+        radius = handle["solar_radius"][:].astype(float)
+        hg = handle["flloc_hg"][:].astype(float)
+        flare_id = handle["flare_id"][:]
+    xy[xy < -9000.0] = np.nan
+    hg[hg < -9000.0] = np.nan
+    table = pd.DataFrame(
+        {
+            "flare_id": flare_id,
+            "x_norm": xy[:, 0] / radius,
+            "y_norm": xy[:, 1] / radius,
+            "lon": hg[:, 0],
+            "lat": hg[:, 1],
+        }
+    )
+    table["r_norm"] = np.hypot(table["x_norm"], table["y_norm"])
+    return table.drop_duplicates("flare_id")
 
 
 def read_flsum(path: Path, satellite: int | None = None) -> pd.DataFrame:
@@ -130,6 +162,9 @@ def load_flares(directory: Path | None = None, satellites: tuple[int, ...] = SAT
                 f"no GOES-{satellite} flare summary in {directory}; run `python -m flinch download`"
             )
         flares = read_flsum(files[-1])
+        locations = sorted(directory.glob(f"sci_xrsf-l2-flloc_g{satellite}_*.nc"))
+        if locations:
+            flares = flares.merge(read_flloc(locations[-1]), on="flare_id", how="left")
         merged = flares if merged is None else merge_flare_lists(merged, flares)
     merged["peak"] = jd_to_datetime(merged["jd_peak"])
     return merged

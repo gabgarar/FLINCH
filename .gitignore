@@ -21,3 +21,6 @@ site/
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Editor settings are machine specific
+.vscode/
