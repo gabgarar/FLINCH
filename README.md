@@ -7,7 +7,7 @@
 
 **FL**are-**IN**duced **CH**anges in Sun-as-a-star radial velocities.
 
-*Does the Sun flinch when it flares?*
+*Do solar flares contaminate the radial-velocity detection of Earth analogues?*
 
 **Documentation: <https://gabgarar.github.io/FLINCH/>**
 

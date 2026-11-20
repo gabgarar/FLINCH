@@ -1,7 +1,7 @@
 # FLINCH: plan de trabajo
 
 **FL**are-**IN**duced **CH**anges in Sun-as-a-star radial velocities.
-*¿Se inmuta el Sol cuando fulgura?*
+*¿Contaminan las fulguraciones solares la detección de análogos terrestres por velocidad radial?*
 
 Estado a 20 de noviembre de 2026: fases 0 a 3 hechas para la velocidad (resultado nulo, con
 controles, robustez e inyecciones) y fase 4 avanzada (12 fulguraciones X con espectros).

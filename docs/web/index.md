@@ -2,7 +2,7 @@
 
 **FL**are-**IN**duced **CH**anges in Sun-as-a-star radial velocities.
 
-*Does the Sun flinch when it flares?*
+*Do solar flares contaminate the radial-velocity detection of Earth analogues?*
 
 Spectrographs built to find exoplanets measure the velocity of a star to a few tens of
 centimetres per second. One of them, NEID, also observes the Sun every clear day as if it were
@@ -29,8 +29,8 @@ The yardstick is the reflex velocity that the Earth imprints on the Sun: 9 cm/s.
 | Do flares excite the five-minute oscillations? | No, within 8 % in amplitude | Power after against before, 140 flares |
 | Do the same spectra see the flares? | Yes: the chromospheric lines brighten | Ca II H and K rise in all 8 X flares on the disc, 6 of them above 3 sigma |
 
-The Sun does not flinch, but it blushes: the chromospheric lines brighten while the velocity
-stays put. See [Results](results.md).
+The answer is no. The Sun does not flinch, but it blushes: the chromospheric lines brighten
+while the velocity stays put, and flares take up 1.5 % of the time at the maximum of the cycle. See [Results](results.md).
 
 ![Mean velocity around the flare peak](img/pilot_profiles.png)
 
