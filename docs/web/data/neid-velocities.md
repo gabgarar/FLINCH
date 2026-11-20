@@ -68,7 +68,11 @@ The whole day: 231 spectra, of which 107 are kept.
    spectra, and its velocity is within 5 robust sigmas of the trend of the day.
 3. **Daily trend.** A polynomial of degree 2 is fitted to the kept spectra of each day and
    subtracted. Days with fewer than 40 kept spectra, or with a scatter above 1.5 m/s, are
-   dropped whole.
+   dropped whole. With fewer than 40 spectra, less than an hour of data, the trend of the day
+   is poorly determined. The scatter of a day is 0.80 m/s in the median and below 1 m/s on
+   nine days out of ten, while days of broken cloud reach tens of m/s, so 1.5 m/s separates
+   the two. The result does not depend on these values. With thresholds of 1, 2 or 3 m/s, or
+   with 20 or 80 spectra, the mean change stays between −0.027 and −0.035 ± 0.035 m/s.
 
 After the cuts 233 857 spectra remain, on 1238 days. The 1 % tolerance on the signal comes
 from the data: within it the robust scatter is 0.85 to 1.0 m/s, and it grows to 2.3 m/s at

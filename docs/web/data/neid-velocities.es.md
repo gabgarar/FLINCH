@@ -70,7 +70,12 @@ El día entero: 231 espectros, de los que se conservan 107.
    del día.
 3. **Tendencia diaria.** A los espectros conservados de cada día se les ajusta un polinomio de
    grado 2 y se les resta. Los días con menos de 40 espectros conservados, o con una
-   dispersión superior a 1,5 m/s, se descartan enteros.
+   dispersión superior a 1,5 m/s, se descartan enteros. Con menos de 40 espectros, menos de
+   una hora de datos, la tendencia del día no queda bien determinada. La dispersión de un día
+   es de 0,80 m/s en la mediana y está por debajo de 1 m/s en nueve días de cada diez,
+   mientras que los días con nubes rotas llegan a decenas de m/s, así que 1,5 m/s separa unos
+   de otros. El resultado no depende de estos valores. Con umbrales de 1, 2 o 3 m/s, o con 20
+   u 80 espectros, el cambio medio queda entre −0,027 y −0,035 ± 0,035 m/s.
 
 Tras los cortes quedan 233 857 espectros en 1238 días. La tolerancia del 1 % en la señal sale
 de los datos: dentro de ella la dispersión robusta es de 0,85 a 1,0 m/s, y crece a 2,3 m/s al

@@ -103,3 +103,24 @@ def test_two_instruments_measure_the_same_injected_signal(archive_with_signal, m
     assert "Both" in capsys.readouterr().out
     for name in ("velocity_by_instrument", "replication_profiles", "replication_events", "early_window"):
         assert (archive_with_signal["root"] / "results" / f"{name}.csv").stat().st_size > 100
+
+
+def test_the_signal_survives_other_cleaning_thresholds(archive_with_signal, monkeypatch, capsys):
+    """Every variant of the cuts on whole days gives back the 1.5 m/s that the two synthetic instruments carry."""
+    import helpers
+    from flinch import _http, replication
+    from flinch.__main__ import main
+
+    helpers.write_harpsn(archive_with_signal["root"] / "data", archive_with_signal["flares"], signal_ms=1.5)
+    monkeypatch.setattr(_http, "download", lambda *a, **k: pytest.fail("the network must not be used"))
+    assert [label for label, _ in replication.cleaning_variants(replication.NEID)][-1] == "at least 80 points per day"
+    assert replication.cleaning_variants(replication.HARPSN)[-1] == ("quality flag above 0.9", {"min_quality": 0.9})
+
+    assert main(["replication", "--cleaning"]) == 0
+    assert "cleaning thresholds" in capsys.readouterr().out
+    table = pd.read_csv(archive_with_signal["root"] / "results" / "cleaning_variants.csv")
+    assert len(table) == 2 * (6 + 7) and set(table["band"]) == {"M and X", "X"}
+    every = table[(table["band"] == "M and X") & (table["flares"] > 5)]
+    assert len(every) >= 8
+    for _, row in every.iterrows():
+        assert row["mean"] == pytest.approx(1.5, abs=5.0 * row["mean_err"])

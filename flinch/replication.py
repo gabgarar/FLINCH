@@ -7,6 +7,7 @@ same events.
 """
 from __future__ import annotations
 
+import inspect
 from dataclasses import dataclass
 
 import numpy as np
@@ -49,9 +50,13 @@ def raw_table(instrument: Instrument) -> pd.DataFrame:
     return harpsn.read_series(harpsn.download_series())
 
 
-def prepare(instrument: Instrument, raw: pd.DataFrame) -> pd.DataFrame:
-    """Quality cuts and daily trend of the instrument."""
-    return quality.prepare(raw) if instrument.name == "NEID" else harpsn.prepare(raw)
+def _preparer(instrument: Instrument):
+    return quality.prepare if instrument.name == "NEID" else harpsn.prepare
+
+
+def prepare(instrument: Instrument, raw: pd.DataFrame, **choices) -> pd.DataFrame:
+    """Quality cuts and daily trend of the instrument; ``choices`` replace the defaults of its cuts."""
+    return _preparer(instrument)(raw, **choices)
 
 
 def prepared_table(instrument: Instrument) -> pd.DataFrame:
@@ -199,6 +204,52 @@ def early_window(instrument: Instrument, flares: pd.DataFrame, series: epoch.Ser
                 "positive": int((chosen > 0).sum()),
             }
         )
+    return pd.DataFrame(rows)
+
+
+def cleaning_variants(instrument: Instrument) -> list[tuple[str, dict]]:
+    """Other values for the cuts that drop whole days and, for HARPS-N, for its quality flag.
+
+    The largest scatter of a day (1, 2 and 3 m/s instead of 1.5), the fewest good points of a
+    day (half and twice the default) and, for HARPS-N, the 0.9 that its release recommends
+    for the quality flag instead of 0.99.
+    """
+    points = inspect.signature(_preparer(instrument)).parameters["min_points"].default
+    variants: list[tuple[str, dict]] = [("default", {})]
+    variants += [(f"day scatter below {limit:g} m/s", {"max_day_sigma": limit}) for limit in (1.0, 2.0, 3.0)]
+    variants += [(f"at least {number} points per day", {"min_points": number}) for number in (points // 2, points * 2)]
+    if instrument.name == "HARPS-N":
+        variants.append(("quality flag above 0.9", {"min_quality": 0.9}))
+    return variants
+
+
+def cleaning_table(seed: int = 0) -> pd.DataFrame:
+    """The velocity change of each instrument under other cleaning thresholds (see ``cleaning_variants``)."""
+    all_flares = goes.load_flares()
+    rows = []
+    for instrument in (NEID, HARPSN):
+        raw = raw_table(instrument)
+        for label, choices in cleaning_variants(instrument):
+            prepared = prepare(instrument, raw, **choices)
+            good = prepared[prepared["good"]]
+            out = measure(instrument, prepared, all_flares, seed)
+            table = band_table(instrument, out["flares"], out["controls"], seed).set_index("band")
+            for band in ("M and X", "X"):
+                row = table.loc[band]
+                rows.append(
+                    {
+                        "instrument": instrument.name,
+                        "variant": label,
+                        "band": band,
+                        "good": len(good),
+                        "days": int(good["day"].nunique()),
+                        "flares": int(row["flares"]),
+                        "mean": row["mean"],
+                        "mean_err": row["mean_err"],
+                        "rotation": row["rotation"],
+                        "rotation_err": row["rotation_err"],
+                    }
+                )
     return pd.DataFrame(rows)
 
 

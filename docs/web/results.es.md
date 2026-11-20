@@ -69,7 +69,7 @@ Un desplazamiento añadido a las velocidades de NEID, y el que se mide después:
 
 Con HARPS-N la misma prueba recupera el 98 %. Con los dos instrumentos juntos, un
 desplazamiento de 10 cm/s común a todas las fulguraciones se habría detectado con una
-probabilidad del 98 %.
+probabilidad del 99 %.
 
 ## Los mismos espectros sí ven las fulguraciones
 

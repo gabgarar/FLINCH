@@ -34,7 +34,7 @@ instrument does not.
 |---|---|
 | Time | The UTC time stamp in the name of each file is the start of the exposure; half the exposure is added. The barycentric date of the table is about seven minutes earlier and is not used. |
 | Clouds | Exposures with the quality flag of the release below 0.99, or flagged by its pipeline, are dropped. The release recommends 0.9; with it the result is the same (−0.005 ± 0.038 m/s for 126 flares). |
-| Daily trend | A polynomial of degree 2 per day, with the same clipping and the same cut on the scatter of the day as for NEID. A day needs 20 kept exposures. |
+| Daily trend | A polynomial of degree 2 per day, with the same clipping and the same cut on the scatter of the day as for NEID. A day needs 20 kept exposures. With 10 or 40 the mean change stays between −0.008 and −0.021 ± 0.04 m/s, and the cut on the scatter removes no day (99 % of the days scatter by less than 0.7 m/s). |
 | Result | 93 593 velocities on 1671 days. |
 | Flares | Those of the GOES-16 and GOES-18 lists, which begin in February 2017: 1750 of class M or X, of which 122 have complete windows and 115 at least three controls. |
 

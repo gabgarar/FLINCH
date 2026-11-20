@@ -126,6 +126,13 @@ def cmd_campaign(args: argparse.Namespace) -> int:
 def cmd_replication(args: argparse.Namespace) -> int:
     from . import replication
 
+    if args.cleaning:
+        table = replication.cleaning_table()
+        with pd.option_context("display.width", 220, "display.float_format", "{:.3f}".format):
+            print("Velocity change under other cleaning thresholds (m/s):")
+            print(table.to_string(index=False))
+        table.to_csv(results_dir() / "cleaning_variants.csv", index=False)
+        return 0
     out = replication.run()
     columns = ["instrument", "band", "flares", "mean", "mean_err", "limit_95", "per_X1", "per_X1_err", "rotation", "rotation_err", "flare_std", "control_std"]
     with pd.option_context("display.width", 220, "display.float_format", "{:.3f}".format):
@@ -217,6 +224,7 @@ def main(argv: list[str] | None = None) -> int:
     camp.set_defaults(run=cmd_campaign)
 
     again = commands.add_parser("replication", help="the velocity response measured with NEID and with HARPS-N, and both combined")
+    again.add_argument("--cleaning", action="store_true", help="instead, repeat the measurement with other cleaning thresholds")
     again.set_defaults(run=cmd_replication)
 
     lines = commands.add_parser("chromosphere", help="response of the spectral indices to the flares with spectra, by class band")

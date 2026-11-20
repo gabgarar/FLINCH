@@ -20,6 +20,7 @@ python -m flinch pilot
 | `results/replication_events.csv` | `replication` | Every flare and control of both instruments, with its velocity change |
 | `results/replication_profiles.csv` | `replication` | Mean velocity around the peak in 10-minute bins |
 | `results/early_window.csv` | `replication` | Mean velocity from 60 to 50 minutes before the peak, by class and instrument |
+| `results/cleaning_variants.csv` | `replication --cleaning` | The mean change and the rotation term with other thresholds for dropping days and, for HARPS-N, with the quality flag above 0.9 |
 | `results/robustness.csv` | `robustness` | The table of variants (NEID) |
 | `results/injections.csv` | `robustness` | A shift added and measured back (NEID) |
 | `results/pilot_*.csv` | `pilot` | The first NEID analysis, including the oscillation power |

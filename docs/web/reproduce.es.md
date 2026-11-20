@@ -21,6 +21,7 @@ python -m flinch pilot
 | `results/replication_events.csv` | `replication` | Cada fulguración y cada control de los dos instrumentos, con su cambio de velocidad |
 | `results/replication_profiles.csv` | `replication` | Velocidad media alrededor del máximo en intervalos de 10 minutos |
 | `results/early_window.csv` | `replication` | Velocidad media de 60 a 50 minutos antes del máximo, por clase y por instrumento |
+| `results/cleaning_variants.csv` | `replication --cleaning` | El cambio medio y el término de rotación con otros umbrales para descartar días y, en HARPS-N, con el indicador de calidad por encima de 0,9 |
 | `results/robustness.csv` | `robustness` | La tabla de variantes (NEID) |
 | `results/injections.csv` | `robustness` | Un desplazamiento añadido y medido después (NEID) |
 | `results/pilot_*.csv` | `pilot` | El primer análisis de NEID, con la potencia de las oscilaciones |

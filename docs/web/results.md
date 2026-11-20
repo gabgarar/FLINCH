@@ -67,7 +67,7 @@ A shift added to the NEID velocities, and the shift measured back:
 | 50 cm/s | 48.8 cm/s | 100 % |
 
 With HARPS-N the same test measures back 98 %. With the two instruments together, a shift of
-10 cm/s common to all flares would have been detected with a probability of 98 %.
+10 cm/s common to all flares would have been detected with a probability of 99 %.
 
 ## The same spectra do see the flares
 
