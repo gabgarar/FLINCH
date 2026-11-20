@@ -16,7 +16,13 @@ from . import epoch, goes, harpsn, neid, pilot, quality, robust
 from .timeutil import MINUTE
 
 # Class bands of the summary: label, lowest peak flux and (exclusive) highest, in W m^-2.
-BANDS = (("M and X", 1.0e-5, np.inf), ("M1-M4", 1.0e-5, 5.0e-5), ("M5-M9", 5.0e-5, 1.0e-4), ("X", 1.0e-4, np.inf))
+BANDS = (
+    ("M and X", 1.0e-5, np.inf),
+    ("M", 1.0e-5, 1.0e-4),
+    ("M1-M4", 1.0e-5, 5.0e-5),
+    ("M5-M9", 5.0e-5, 1.0e-4),
+    ("X", 1.0e-4, np.inf),
+)
 PROFILE_EDGES_MIN = np.arange(-60.0, 90.1, 10.0)
 PROFILE_SUBSETS = ("M and X", "X")
 EARLY_WINDOW_MIN = (-60.0, -50.0)  # where the X-class flares of NEID show an excess

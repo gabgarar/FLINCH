@@ -293,6 +293,90 @@ def event(changes: pd.DataFrame, path: Path, quantities=EVENT_QUANTITIES, column
         return _save(fig, path)
 
 
+def method_example(example: dict, path: Path) -> Path:
+    """How the velocity change of a flare is measured: one real flare and one of its control days, one page wide.
+
+    ``example`` holds, for the day of the flare and for a control day (keys "flare" and
+    "control"), the X-ray flux and the velocities against minutes from the X-ray peak, and the
+    limits of the two windows: ``xray_min``, ``xray_flux``, ``min``, ``velocity``, ``before``
+    and ``during`` (pairs of minutes), ``start_min`` and ``title``.
+    """
+    with plt.rc_context(style()):
+        fig, axes = plt.subplots(2, 2, figsize=_inches(PAGE_MM, 84.0), sharex=True, sharey="row", height_ratios=(1.0, 1.5))
+        for column, key in enumerate(("flare", "control")):
+            day = example[key]
+            top, bottom = axes[0, column], axes[1, column]
+            for ax in (top, bottom):
+                ax.axvspan(*day["before"], color=BAND, linewidth=0, zorder=1)
+                ax.axvspan(*day["during"], color=FLARES, alpha=0.14, linewidth=0, zorder=1)
+            top.plot(day["xray_min"], day["xray_flux"], color="black", linewidth=0.9, zorder=3)
+            top.set_yscale("log")
+            top.set_title(day["title"])
+            time, velocity = np.asarray(day["min"], dtype=float), np.asarray(day["velocity"], dtype=float)
+            bottom.axhline(0.0, color=GUIDE, linewidth=0.5, zorder=2)
+            bottom.plot(time, velocity, linestyle="none", marker="o", markersize=2.2, color="0.45", zorder=3)
+            means = {}
+            for name, colour in (("before", "black"), ("during", FLARES)):
+                low, high = day[name]
+                inside = (time >= low) & (time <= high)
+                means[name] = float(np.nanmean(velocity[inside]))
+                bottom.plot([low, high], [means[name]] * 2, color=colour, linewidth=1.8, solid_capstyle="butt", zorder=4)
+            change = means["during"] - means["before"]
+            bottom.text(0.98, 0.06, rf"$\Delta v = {change:+.2f}$ m s$^{{-1}}$", transform=bottom.transAxes, ha="right", va="bottom")
+            bottom.set_xlabel("Time from the X-ray peak (min)")
+        axes[0, 0].set_ylabel(r"X-ray flux (W m$^{-2}$)")
+        axes[1, 0].set_ylabel(r"Velocity (m s$^{-1}$)")
+        axes[0, 0].set_ylim(3.0e-7, 5.0e-4)
+        limit = _round_up(float(np.nanpercentile(np.abs(np.concatenate([example["flare"]["velocity"], example["control"]["velocity"]])), 99.5)) * 1.1, 0.5)
+        axes[1, 0].set_ylim(-limit, limit)
+        before, during = example["flare"]["before"], example["flare"]["during"]
+        axes[1, 0].text(0.5 * sum(before), 0.93 * limit, "before", ha="center", va="top", fontsize=7.5)
+        axes[1, 0].text(0.5 * sum(during), 0.93 * limit, "during", ha="center", va="top", fontsize=7.5, color=FLARES)
+        fig.subplots_adjust(left=0.07, right=0.99, top=0.945, bottom=0.12, wspace=0.04, hspace=0.08)
+        return _save(fig, path)
+
+
+def example_data(event_peak: str = "2022-03-30", before_min: float = 62.0, after_min: float = 32.0) -> dict:
+    """Real data for ``method_example``: a flare observed by NEID and its nearest control day."""
+    from . import epoch, goes, neid, quality, replication
+    from .timeutil import MINUTE, jd_to_datetime
+
+    prepared = quality.prepare(neid.read_solar_table())
+    out = replication.measure(replication.NEID, prepared, goes.load_flares())
+    flares, controls = out["flares"], out["controls"]
+    days = np.array([f"{jd_to_datetime(jd):%Y-%m-%d}" for jd in flares["jd_peak"]])
+    strongest = flares[days == event_peak]["peak_flux"].idxmax()
+    flare = flares.loc[strongest]
+    own = controls[controls["parent"] == strongest]
+    control = own.loc[own["shift_days"].abs().idxmin()]
+    good = prepared[prepared["good"]]
+    jd, residual = good["jd"].to_numpy(), good["res"].to_numpy()
+    rise = float((flare["jd_peak"] - flare["jd_start"]) / MINUTE)
+    windows = {"before": (-rise + robust_pre()[0], -rise + robust_pre()[1]), "during": (-rise, epoch.Windows().signal_after_peak)}
+    result = {}
+    for key, peak, title in (
+        ("flare", flare["jd_peak"], f"Day of the flare: {jd_to_datetime(flare['jd_peak']):%d %B %Y}, class {flare['goes_class']}"),
+        ("control", control["jd_peak"], f"Control: the same hour {abs(int(control['shift_days']))} day{'s' if abs(control['shift_days']) > 1 else ''} "
+                                         f"{'later' if control['shift_days'] > 0 else 'earlier'}, without flare"),
+    ):
+        xray_jd, xray_flux = goes.load_avg1m(int(flare["satellite"]), jd_to_datetime(peak).year)
+        chosen = (xray_jd > peak - before_min * MINUTE) & (xray_jd < peak + after_min * MINUTE)
+        inside = (jd > peak - before_min * MINUTE) & (jd < peak + after_min * MINUTE)
+        result[key] = {
+            "title": title, "start_min": -rise, **windows,
+            "xray_min": (xray_jd[chosen] - peak) / MINUTE, "xray_flux": xray_flux[chosen],
+            "min": (jd[inside] - peak) / MINUTE, "velocity": residual[inside],
+        }
+    return result
+
+
+def robust_pre() -> tuple[float, float]:
+    """The baseline window, in minutes from the start of the flare."""
+    from . import robust
+
+    return robust.PRE
+
+
 def make_all(directory: Path, event_name: str | None = None) -> list[Path]:
     """Write the figures of the paper from the tables in ``results/`` (see ``flinch replication``) and the spectra on disk.
 
@@ -305,6 +389,7 @@ def make_all(directory: Path, event_name: str | None = None) -> list[Path]:
     results = results_dir()
     stacked = pd.read_csv(results / "replication_profiles.csv")
     written = [
+        method_example(example_data(), directory / "method.pdf"),
         profiles(stacked, directory / "profiles.pdf"),
         profiles(stacked, directory / "profiles_x.pdf", subset="X"),
         events(pd.read_csv(results / "replication_events.csv"), directory / "events.pdf"),

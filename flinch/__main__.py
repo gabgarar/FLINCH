@@ -144,6 +144,31 @@ def cmd_replication(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_chromosphere(args: argparse.Namespace) -> int:
+    from . import chromosphere
+
+    events, indices = [], []
+    for band, low, high in (("X", "X1.0", None), ("M5-M9", "M5.0", "X1.0")):
+        out = chromosphere.run(min_class=low, max_class=high)
+        if not len(out["events"]):
+            continue
+        if events:  # the control windows are the same for every band: keep them once
+            out["events"] = out["events"][out["events"]["kind"] == "flare"]
+        events.append(out["events"].assign(band=band))
+        indices.append(out["indices"].assign(band=band))
+        print(f"{band}: {out['numbers']}")
+    if not events:
+        print("No flare has spectra yet: run `python -m flinch campaign` first.")
+        return 1
+    directory = results_dir()
+    pd.concat(events, ignore_index=True).to_csv(directory / "spectral_response.csv", index=False)
+    table = pd.concat(indices, ignore_index=True)
+    table.to_csv(directory / "spectral_indices.csv", index=False)
+    with pd.option_context("display.width", 220, "display.float_format", "{:.2f}".format):
+        print(table[["band", "index", "flares", "detected_total_error", "disc_mean", "disc_mean_err", "limb_mean", "limb_mean_err", "control_std"]].to_string(index=False))
+    return 0
+
+
 def cmd_paper_figures(args: argparse.Namespace) -> int:
     from . import paperfigs
 
@@ -193,6 +218,9 @@ def main(argv: list[str] | None = None) -> int:
 
     again = commands.add_parser("replication", help="the velocity response measured with NEID and with HARPS-N, and both combined")
     again.set_defaults(run=cmd_replication)
+
+    lines = commands.add_parser("chromosphere", help="response of the spectral indices to the flares with spectra, by class band")
+    lines.set_defaults(run=cmd_chromosphere)
 
     figures = commands.add_parser("paper-figures", help="figures of the paper, as PDF in journal style, from the tables in results/")
     figures.add_argument("--out", default="docs/paper/figuras", help="folder for the PDF files (default docs/paper/figuras)")

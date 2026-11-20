@@ -186,3 +186,16 @@ def test_binned_means_leave_out_sparse_bins():
     # The middle bin has one point only; a bin with positive edges is centred on their geometric mean.
     assert centres == pytest.approx([0.5, np.sqrt(6.0)])
     assert list(means) == [2.0, 5.0] and errors[1] == pytest.approx(1.0 / np.sqrt(3.0))
+
+
+def test_method_example_figure(tmp_path):
+    from flinch import paperfigs
+
+    rng = np.random.default_rng(3)
+    time = np.arange(-60.0, 30.0, 1.4)
+    day = {
+        "title": "A synthetic day", "start_min": -15.0, "before": (-55.0, -20.0), "during": (-15.0, 2.0),
+        "xray_min": np.arange(-60.0, 30.0), "xray_flux": 1.0e-6 + 1.0e-4 * np.exp(-0.5 * (np.arange(-60.0, 30.0) / 8.0) ** 2),
+        "min": time, "velocity": rng.normal(0.0, 0.8, len(time)),
+    }
+    assert _is_pdf(paperfigs.method_example({"flare": day, "control": dict(day, title="A synthetic control")}, tmp_path / "method.pdf"))
