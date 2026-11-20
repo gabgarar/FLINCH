@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 
 from . import coverage, goes, neid, spectra
-from .config import data_dir
+from .config import data_dir, results_dir
 from .timeutil import MINUTE, jd_to_datetime
 
 
@@ -102,6 +102,7 @@ def run(
     core_before_min: float = 10.0,
     core_after_min: float = 15.0,
     kind: str = "flares",
+    usable_only: bool = False,
 ) -> None:
     """Fetch spectrum extracts flare by flare until the time or the file budget runs out.
 
@@ -112,7 +113,8 @@ def run(
     disk are skipped, so the campaign can be stopped and run again.
 
     With ``kind`` = "controls" the same windows are fetched on a flare-free day for every
-    flare that already has spectra (see ``control_events``).
+    flare that already has spectra (see ``control_events``). With ``usable_only`` the controls
+    are limited to the flares marked as usable in ``results/spectral_response.csv``.
     """
     deadline = time.monotonic() + hours * 3600.0
     events = select_events(min_class)
@@ -120,6 +122,10 @@ def run(
     if kind == "controls":
         fetched_flares = [len(list((root / event_name(r)).glob("neidL2_*.npz"))) >= 10 for r in events.itertuples()]
         events = control_events(events[fetched_flares])
+        if usable_only:
+            measured = pd.read_csv(results_dir() / "spectral_response.csv")
+            wanted = set(measured.loc[(measured["kind"] == "flare") & measured["usable"], "name"])
+            events = events[events["parent"].isin(wanted)].reset_index(drop=True)
     name_of = control_name if kind == "controls" else event_name
     manifest = []
     scratch = Path(tempfile.gettempdir()) / "flinch_spectra"

@@ -113,7 +113,11 @@ def cmd_spectra(args: argparse.Namespace) -> int:
 def cmd_campaign(args: argparse.Namespace) -> int:
     from . import campaign
 
-    campaign.run(hours=args.hours, max_files=args.max_files, step=args.step, workers=args.workers, kind=args.kind)
+    core = (-1.0e9, -1.0e9) if args.sparse else (10.0, 15.0)  # sparse: no full-cadence core
+    campaign.run(
+        hours=args.hours, max_files=args.max_files, step=args.step, workers=args.workers, kind=args.kind,
+        usable_only=args.usable_only, core_before_min=core[0], core_after_min=core[1],
+    )
     return 0
 
 
@@ -147,6 +151,8 @@ def main(argv: list[str] | None = None) -> int:
     camp.add_argument("--step", type=int, default=3, help="take every n-th spectrum (default 3)")
     camp.add_argument("--workers", type=int, default=3, help="simultaneous downloads (default 3)")
     camp.add_argument("--kind", choices=["flares", "controls"], default="flares", help="flare windows, or flare-free windows for the flares already fetched")
+    camp.add_argument("--usable-only", action="store_true", help="controls only for the flares with usable spectra")
+    camp.add_argument("--sparse", action="store_true", help="every n-th spectrum throughout, without the full-cadence core")
     camp.set_defaults(run=cmd_campaign)
     args = parser.parse_args(argv)
     return args.run(args)
