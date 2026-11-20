@@ -31,7 +31,7 @@ general.
 | ¿Hay firma de rotación (signo opuesto al este y al oeste)? | No | −0,006 ± 0,038 m/s para una X1 en el limbo, a un factor entre 1,5 y 3,5 del mayor desplazamiento esperado |
 | ¿Se habría visto una señal? | Sí | Se recupera el 98 % de un desplazamiento añadido a los datos |
 | ¿Ven los espectros las fulguraciones? | Sí | Ca II H y K y H alfa se abrillantan en las 14 fulguraciones del disco con espectros, entre 2 y 5 partes por mil |
-| ¿Cuánto tiempo pasa el Sol en fulguración? | El 1,6 % | 358 fulguraciones de clase M o X al año en el máximo del ciclo 25, contadas de inicio a final (19 minutos en la mediana) |
+| ¿Cuánto tiempo pasa el Sol en fulguración? | El 1,6 % | 358 fulguraciones de clase M o X al año de media entre 2020 y 2026, contadas de inicio a final (19 minutos en la mediana); el 3,8 % en 2024, el año más activo |
 
 El Sol no se inmuta, pero se sonroja: las líneas cromosféricas se abrillantan mientras la
 velocidad no se mueve. Véase [Resultados](results.md).

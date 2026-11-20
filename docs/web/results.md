@@ -106,7 +106,7 @@ The table flare by flare is `results/spectral_response.csv`. One flare in detail
   brightens by 7 parts per million, and in the X17 flare of 28 October 2003 it brightened by
   264 (Kretzschmar 2011). Those classes are on the old GOES scale, which carried a factor
   0.7; on the scale used here they give 11 to 23 parts per million for an X1 flare. The two
-  agree within a factor of two although the flares differ by a factor of sixty in class: on
+  agree within a factor of two although the flares differ by a factor of almost ninety in class: on
   average the visible brightening grows with the X-ray class, though not flare by flare.
 - **How much does that light move the velocity?** At most 2 to 4 cm/s for an X1 flare at the
   limb (K = 1), and less elsewhere.
@@ -121,10 +121,12 @@ velocity, for two reasons:
 - **They move the velocity very little**: less than 7 cm/s on average up to class X. For class
   X alone no change is found either, but the limit is about 20 cm/s, twice the signal of the
   Earth.
-- **They take up little of the time**: at the maximum of cycle 25 the Sun produced 358 flares
-  of class M or X per year, 18 of them of class X. Counting each flare from its start to its
-  end in the GOES list (19 minutes in the median), the Sun spent 1.6 % of the time in one of
-  them (0.1 % for class X).
+- **They take up little of the time.** Between December 2020 and November 2026, six years
+  that span the rise and the maximum of cycle 25, the Sun produced 358 flares of class M or X
+  per year on average, 18 of them of class X. Counting each flare from its start to its end
+  in the GOES list (19 minutes in the median), the Sun spent 1.6 % of the time in one of them
+  (0.1 % for class X). In 2024, the most active year, there were 934 flares, 52 of them of
+  class X, and the Sun spent 3.8 % of the time in one (0.3 % for class X).
 
 This has been shown for the Sun, not for Sun-like stars in general: stars more active than
 the Sun, with larger and more frequent flares, are another matter.

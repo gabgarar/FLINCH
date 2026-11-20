@@ -30,7 +30,7 @@ solar en general.
 | Señal añadida que se recupera | 98 % en los dos instrumentos |
 | Respuesta de Ca II H y K, fulguraciones del disco | +5,3 ± 1,7 ‰ (8 de clase X), +2,2 ± 0,4 ‰ (6 de M5 a M9), 0,0 ± 0,2 ‰ (9 controles) |
 | Respuesta del núcleo de H alfa | +3,3 ± 1,1 ‰, +2,0 ± 0,2 ‰, −0,1 ± 0,2 ‰ |
-| Tiempo que el Sol pasa en fulguraciones M o X en el máximo del ciclo 25 | 1,6 % (0,1 % en las de clase X), contando cada fulguración de inicio a final |
+| Tiempo que el Sol pasa en fulguraciones M o X | 1,6 % de media entre 2020 y 2026 (0,1 % en las de clase X), contando cada fulguración de inicio a final; 3,8 % en 2024, el año más activo |
 
 ## Cómo se reproduce
 

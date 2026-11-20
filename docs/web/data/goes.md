@@ -76,5 +76,6 @@ The functions are in [`flinch.goes`](../api/data.md).
   reproduces the flare times to the minute. An ambiguity of 5 s would not matter against
   55 s exposures.
 - **The scale of the classes.** Fluxes of satellites before GOES-16 were reported multiplied
-  by 0.7, so a flare of those lists is 1.4 times larger on the scale used here: the flare
-  catalogued as X9.3 on 6 September 2017 is X14.6 here.
+  by 0.7. The flares of September 2017, which both generations of satellites recorded, are
+  1.4 to 1.6 times larger in the list used here. The ones catalogued as X9.3 on 6 September
+  and as X8.2 on 10 September are X14.6 and X12.9 here.

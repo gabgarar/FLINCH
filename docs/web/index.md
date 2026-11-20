@@ -28,7 +28,7 @@ velocity. This has been shown for the Sun, not for Sun-like stars in general.
 | Is there a rotation signature (opposite sign east and west)? | No | −0.006 ± 0.038 m/s for an X1 flare at the limb, within a factor of 1.5 to 3.5 of the largest shift expected |
 | Would a signal have been seen? | Yes | 98 % of a shift added to the data is measured back |
 | Do the spectra see the flares at all? | Yes | Ca II H and K and H alpha brighten in all 14 flares on the disc with spectra, by 2 to 5 parts per thousand |
-| How much of the time is the Sun flaring? | 1.6 % | 358 flares of class M or X per year at the maximum of cycle 25, counted from start to end (19 minutes in the median) |
+| How much of the time is the Sun flaring? | 1.6 % | 358 flares of class M or X per year on average from 2020 to 2026, counted from start to end (19 minutes in the median); 3.8 % in 2024, the most active year |
 
 The Sun does not flinch, but it blushes: the chromospheric lines brighten while the velocity
 stays put. See [Results](results.md).

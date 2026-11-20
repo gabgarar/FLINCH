@@ -111,7 +111,7 @@ espectro solar de ese día:
   el Sol se abrillanta 7 partes por millón, y en la X17 del 28 de octubre de 2003 se abrillantó
   264 (Kretzschmar 2011). Esas clases están en la escala antigua de GOES, que llevaba un factor
   0,7; en la escala de aquí son entre 11 y 23 partes por millón para una X1. Los dos valores
-  coinciden dentro de un factor dos aunque las fulguraciones difieren en un factor sesenta en
+  coinciden dentro de un factor dos aunque las fulguraciones difieren en un factor de casi noventa en
   clase: en promedio el abrillantamiento visible crece con la clase en rayos X, aunque no
   fulguración a fulguración.
 - **¿Cuánto mueve esa luz la velocidad?** Como mucho de 2 a 4 cm/s para una X1 en el limbo
@@ -127,10 +127,13 @@ por velocidad radial, por dos razones:
 - **Mueven muy poco la velocidad**: menos de 7 cm/s de media hasta la clase X. En las de clase
   X solas tampoco se encuentra ningún cambio, pero la cota es de unos 20 cm/s, el doble de la
   señal de la Tierra.
-- **Ocupan poco tiempo**: en el máximo del ciclo 25 el Sol produjo 358 fulguraciones de clase
-  M o X al año, 18 de ellas de clase X. Contando cada fulguración desde su inicio hasta su
-  final en la lista de GOES (19 minutos en la mediana), el Sol pasó el 1,6 % del tiempo en
-  alguna de ellas (el 0,1 % en las de clase X).
+- **Ocupan poco tiempo.** Entre diciembre de 2020 y noviembre de 2026, seis años que abarcan
+  la subida y el máximo del ciclo 25, el Sol produjo de media 358 fulguraciones de clase M o X
+  al año, 18 de ellas de clase X. Contando cada fulguración desde su inicio hasta su final en
+  la lista de GOES (19 minutos en la mediana), el Sol pasó el 1,6 % del tiempo en alguna de
+  ellas (el 0,1 % en las de clase X). En 2024, el año más activo, hubo 934 fulguraciones, 52
+  de ellas de clase X, y el Sol pasó el 3,8 % del tiempo en alguna (el 0,3 % en las de clase
+  X).
 
 Esto se ha demostrado para el Sol, no para las estrellas de tipo solar en general: las
 estrellas más activas que el Sol, con fulguraciones mayores y más frecuentes, son otro asunto.

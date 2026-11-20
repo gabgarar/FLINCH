@@ -78,5 +78,7 @@ Las funciones están en [`flinch.goes`](../api/data.md).
   segundos intercalares, lo que reproduce los instantes de las fulguraciones al minuto. Una
   ambigüedad de 5 s no importaría frente a exposiciones de 55 s.
 - **Escala de las clases.** Los flujos de los satélites anteriores a GOES-16 se daban
-  multiplicados por 0,7, así que una fulguración de aquellas listas es 1,4 veces mayor en la
-  escala de aquí: la catalogada como X9.3 el 6 de septiembre de 2017 es aquí X14.6.
+  multiplicados por 0,7. Las fulguraciones de septiembre de 2017, que registraron las dos
+  generaciones de satélites, son entre 1,4 y 1,6 veces mayores en la lista de aquí. Las
+  catalogadas como X9.3 el 6 de septiembre y como X8.2 el 10 de septiembre son aquí X14.6 y
+  X12.9.
