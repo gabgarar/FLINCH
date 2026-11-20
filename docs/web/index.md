@@ -29,8 +29,9 @@ The yardstick is the reflex velocity that the Earth imprints on the Sun: 9 cm/s.
 | Do flares excite the five-minute oscillations? | No, within 8 % in amplitude | Power after against before, 140 flares |
 | Do the same spectra see the flares? | Yes: the chromospheric lines brighten | Ca II H and K rise in all 8 X flares on the disc, 6 of them above 3 sigma |
 
-The answer is no. The Sun does not flinch, but it blushes: the chromospheric lines brighten
-while the velocity stays put, and flares take up 1.5 % of the time at the maximum of the cycle. See [Results](results.md).
+Solar flares do not significantly contaminate it. The Sun does not flinch, but it blushes: the
+chromospheric lines brighten while the velocity stays put, and flares take up 1.5 % of the time
+at the maximum of the cycle. This has been shown for the Sun, not for Sun-like stars in general. See [Results](results.md).
 
 ![Mean velocity around the flare peak](img/pilot_profiles.png)
 
