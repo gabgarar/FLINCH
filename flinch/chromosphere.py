@@ -74,6 +74,48 @@ def spearman(a, b) -> float:
     return float(a[keep].rank().corr(b[keep].rank())) if keep.sum() >= 4 else np.nan
 
 
+MIN_CONTROLS = 3
+
+
+def mean_and_error(values) -> tuple[float, float]:
+    """Mean and standard error of the mean of the finite values (NaN error with fewer than two)."""
+    values = np.asarray(values, dtype=float)
+    values = values[np.isfinite(values)]
+    if len(values) == 0:
+        return np.nan, np.nan
+    if len(values) == 1:
+        return float(values[0]), np.nan
+    return float(values.mean()), float(values.std(ddof=1) / np.sqrt(len(values)))
+
+
+def scatter_and_error(values) -> tuple[float, float]:
+    """Standard deviation of the finite values and its own uncertainty.
+
+    For n values drawn from a normal distribution the standard deviation is known to a
+    fraction 1 / sqrt(2 (n - 1)): 35 % with five values, 22 % with eleven. With fewer than
+    ``MIN_CONTROLS`` values both are NaN.
+    """
+    values = np.asarray(values, dtype=float)
+    values = values[np.isfinite(values)]
+    if len(values) < MIN_CONTROLS:
+        return np.nan, np.nan
+    scatter = float(values.std(ddof=1))
+    return scatter, scatter / float(np.sqrt(2.0 * (len(values) - 1)))
+
+
+def total_error(own_error, control_scatter: float) -> np.ndarray:
+    """Error of the response of a flare: its own error and the scatter of the controls, in quadrature.
+
+    The own error comes from the spectra before the flare and misses the slow drifts with the
+    height of the Sun; the scatter of the controls, measured in the same windows on flare-free
+    days, contains them. Without a control scatter the own error is returned unchanged.
+    """
+    own_error = np.asarray(own_error, dtype=float)
+    if not np.isfinite(control_scatter):
+        return own_error.copy()
+    return np.hypot(own_error, control_scatter)
+
+
 def run(window_min: tuple[float, float] = (-8.0, 10.0)) -> dict:
     root = data_dir() / "spectra"
     keep = quality.stable_obsjd(neid.read_solar_table())
@@ -92,29 +134,41 @@ def run(window_min: tuple[float, float] = (-8.0, 10.0)) -> dict:
     good_flares = measured[measured["usable"] & (measured["kind"] == "flare")]
     good_controls = measured[measured["usable"] & (measured["kind"] == "control")]
 
+    flare_rows = measured["usable"] & (measured["kind"] == "flare")
     rows = []
-    for column, label in INDICES:
-        value, error = good_flares[column], good_flares[f"{column}_err"]
-        on_disc = good_flares["r_norm"] < 0.9
-        row = {
-            "index": label,
-            "flares": len(good_flares),
-            "detected_3sigma": int((value / error > 3.0).sum()),
-            "disc_mean": float(value[on_disc].mean()),
-            "limb_mean": float(value[~on_disc].mean()) if (~on_disc).any() else np.nan,
-            "rho_class": spearman(value, good_flares["peak_flux"]),
-            "rho_fluence": spearman(value, good_flares["fluence"]),
-            "rho_fluence_mu": spearman(value, good_flares["fluence"] * good_flares["mu"]),
-        }
-        if len(good_controls):
-            row["controls"] = len(good_controls)
-            row["control_mean"] = float(good_controls[column].mean())
-            row["control_std"] = float(good_controls[column].std(ddof=1)) if len(good_controls) > 1 else np.nan
-        rows.append(row)
+    for column, label in (*INDICES, ("rv_ms", "Radial velocity (m/s)")):
+        control_scatter, control_scatter_error = scatter_and_error(good_controls[column]) if len(good_controls) else (np.nan, np.nan)
+        measured.loc[flare_rows, f"{column}_total_err"] = total_error(measured.loc[flare_rows, f"{column}_err"], control_scatter)
+        value, own = good_flares[column], good_flares[f"{column}_err"]
+        total = total_error(own, control_scatter)
+        on_disc = (good_flares["r_norm"] < 0.9).to_numpy()
+        disc_mean, disc_error = mean_and_error(value[on_disc])
+        limb_mean, limb_error = mean_and_error(value[~on_disc])
+        rows.append(
+            {
+                "index": label,
+                "flares": len(good_flares),
+                "detected_own_error": int((value / own > 3.0).sum()),
+                "detected_total_error": int((value / total > 3.0).sum()),
+                "disc_mean": disc_mean,
+                "disc_mean_err": disc_error,
+                "disc_median": float(np.nanmedian(value[on_disc])) if on_disc.any() else np.nan,
+                "limb_mean": limb_mean,
+                "limb_mean_err": limb_error,
+                "rho_class": spearman(value, good_flares["peak_flux"]),
+                "rho_fluence": spearman(value, good_flares["fluence"]),
+                "rho_fluence_mu": spearman(value, good_flares["fluence"] * good_flares["mu"]),
+                "controls": len(good_controls),
+                "control_mean": float(good_controls[column].mean()) if len(good_controls) else np.nan,
+                "control_std": control_scatter,
+                "control_std_err": control_scatter_error,
+            }
+        )
+    good_flares = measured[flare_rows]  # now with the total errors
 
     # Does the velocity follow the chromospheric response times the rotation at the flare?
     predictor = good_flares["Ha06_1_tellcorr"] * good_flares["rotation"]
-    slope, slope_error = weighted_slope(good_flares["rv_ms"], predictor, good_flares["rv_ms_err"])
+    slope, slope_error = weighted_slope(good_flares["rv_ms"], predictor, good_flares["rv_ms_total_err"])
     return {
         "events": measured,
         "indices": pd.DataFrame(rows),
