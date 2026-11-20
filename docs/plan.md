@@ -3,8 +3,9 @@
 **FL**are-**IN**duced **CH**anges in Sun-as-a-star radial velocities.
 *¿Se inmuta el Sol cuando fulgura?*
 
-Estado a 19 de noviembre de 2026: muestra definida y código de datos funcionando. La medida
-todavía no está hecha.
+Estado a 20 de noviembre de 2026: fases 0 a 3 hechas para la velocidad (resultado nulo, con
+controles, robustez e inyecciones) y fase 4 empezada (primeras detecciones en líneas
+cromosféricas). Los resultados están en [resultados.md](resultados.md).
 
 ## 1. La pregunta
 
@@ -192,7 +193,20 @@ Entregable: qué líneas responden, desde qué clase, y si las eruptivas se dist
 | Efectos sistemáticos mayores que la señal | Muestra de control desde el primer día. |
 | Los espectros no se pueden descargar o pesan demasiado | La base segura no depende de ellos; limitarse a las fulguraciones mayores. |
 
-## 9. Referencias de partida
+## 9. Revisión externa del plan (20-11-2026)
+
+Una revisión del plan pidió reforzar seis puntos. Estado de cada uno:
+
+| Petición | Qué se ha hecho |
+|---|---|
+| No apilar solo por el máximo de GOES | Ventanas en el inicio, en el máximo y en la fase impulsiva (máximo de la derivada del flujo). |
+| El análisis con signo como eje, no como comprobación | El ajuste frente a flujo × rotación proyectada es uno de los tres resultados principales. |
+| Escala física explícita | Se formula como ΔRV ≈ (ΔF/F) · v_rot · K y la cota se da sobre K · ΔF/F. |
+| Fijar el modelo de fondo | Opciones por defecto escritas y tabla de robustez variándolas. Se fijaron tras el primer piloto, no antes. |
+| Sucesos no independientes | Bootstrap por día de observación. Falta agrupar por región activa. |
+| Controles falsos más exigentes | Inyección a 5, 10, 20 y 50 cm/s y permutación de posiciones. Los controles del mismo día solo existen para 8 fulguraciones. |
+
+## 10. Referencias de partida
 
 - Pietrow et al. 2024, A&A 682, A46 (2024A&A...682A..46P).
 - Karoff y Kjeldsen 2008, ApJ 678, L73 (2008ApJ...678L..73K).
