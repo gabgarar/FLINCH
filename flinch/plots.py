@@ -182,6 +182,7 @@ def plot_event(changes: pd.DataFrame, title: str, path: Path, quantities=None) -
             ax.set_visible(False)
         for ax in axes[max(0, len(quantities) - columns): len(quantities)]:
             ax.set_xlabel("Minutes from the X-ray peak")
+            ax.tick_params(labelbottom=True)  # the panel below may be an empty slot of the grid
         top = axes[0].get_ylim()[1]
         axes[0].text(start_min, top, " start", fontsize=8, color=INK_SECONDARY, va="top", ha="left")
         axes[0].text(0.0, top, " peak", fontsize=8, color=INK_SECONDARY, va="top", ha="left")

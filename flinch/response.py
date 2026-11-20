@@ -65,3 +65,42 @@ def changes(table: pd.DataFrame, baseline_end_min: float = -2.0, detrend: bool =
             out[column] = np.nan
             out[f"{column}_sigma"] = np.nan
     return out
+
+
+def event_response(change: pd.DataFrame, window_min: tuple[float, float] = (-8.0, 10.0)) -> dict:
+    """Mean change of each quantity around the X-ray peak, with its error.
+
+    The window is in minutes from the peak. The error combines the scatter of the pre-flare
+    spectra over the number of spectra in the window and in the baseline.
+    """
+    inside = (change["min_peak"] >= window_min[0]) & (change["min_peak"] <= window_min[1]) & ~change["pre_flare"]
+    n_window, n_before = int(inside.sum()), int(change["pre_flare"].sum())
+    out = {"n_window": n_window, "n_before": n_before}
+    for column, _, _ in QUANTITIES:
+        sigma = float(change[f"{column}_sigma"].iloc[0])
+        if n_window >= 2 and n_before >= 3 and np.isfinite(sigma):
+            out[column] = float(change.loc[inside, column].mean())
+            out[f"{column}_err"] = sigma * float(np.sqrt(1.0 / n_window + 1.0 / n_before))
+        else:
+            out[column] = np.nan
+            out[f"{column}_err"] = np.nan
+    return out
+
+
+def collect(events: pd.DataFrame, root: Path, window_min: tuple[float, float] = (-8.0, 10.0), detrend: bool = False) -> pd.DataFrame:
+    """Response of every event that has spectra: one row per event.
+
+    ``events`` needs the columns ``name``, ``jd_start`` and ``jd_peak``; its other columns
+    (class, flux, position, kind) are carried over.
+    """
+    rows = []
+    for event in events.itertuples(index=False):
+        directory = Path(root) / event.name
+        if len(list(directory.glob("neidL2_*.npz"))) < 8:
+            continue
+        table = event_table(directory, event.jd_start, event.jd_peak)
+        row = event._asdict()
+        row["n_spectra"] = len(table)
+        row.update(event_response(changes(table, detrend=detrend), window_min))
+        rows.append(row)
+    return pd.DataFrame(rows)
