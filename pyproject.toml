@@ -35,3 +35,9 @@ include = ["flinch*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["tests"]
+addopts = "-m 'not network'"
+markers = [
+    "network: needs the NEID and NOAA archives; run with  pytest -m network",
+    "needs_data: uses the real downloads in data/; skipped when they are missing",
+]

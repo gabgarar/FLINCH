@@ -171,6 +171,11 @@ def analyse(flares: pd.DataFrame, d: np.ndarray, label: str, seed: int = 0, by_r
     ``days`` then counts regions).
     """
     keep = np.isfinite(d)
+    if keep.sum() < 2:  # nothing to resample (for instance, a sample without X-class flares)
+        row = {"configuration": label, "flares": int(keep.sum()), "days": int(keep.sum())}
+        for name in STATISTICS:
+            row[name], row[f"{name}_err"] = np.nan, np.nan
+        return row
     values = {"d": d[keep], "flux": pilot.flux_weight(flares)[keep], "rot": rotation_fraction(flares)[keep]}
     days = np.floor(flares["jd_peak"].to_numpy()[keep] - 0.5)
     if by_region:

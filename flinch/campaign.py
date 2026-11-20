@@ -73,6 +73,7 @@ def control_name(row) -> str:
 def write_manifest(rows: list[dict]) -> None:
     """Record of every window fetched: name, kind, times and the flare it belongs to."""
     path = data_dir() / "spectra" / "events.csv"
+    path.parent.mkdir(parents=True, exist_ok=True)
     new = pd.DataFrame(rows)
     if path.exists():
         new = pd.concat([pd.read_csv(path), new], ignore_index=True).drop_duplicates("name", keep="last")

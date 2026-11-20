@@ -1,0 +1,111 @@
+"""Unit tests of the campaign bookkeeping, the figures and the command line."""
+import numpy as np
+import pandas as pd
+import pytest
+
+from flinch import campaign, plots, response
+from flinch.__main__ import main
+from flinch.timeutil import MINUTE, datetime_to_jd
+
+import datetime as dt
+
+
+def test_event_and_control_names():
+    row = pd.Series({"jd_peak": datetime_to_jd(dt.datetime(2026, 1, 18, 18, 9)), "goes_class": "X1.9"})
+    assert campaign.event_name(row) == "20260118_1809_X1.9"
+    control = pd.Series({"parent": "20260118_1809_X1.9", "shift_days": -2.0})
+    assert campaign.control_name(control) == "20260118_1809_X1.9_control-2d"
+    assert campaign.control_name(pd.Series({"parent": "x", "shift_days": 1.0})) == "x_control+1d"
+
+
+def test_manifest_accumulates_and_replaces_by_name(archive):
+    campaign.write_manifest([{"name": "a", "kind": "flares", "jd_peak": 1.0}, {"name": "b", "kind": "flares", "jd_peak": 2.0}])
+    campaign.write_manifest([{"name": "b", "kind": "flares", "jd_peak": 3.0}, {"name": "c", "kind": "controls", "jd_peak": 4.0}])
+    manifest = pd.read_csv(archive["root"] / "data" / "spectra" / "events.csv").set_index("name")
+    assert list(manifest.index) == ["a", "b", "c"] and manifest.loc["b", "jd_peak"] == 3.0
+
+
+def test_select_events_lists_the_observed_flares_strongest_first(archive):
+    events = campaign.select_events()
+    assert len(events) == len(archive["flares"])  # every synthetic flare happens while observing
+    assert events["peak_flux"].is_monotonic_decreasing
+    assert events["at_peak"].all() and (events["n_rise"] >= 3).all()
+    assert campaign.select_events(min_class="X1.0")["goes_class"].str[0].eq("X").all()
+
+
+def test_control_events_are_quiet_days_at_the_same_time(archive):
+    events = campaign.select_events().head(5)
+    controls = campaign.control_events(events)
+    assert len(controls) == 5
+    majors = archive["flares"]["jd_peak"].to_numpy()
+    for control in controls.itertuples():
+        assert abs(control.shift_days) == 1  # flares fall on every other day: the next day is free
+        assert np.abs(majors - control.jd_peak).min() > 60 * MINUTE
+        assert (control.jd_peak - control.jd_start) / MINUTE == pytest.approx(10.0)
+        assert campaign.control_name(control).startswith(control.parent)
+
+
+def test_keep_awake_does_not_fail():
+    campaign.keep_awake(True)
+    campaign.keep_awake(False)
+
+
+def _is_png(path):
+    return path.exists() and path.stat().st_size > 2000 and path.read_bytes()[:4] == b"\x89PNG"
+
+
+def test_velocity_figures(tmp_path):
+    rng = np.random.default_rng(0)
+    minutes = np.arange(-57.5, 90, 5.0)
+    profiles = pd.concat(
+        [
+            pd.DataFrame({"subset": subset, "sample": sample, "events": 20, "minutes": minutes, "mean": rng.normal(0, 0.05, len(minutes)), "sem": 0.04, "n": 20})
+            for subset in ("M and X", "X")
+            for sample in ("flares", "controls")
+        ]
+    )
+    assert _is_png(plots.plot_profiles(profiles, tmp_path / "a" / "profiles.png"))
+    flares = pd.DataFrame(
+        {"peak_flux": 10 ** rng.uniform(-5, -3.5, 60), "delta": rng.normal(0, 0.4, 60), "x_norm": rng.uniform(-1, 1, 60), "r_norm": rng.uniform(0, 1, 60)}
+    )
+    controls = pd.DataFrame({"delta": rng.normal(0, 0.4, 300)})
+    assert _is_png(plots.plot_events(flares, controls, tmp_path / "events.png"))
+
+
+def test_data_and_event_figures(tmp_path):
+    rng = np.random.default_rng(1)
+    jd = 2460000.9 + np.arange(150) * MINUTE
+    flare = {"jd_start": jd[40], "jd_impulsive": jd[55], "jd_peak": jd[60], "goes_class": "X1.0", "peak": pd.Timestamp("2023-02-25")}
+    assert _is_png(plots.plot_goes_example(jd, 1e-6 + 1e-4 * np.exp(-0.5 * ((np.arange(150) - 60) / 10.0) ** 2), flare, tmp_path / "goes.png"))
+    day = pd.DataFrame({"jd": 2460000.2 + np.arange(200) * 83.0 / 86400.0, "rv_ms": -645 + rng.normal(0, 0.8, 200), "good": rng.random(200) > 0.2})
+    assert _is_png(plots.plot_neid_day(day, tmp_path / "day.png"))
+    wave = np.linspace(6558.0, 6571.0, 400)
+    assert _is_png(plots.plot_contrast(wave, 0.005 * np.exp(-0.5 * ((wave - 6564.61) / 0.4) ** 2), np.full(400, 0.001), 6564.61, "H alpha", tmp_path / "contrast.png"))
+    time = np.arange(-30.0, 30.0, 3.0)
+    change = pd.DataFrame({"min_peak": time - 5.0, "min_start": time})
+    for column, _, _ in response.QUANTITIES:
+        change[column] = rng.normal(0, 1, len(time))
+        change[f"{column}_sigma"] = 1.0
+    assert _is_png(plots.plot_event(change, "A synthetic flare", tmp_path / "event.png"))
+
+
+def test_command_line_parsing(capsys):
+    with pytest.raises(SystemExit) as stop:
+        main(["--help"])
+    assert stop.value.code == 0
+    listed = capsys.readouterr().out
+    for command in ("download", "coverage", "pilot", "robustness", "spectra", "campaign"):
+        assert command in listed
+    with pytest.raises(SystemExit) as stop:
+        main([])  # a command is required
+    assert stop.value.code == 2
+    with pytest.raises(SystemExit):
+        main(["campaign", "--kind", "nonsense"])
+
+
+def test_coverage_command_writes_the_sample(archive, capsys):
+    assert main(["coverage"]) == 0
+    printed = capsys.readouterr().out
+    assert f"M and X flares in the NEID era: {len(archive['flares'])}" in printed
+    sample = pd.read_csv(archive["root"] / "results" / "flare_sample.csv")
+    assert len(sample) == len(archive["flares"]) and sample["well_covered"].all()

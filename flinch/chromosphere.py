@@ -63,6 +63,8 @@ def weighted_slope(y, x, sigma) -> tuple[float, float]:
     keep = np.isfinite(y) & np.isfinite(x) & np.isfinite(sigma) & (sigma > 0)
     weight = 1.0 / sigma[keep] ** 2
     norm = np.sum(weight * x[keep] ** 2)
+    if not np.isfinite(norm) or norm <= 0.0:  # no usable points, or a predictor that is zero everywhere
+        return np.nan, np.nan
     return float(np.sum(weight * x[keep] * y[keep]) / norm), float(1.0 / np.sqrt(norm))
 
 

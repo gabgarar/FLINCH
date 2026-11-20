@@ -12,6 +12,13 @@ def test_weighted_slope_through_the_origin():
     assert error == pytest.approx(1.0 / np.sqrt(1 / 0.01 + 4 / 0.01 + 16 / 0.04))
 
 
+def test_weighted_slope_without_information_is_missing():
+    slope, error = chromosphere.weighted_slope([1.0, 2.0], [0.0, 0.0], [0.1, 0.1])
+    assert np.isnan(slope) and np.isnan(error)
+    slope, error = chromosphere.weighted_slope([1.0, 2.0], [1.0, 2.0], [0.0, np.nan])
+    assert np.isnan(slope) and np.isnan(error)
+
+
 def test_spearman_needs_four_points_and_ignores_missing_values():
     assert np.isnan(chromosphere.spearman([1, 2, 3], [1, 2, 3]))
     assert chromosphere.spearman([1, 2, 3, 4, np.nan], [10, 20, 30, 50, 5]) == pytest.approx(1.0)
