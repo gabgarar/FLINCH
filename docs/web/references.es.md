@@ -6,7 +6,9 @@
   observed with HARPS-N. *Astronomy & Astrophysics*, 682, A46.
 - Dumusque, X., et al. (2026). A decade of solar high-fidelity spectroscopy and precise radial
   velocities from HARPS-N. *Astronomy & Astrophysics*, 706, A231. La publicación de datos
-  que aquí se usa como segundo instrumento.
+  que aquí se usa como segundo instrumento. Cita a Pietrow et al. (2024) como prueba de que
+  las fulguraciones contribuyen de forma despreciable a la velocidad de las estrellas de tipo
+  solar en calma; su cota era de 50 cm/s, más de cinco veces la señal de la Tierra.
 - Dumusque, X., et al. (2021). Three years of HARPS-N high-resolution spectroscopy and
   precise radial velocity data for the Sun. *Astronomy & Astrophysics*.
 - Ma, Y. L., et al. (2024). Sun-as-a-star study of an X-class solar flare with spectroscopic

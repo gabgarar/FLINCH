@@ -6,7 +6,9 @@
   observed with HARPS-N. *Astronomy & Astrophysics*, 682, A46.
 - Dumusque, X., et al. (2026). A decade of solar high-fidelity spectroscopy and precise radial
   velocities from HARPS-N. *Astronomy & Astrophysics*, 706, A231. The data release used
-  here as second instrument.
+  here as second instrument. It cites Pietrow et al. (2024) as having shown that flares
+  contribute negligibly to the velocity of quiet Sun-like stars; their limit was 50 cm/s,
+  more than five times the signal of the Earth.
 - Dumusque, X., et al. (2021). Three years of HARPS-N high-resolution spectroscopy and
   precise radial velocity data for the Sun. *Astronomy & Astrophysics*.
 - Ma, Y. L., et al. (2024). Sun-as-a-star study of an X-class solar flare with spectroscopic
