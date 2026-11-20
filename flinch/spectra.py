@@ -6,6 +6,7 @@ be downloaded whole. Only a compact extract (about 0.2 MB) is kept; the file its
 from __future__ import annotations
 
 import tempfile
+import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -74,19 +75,30 @@ def extract(path: Path) -> dict[str, np.ndarray]:
     return out
 
 
+def _retry(action, attempts: int = 8, wait_s: float = 1.5):
+    """Run ``action``, retrying while Windows reports the file in use (antivirus, indexer, sync)."""
+    for attempt in range(attempts):
+        try:
+            return action()
+        except PermissionError:
+            if attempt == attempts - 1:
+                raise
+            time.sleep(wait_s)
+
+
 def fetch_one(filepath: str, filename: str, directory: Path, scratch: Path) -> Path:
     """Download one level-2 file, save its extract in ``directory`` and delete the file."""
     destination = directory / (Path(filename).stem + ".npz")
     if destination.exists():
         return destination
-    raw = download(f"{FILE_URL}?filehand={filepath}&solar", scratch / filename, overwrite=True)
+    raw = _retry(lambda: download(f"{FILE_URL}?filehand={filepath}&solar", scratch / filename, overwrite=True), attempts=3)
     try:
         arrays = extract(raw)
         partial = destination.with_name(destination.stem + ".part.npz")  # savez needs the .npz suffix
         np.savez_compressed(partial, **arrays)
-        partial.replace(destination)
+        _retry(lambda: partial.replace(destination))
     finally:
-        raw.unlink(missing_ok=True)
+        _retry(lambda: raw.unlink(missing_ok=True))
     return destination
 
 
