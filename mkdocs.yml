@@ -55,6 +55,36 @@ nav:
 
 plugins:
   - search
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+        - locale: es
+          name: Español
+          build: true
+          site_description: ¿Contaminan las fulguraciones solares la detección de análogos terrestres por velocidad radial? Fulguraciones solares en las velocidades radiales del Sol como estrella de NEID y HARPS-N
+          nav_translations:
+            Home: Inicio
+            Getting started: Primeros pasos
+            Data: Datos
+            GOES flares: Fulguraciones de GOES
+            NEID velocities: Velocidades de NEID
+            NEID spectra: Espectros de NEID
+            HARPS-N velocities: Velocidades de HARPS-N
+            Method: Método
+            Results: Resultados
+            Reproducing the results: Reproducir los resultados
+            API reference: Referencia de la API
+            Velocity analysis: Análisis de velocidad
+            Spectra: Espectros
+            References: Referencias
+            Cite: Citar
   - mkdocstrings:
       handlers:
         python:

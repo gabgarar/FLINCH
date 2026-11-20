@@ -23,7 +23,7 @@ dependencies = [
 analysis = ["scipy>=1.10", "matplotlib>=3.7", "astropy>=5.3"]
 notebooks = ["ipykernel"]
 dev = ["pytest>=7"]
-docs = ["mkdocs-material>=9.5", "mkdocstrings[python]>=0.25"]  # documentation site (mkdocs serve)
+docs = ["mkdocs-material>=9.5", "mkdocstrings[python]>=0.25", "mkdocs-static-i18n>=1.2"]  # documentation site (mkdocs serve)
 
 [project.urls]
 Homepage = "https://github.com/gabgarar/FLINCH"

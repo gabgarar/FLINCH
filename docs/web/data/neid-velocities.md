@@ -89,3 +89,5 @@ The functions are in [`flinch.neid`](../api/data.md) and
 - **What the velocity includes.** The daily trend absorbs the slow effects of the rotation
   of the Earth and of differential extinction. The analysis never compares velocities of
   different days.
+- **Hours.** NEID observes the Sun between about 16:30 and 22:30 UT, so flares that peak
+  after 22:20 UT have no decay phase.

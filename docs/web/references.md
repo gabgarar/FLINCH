@@ -58,14 +58,13 @@ follow-up.
 ## Data
 
 - **NEID solar data.** NEID Archive at the NASA Exoplanet Science Institute (NExScI),
-  <https://neid.ipac.caltech.edu>. The papers describing the instrument and its solar feed
-  are still to be added to this list.
-- **Coronal mass ejections.** SOHO/LASCO CME catalogue of the CDAW Data Center,
-  <https://cdaw.gsfc.nasa.gov/CME_list/>.
+  <https://neid.ipac.caltech.edu>.
+- **HARPS-N solar data.** Ten-year data release on the DACE platform of the University of
+  Geneva, <https://dace.unige.ch/sun/>.
 - **GOES-R XRS.** Science-quality level-2 products of the NOAA National Centers for
   Environmental Information,
   <https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/>.
 
 !!! note
-    The papers by Pietrow et al. (2024), Otsu et al. (2022, 2024, 2026) and Kretzschmar
-    (2010, 2011) have been read in full; the rest of the list rests on their abstracts.
+    The papers by Pietrow et al. (2024), Otsu et al. (2022, 2024, 2026), Kretzschmar
+    (2010, 2011) and Dumusque et al. (2026) have been read in full; the rest of the list rests on their abstracts.

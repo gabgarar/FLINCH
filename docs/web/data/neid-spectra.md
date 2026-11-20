@@ -66,20 +66,24 @@ deepen as the Sun sinks towards the horizon: they are not solar.
    cross-correlation function over orders, and six wavelength windows of the stitched
    spectrum (Ca II H and K, H beta, Mg I b, He I D3 with Na I D, H alpha, Ca II 8542). The
    extract is 0.2 MB; the file is deleted.
-2. **Sampling.** A campaign takes every spectrum from 10 minutes before the start of a flare
-   to 15 minutes after its peak, and one in three from 30 minutes before the start to 45
-   after the peak.
+2. **Sampling.** For the X-class flares, every spectrum from 10 minutes before the start to
+   15 minutes after the peak, and one in three from 30 minutes before the start to 45 after
+   the peak. For the flares between M5 and M9, every second clear-sky spectrum from 26
+   minutes before the start to 10 after the peak.
 3. **Clear sky only.** Spectra with a signal-to-noise ratio more than 1 % away from its
    running median are dropped, as for the velocities.
 4. **Baseline.** Each quantity is expressed as its change with respect to the mean of the
-   spectra taken before the start of the flare. Their scatter gives the error.
+   spectra taken before the start of the flare.
 5. **Response.** The response of a flare is the mean change from 8 minutes before the X-ray
    peak to 10 minutes after it.
-6. **Line shape.** The cross-correlation function is normalised by its wings and fitted with
+6. **Controls.** The same windows are measured on the nearest flare-free day. The scatter of
+   their responses is added in quadrature to the error of each flare, because it contains
+   the slow drifts that the error of the flare itself does not see.
+7. **Line shape.** The cross-correlation function is normalised by its wings and fitted with
    a Gaussian (centre, depth, width); its area and bisector span are measured on a profile
    resampled with a cubic spline.
 
-The functions are in [`flinch.spectra`, `flinch.response` and
+The functions are in [`flinch.spectra`, `flinch.response`, `flinch.chromosphere` and
 `flinch.lineshape`](../api/spectra.md).
 
 ![Spectral response to the X6.3 flare](../img/event_20240222_2233_X6.3.png)
@@ -88,9 +92,10 @@ The functions are in [`flinch.spectra`, `flinch.response` and
 
 - **Slow drifts with the height of the Sun.** Telluric lines and differential extinction
   change the indices and the depth of the mean line over tens of minutes. The depth drifted
-  by more than 2000 parts per million in the hour of the figure below, with no step at the flare.
-- **No control windows yet.** Until the same windows are measured on flare-free days, a
-  small change cannot be told from a drift, and the errors quoted do not include it.
+  by more than 2000 parts per million in the hour of the figure above, with no step at the
+  flare. This is why the controls are needed.
+- **Few control windows.** There are nine, all of X-class flares; the scatter they give is
+  known to 25 %.
 - **Resampling matters.** Linear interpolation of a line sampled every 0.25 km/s is wrong by
   parts in 10⁴ at the core, and a bisector measured on the raw samples jumps by more than
   1 m/s when the lowest sample changes. Both are done on a spline.
