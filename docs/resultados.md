@@ -2,14 +2,14 @@
 
 Estado a 20 de noviembre de 2026. Las secciones 1 a 3 se reproducen con `python -m flinch
 pilot` y `python -m flinch robustness`; las tablas quedan en `results/` y las figuras en
-`results/figures/`. La sección 4 es preliminar: la descarga de espectros sigue en curso.
+`docs/web/img/`. La sección 4 es preliminar: la descarga de espectros sigue en curso.
 
 ## 1. La velocidad del Sol no cambia durante las fulguraciones
 
 Con 139 fulguraciones de clase M y X, la velocidad radial del Sol visto como estrella no
 cambia de forma detectable durante la fulguración.
 
-![Velocidad media alrededor del máximo de la fulguración](../results/figures/pilot_profiles.png)
+![Velocidad media alrededor del máximo de la fulguración](web/img/pilot_profiles.png)
 
 Cada fulguración se compara con sus propios controles (misma hora, otros días, sin
 fulguraciones). Los errores salen de un bootstrap que remuestrea días enteros, porque las
@@ -29,7 +29,7 @@ Una mancha brillante en la mitad del disco que se acerca debería bajar la veloc
 que se aleja subirla; el promedio simple cancelaría esa señal y este ajuste no. Tampoco
 aparece: permutando las posiciones entre fulguraciones, un valor así sale el 10 % de las veces.
 
-![Cambio de velocidad de cada fulguración frente a su clase y a su posición](../results/figures/pilot_events.png)
+![Cambio de velocidad de cada fulguración frente a su clase y a su posición](web/img/pilot_events.png)
 
 En términos físicos, el cambio esperado es ΔRV ≈ (ΔF/F) · v_rot · K, con ΔF/F el aumento
 relativo de brillo en el visible, v_rot la rotación proyectada (hasta 1983 m/s) y K la
@@ -88,7 +88,7 @@ Los espectros completos de las fulguraciones más intensas muestran lo contrario
 velocidad: los índices cromosféricos suben con claridad cuando la fulguración está sobre el
 disco.
 
-![Respuesta espectral a la fulguración X6.3 del 22 de febrero de 2024](../results/figures/event_20240222_2233_X6.3.png)
+![Respuesta espectral a la fulguración X6.3 del 22 de febrero de 2024](web/img/event_20240222_2233_X6.3.png)
 
 Cambio medio entre 8 minutos antes y 10 después del máximo, respecto a los espectros previos
 al inicio, en partes por mil (velocidad en m/s):

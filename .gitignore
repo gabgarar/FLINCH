@@ -11,8 +11,8 @@ dist/
 .venv/
 venv/
 
-# Downloaded data: reproducible with `python -m flinch download`
-data/
+# Downloaded data: reproducible with `python -m flinch download` (only the folder at the root)
+/data/
 
 # Documentation build
 site/

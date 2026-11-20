@@ -1,68 +1,80 @@
 # FLINCH
 
+[![tests](https://github.com/gabgarar/FLINCH/actions/workflows/tests.yml/badge.svg)](https://github.com/gabgarar/FLINCH/actions/workflows/tests.yml)
+[![docs](https://github.com/gabgarar/FLINCH/actions/workflows/docs.yml/badge.svg)](https://gabgarar.github.io/FLINCH/)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+[![License: BSD-3-Clause](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE)
+
 **FL**are-**IN**duced **CH**anges in Sun-as-a-star radial velocities.
 
 *Does the Sun flinch when it flares?*
 
+**Documentation: <https://gabgarar.github.io/FLINCH/>**
+
 Spectrographs built to find exoplanets measure the velocity of a star to a few tens of
 centimetres per second. One of them, NEID (Kitt Peak, Arizona), also observes the Sun every
-day as if it were a distant star, one spectrum every 83 seconds. FLINCH uses those data to
-measure what a solar flare does to the disc-integrated radial velocity: whether it is
-detectable, from which flare size, and what that implies for planet searches around other
-Sun-like stars.
+clear day as if it were a distant star, one spectrum every 83 seconds. FLINCH cross-matches
+those spectra with the flares recorded by the GOES satellites and measures what a flare does
+to the disc-integrated velocity and spectrum: whether it is detectable, from which flare
+size, and what that implies for planet searches around other Sun-like stars.
 
-**Status: early stage.** The data layer and the flare sample exist; the measurement itself is
-the next step. The working plan (in Spanish) is in [docs/plan.md](docs/plan.md).
+## Results so far
 
-## The sample
+Work in progress (November 2026). The velocity analysis is complete; the spectral one is
+preliminary.
 
-Between December 2020 and November 2026 the Sun produced 2122 flares of GOES class M or X.
-NEID was observing the Sun at the peak of 279 of them:
+| Question | Answer |
+|---|---|
+| Does the velocity change during a flare? | No: −0.035 ± 0.035 m/s for 139 M and X flares against their own controls (95 % limit 0.09 m/s, the size of the signal of the Earth) |
+| Is there a rotation signature? | No: −0.11 ± 0.08 m/s per X1 flare at the limb |
+| Do flares excite the five-minute oscillations? | No, within 8 % in amplitude |
+| Do the chromospheric lines respond? | Yes, for flares on the disc: the H alpha core index rises by 5.3 ± 0.5 parts per thousand in an X6.3 flare (preliminary, four flares) |
 
-| GOES class | Flares | NEID observing at the peak | ...with 30 min of data before and after |
-|---|---|---|---|
-| M1 to M4 | 1833 | 236 | 208 |
-| M5 to M9 | 185 | 24 | 21 |
-| X | 104 | 19 | 19 |
-
-The table is produced by `python -m flinch coverage`, which also writes the sample to
-[results/flare_sample.csv](results/flare_sample.csv).
+![Mean velocity around the flare peak](docs/web/img/pilot_profiles.png)
 
 ## Data
 
 Both sources are public and need no registration.
 
-| Data | Source | Size |
-|---|---|---|
-| Flare list (start, peak, end, class) | GOES-16 and GOES-18 XRS science-quality flare summaries, NOAA/NCEI | 12 MB |
-| Solar radial velocities | NEID solar archive (NExScI), table `neidsolarl2` through its TAP service | 8 MB |
-
-GOES-16 is the primary flare list; GOES-18 fills its gaps and continues after April 2025.
-The class of a flare differs by a few per cent between the two satellites.
+| Data | Source |
+|---|---|
+| Flare list, positions and one-minute fluxes | GOES-16 and GOES-18 XRS science-quality products, NOAA/NCEI |
+| Solar radial velocities and spectra | NEID solar archive, NExScI |
 
 ## Quick start
 
 ```
-python -m venv <somewhere>/venv
-<somewhere>/venv/Scripts/python -m pip install -e ".[analysis,dev]"
-python -m flinch download     # flare lists and velocity table, about 20 MB, into data/
-python -m flinch coverage     # the table above and results/flare_sample.csv
+python -m venv venv
+venv/Scripts/python -m pip install -e ".[analysis,dev]"
+python -m flinch download     # flare lists and velocity table, 22 MB, into data/
+python -m flinch coverage     # which flares NEID observed
+python -m flinch pilot        # velocity response against controls
+python -m flinch robustness   # the same under other analysis choices
 python -m pytest              # tests, no network needed
 ```
 
-Downloads go to `data/` inside the repository, or to the folder named by the environment
-variable `FLINCH_DATA`.
+The distribution is called `flinch-rv` (the name `flinch` is taken on PyPI); the import name
+is `flinch`.
 
 ## Layout
 
 | Path | Content |
 |---|---|
-| `flinch/goes.py` | Download and parsing of the GOES flare summaries |
-| `flinch/neid.py` | Queries to the NEID solar archive |
-| `flinch/coverage.py` | Cross-match of flares and observations |
+| `flinch/` | The package: data access, quality cuts, epoch analysis, spectra |
 | `tests/` | Unit tests |
-| `docs/plan.md` | Research plan |
-| `results/` | Small derived tables kept under version control |
+| `results/` | Derived tables |
+| `docs/web/` | The documentation site and its figures |
+| `docs/plan.md`, `docs/resultados.md` | Working documents, in Spanish |
+
+## Cite
+
+If you use FLINCH in academic work, please cite the software:
+
+> García, G. (2026). *FLINCH: FLare-INduced CHanges in Sun-as-a-star radial velocities* (v0.1.0).
+> <https://github.com/gabgarar/FLINCH>
+
+GitHub shows a ready-made citation under "Cite this repository", generated from
+[CITATION.cff](CITATION.cff). A paper is in preparation.
 
 ## Licence
 

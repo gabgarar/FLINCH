@@ -189,7 +189,7 @@ Entregable: qué líneas responden, desde qué clase, y si las eruptivas se dist
 | Riesgo | Qué hacemos |
 |---|---|
 | Resultado nulo | Es publicable como cota, y la fase 4 aporta señales que sí se esperan. |
-| Otro grupo publica antes (Potsdam, equipos de NEID) | Empezar por la base segura, que es rápida, y vigilar ADS y arXiv. |
+| Otro grupo publica antes | Empezar por la base segura, que es rápida, y vigilar ADS y arXiv. |
 | Efectos sistemáticos mayores que la señal | Muestra de control desde el primer día. |
 | Los espectros no se pueden descargar o pesan demasiado | La base segura no depende de ellos; limitarse a las fulguraciones mayores. |
 

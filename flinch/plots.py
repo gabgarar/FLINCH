@@ -199,3 +199,71 @@ def plot_event(changes: pd.DataFrame, title: str, path: Path, quantities=None) -
         fig.savefig(path, dpi=130)
         plt.close(fig)
     return path
+
+
+def plot_goes_example(jd, flux, flare, path: Path) -> Path:
+    """One-minute GOES X-ray light curve of a flare, with its start, steepest rise and peak."""
+    minutes = (np.asarray(jd) - flare["jd_peak"]) * 1440.0
+    with plt.rc_context(style()):
+        fig, ax = plt.subplots(figsize=(7.6, 3.9))
+        ax.plot(minutes, flux, color=FLARES)
+        ax.set_yscale("log")
+        ax.set_yticks([1e-6, 1e-5, 1e-4, 1e-3])
+        ax.set_yticklabels(["C1", "M1", "X1", "X10"])
+        ax.set_ylim(1e-6, 2e-3)
+        top = ax.get_ylim()[1]
+        for key, label in (("jd_start", "start"), ("jd_impulsive", "steepest\nrise"), ("jd_peak", "peak")):
+            x = (flare[key] - flare["jd_peak"]) * 1440.0
+            ax.axvline(x, color=AXIS, linewidth=1.0)
+            ax.text(x, top * 0.8, f" {label}", fontsize=8.5, color=INK_SECONDARY, va="top", ha="left")
+        ax.set_xlabel("Minutes from the X-ray peak")
+        ax.set_ylabel("GOES class (1-8 Å flux)")
+        ax.set_title(f"{flare['goes_class']} flare of {pd.Timestamp(flare['peak']):%Y-%m-%d}: GOES X-ray flux at one-minute cadence")
+        fig.tight_layout()
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(path, dpi=150)
+        plt.close(fig)
+    return Path(path)
+
+
+def plot_neid_day(day: pd.DataFrame, path: Path, order: int = 2) -> Path:
+    """One day of NEID solar velocities: spectra kept and rejected, and the daily trend removed."""
+    hours = ((day["jd"] - 0.5) % 1.0) * 24.0
+    good = day["good"].to_numpy()
+    fit = np.polyfit(hours[good] - hours[good].mean(), day.loc[good, "rv_ms"], order)
+    with plt.rc_context(style()):
+        fig, ax = plt.subplots(figsize=(7.6, 3.9))
+        ax.scatter(hours[~good], day.loc[~good, "rv_ms"], s=16, color=CONTROLS, edgecolor=SURFACE, linewidth=0.6, label=f"Rejected ({int((~good).sum())})", zorder=2)
+        ax.scatter(hours[good], day.loc[good, "rv_ms"], s=16, color=FLARES, edgecolor=SURFACE, linewidth=0.6, label=f"Kept ({int(good.sum())})", zorder=3)
+        grid = np.linspace(hours.min(), hours.max(), 200)
+        ax.plot(grid, np.polyval(fit, grid - hours[good].mean()), color=INK, linewidth=1.6, label="Daily trend (degree 2)", zorder=4)
+        centre = float(np.median(day.loc[good, "rv_ms"]))
+        ax.set_ylim(centre - 8.0, centre + 8.0)
+        ax.set_xlabel("Universal time (hours)")
+        ax.set_ylabel("Radial velocity (m/s)")
+        ax.set_title(f"NEID solar velocities on {pd.Timestamp((day['jd'].iloc[0] - 2440587.5) * 86400.0, unit='s'):%Y-%m-%d}, one spectrum every 83 s")
+        ax.legend(loc="upper right", ncol=3, handlelength=1.2, columnspacing=1.4)
+        fig.tight_layout()
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(path, dpi=150)
+        plt.close(fig)
+    return Path(path)
+
+
+def plot_contrast(wave, contrast, error, centre: float, title: str, path: Path) -> Path:
+    """Contrast profile of a line: mean spectrum during the flare over the pre-flare one, minus 1."""
+    with plt.rc_context(style()):
+        fig, ax = plt.subplots(figsize=(7.6, 3.9))
+        offset = np.asarray(wave) - centre
+        ax.fill_between(offset, -error * 1e3, error * 1e3, color=INK_MUTED, alpha=0.18, linewidth=0)
+        ax.axhline(0.0, color=AXIS, linewidth=1.0)
+        ax.plot(offset, contrast * 1e3, color=FLARES, linewidth=1.3)
+        ax.set_xlim(-4.0, 4.0)
+        ax.set_xlabel("Wavelength from the line centre (Å)")
+        ax.set_ylabel("Change of the spectrum (parts per thousand)")
+        ax.set_title(title)
+        fig.tight_layout()
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(path, dpi=150)
+        plt.close(fig)
+    return Path(path)

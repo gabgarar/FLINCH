@@ -23,6 +23,12 @@ dependencies = [
 analysis = ["scipy>=1.10", "matplotlib>=3.7", "astropy>=5.3"]
 notebooks = ["ipykernel"]
 dev = ["pytest>=7"]
+docs = ["mkdocs-material>=9.5", "mkdocstrings[python]>=0.25"]  # documentation site (mkdocs serve)
+
+[project.urls]
+Homepage = "https://github.com/gabgarar/FLINCH"
+Documentation = "https://gabgarar.github.io/FLINCH/"
+Issues = "https://github.com/gabgarar/FLINCH/issues"
 
 [tool.setuptools.packages.find]
 include = ["flinch*"]

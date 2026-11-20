@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: >-
+  If you use FLINCH in academic work, please cite this software.
+type: software
+title: "FLINCH: FLare-INduced CHanges in Sun-as-a-star radial velocities"
+version: 0.1.0
+date-released: 2026-11-20
+authors:
+  - family-names: "García"
+    given-names: "Gabriel"
+    orcid: "https://orcid.org/0000-0001-7256-2609"
+repository-code: https://github.com/gabgarar/FLINCH
+url: https://gabgarar.github.io/FLINCH/
+license: BSD-3-Clause
+abstract: >-
+  Response of the Sun seen as a star to solar flares: radial velocities, oscillation power,
+  chromospheric indices and line shapes from the NEID solar spectra, cross-matched with the
+  GOES flare lists.
+keywords:
+  - solar physics
+  - solar flares
+  - radial velocity
+  - Sun-as-a-star
+  - exoplanets

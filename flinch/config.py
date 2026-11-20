@@ -19,8 +19,15 @@ def data_dir() -> Path:
     return path
 
 
+def figures_dir() -> Path:
+    """Directory of the figures, inside the documentation site."""
+    path = REPO_ROOT / "docs" / "web" / "img"
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
 def results_dir() -> Path:
-    """Directory for small derived tables and figures that are kept under version control."""
+    """Directory for small derived tables that are kept under version control."""
     path = REPO_ROOT / "results"
     path.mkdir(parents=True, exist_ok=True)
     return path

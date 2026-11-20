@@ -6,7 +6,7 @@ import argparse
 import pandas as pd
 
 from . import coverage, goes, neid
-from .config import results_dir
+from .config import figures_dir, results_dir
 
 
 def cmd_download(args: argparse.Namespace) -> int:
@@ -71,8 +71,8 @@ def cmd_pilot(args: argparse.Namespace) -> int:
     out["profiles"].to_csv(directory / "pilot_profiles.csv", index=False)
     from . import plots
 
-    plots.plot_profiles(out["profiles"], directory / "figures" / "pilot_profiles.png")
-    plots.plot_events(out["flares"], out["controls"], directory / "figures" / "pilot_events.png")
+    plots.plot_profiles(out["profiles"], figures_dir() / "pilot_profiles.png")
+    plots.plot_events(out["flares"], out["controls"], figures_dir() / "pilot_events.png")
     print(f"\nTables and figures written to {directory}")
     return 0
 
