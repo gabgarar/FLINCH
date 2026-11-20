@@ -131,7 +131,8 @@ def load_window(directory: Path) -> tuple[pd.DataFrame, dict[str, np.ndarray]]:
     rows, arrays = [], {}
     for path in sorted(Path(directory).glob("neidL2_*.npz")):
         with np.load(path, allow_pickle=False) as data:
-            row = {"file": path.stem, "jd": float(data["obsjd"]) + 0.5 * float(data["exptime"]) / 86400.0}
+            row = {"file": path.stem, "obsjd": float(data["obsjd"])}
+            row["jd"] = row["obsjd"] + 0.5 * float(data["exptime"]) / 86400.0
             row["rv_ms"] = float(data["ccfrvmod"]) * 1000.0
             row["sunagl"] = float(data["sunagl"])
             for index, value, error in zip(data["activity_names"], data["activity_values"], data["activity_errors"]):

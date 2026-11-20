@@ -77,6 +77,27 @@ def cmd_pilot(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_robustness(args: argparse.Namespace) -> int:
+    from . import robust
+
+    out = robust.run(seed=args.seed)
+    numbers = out["numbers"]
+    with pd.option_context("display.width", 250, "display.max_colwidth", 90, "display.float_format", "{:.3f}".format):
+        print("Paired velocity change (flare minus its controls), m/s; errors from a bootstrap over days:")
+        print(out["table"].to_string(index=False))
+        print()
+        print("Injection and recovery through the whole chain:")
+        print(out["injections"].to_string(index=False))
+    print()
+    print(f"Most flares on one day: {numbers['flares_per_day_max']}")
+    print(f"Rotation term, permutation of the positions: p = {numbers['rotation_permutation_p']:.3f}")
+    print(f"95 % limit on the effective optical contrast per X1 flare: {numbers['optical_contrast_limit_per_X1']:.1e}")
+    directory = results_dir()
+    out["table"].to_csv(directory / "robustness.csv", index=False)
+    out["injections"].to_csv(directory / "injections.csv", index=False)
+    return 0
+
+
 def cmd_spectra(args: argparse.Namespace) -> int:
     import datetime as dt
 
@@ -108,6 +129,9 @@ def main(argv: list[str] | None = None) -> int:
     pilot.add_argument("--controls", type=int, default=10, help="controls per flare (default 10)")
     pilot.add_argument("--seed", type=int, default=0, help="seed of the random choices (default 0)")
     pilot.set_defaults(run=cmd_pilot)
+    robustness = commands.add_parser("robustness", help="the velocity result under other estimators, backgrounds and controls")
+    robustness.add_argument("--seed", type=int, default=0)
+    robustness.set_defaults(run=cmd_robustness)
     spec = commands.add_parser(
         "spectra", help="extract indices and line windows from every spectrum in a time window (113 MB each)"
     )

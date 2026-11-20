@@ -14,6 +14,18 @@ def robust_sigma(values: np.ndarray) -> float:
     return float(1.4826 * np.median(np.abs(values - np.median(values))))
 
 
+def stable_obsjd(table: pd.DataFrame, snr_tolerance: float = 0.01) -> np.ndarray:
+    """Exposure start times (sorted) of the spectra taken through a steady, clear sky.
+
+    These are the spectra with a valid velocity error and a signal-to-noise ratio within
+    ``snr_tolerance`` of its running median. Unlike ``good`` it does not drop whole days, so it
+    suits the spectral indices, which a passing cloud ruins just as it ruins the velocity.
+    """
+    prepared = table if "snr_rel" in table else prepare(table)
+    steady = (prepared["snr_rel"] - 1.0).abs() <= snr_tolerance
+    return np.sort(prepared.loc[steady, "obsjd"].to_numpy())
+
+
 def prepare(
     table: pd.DataFrame,
     snr_window: int = 31,

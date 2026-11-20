@@ -168,3 +168,50 @@ def load_flares(directory: Path | None = None, satellites: tuple[int, ...] = SAT
         merged = flares if merged is None else merge_flare_lists(merged, flares)
     merged["peak"] = jd_to_datetime(merged["jd_peak"])
     return merged
+
+
+def avg1m_url(satellite: int, year: int) -> str:
+    """URL of the yearly file of one-minute X-ray fluxes (the version is read from the listing)."""
+    directory = f"{ARCHIVE}/goes{satellite}/l2/data/xrsf-l2-avg1m_science/"
+    names = re.findall(rf'href="(sci_xrsf-l2-avg1m_g{satellite}_y{year}_v[\d-]+\.nc)"', fetch_text(directory))
+    if not names:
+        raise RuntimeError(f"no one-minute file of GOES-{satellite} for {year}")
+    return directory + sorted(names)[-1]
+
+
+def load_avg1m(satellite: int, year: int, directory: Path | None = None) -> tuple[np.ndarray, np.ndarray]:
+    """Julian dates and 1-8 Angstrom fluxes (W m^-2) at one-minute cadence; downloaded if missing."""
+    directory = Path(directory or data_dir() / "goes")
+    files = sorted(directory.glob(f"sci_xrsf-l2-avg1m_g{satellite}_y{year}_*.nc"))
+    path = files[-1] if files else download(avg1m_url(satellite, year), directory / avg1m_url(satellite, year).rsplit("/", 1)[-1])
+    with h5py.File(path, "r") as handle:
+        jd = JD_J2000 + handle["time"][:] / 86400.0
+        flux = handle["xrsb_flux"][:].astype(float)
+    flux[~(flux > 0.0)] = np.nan  # fill values and gaps
+    return jd, flux
+
+
+def add_impulsive_time(flares: pd.DataFrame, directory: Path | None = None) -> pd.DataFrame:
+    """Add ``jd_impulsive``: the time of the steepest rise of the X-ray flux of each flare.
+
+    The time derivative of the soft X-ray flux follows the energy deposition by accelerated
+    particles (the Neupert effect), so its maximum marks the impulsive phase better than the
+    X-ray peak, which comes minutes later. It is searched between the start and the peak with a
+    centred difference over two minutes; flares without one-minute data keep NaN.
+    """
+    out = flares.copy()
+    out["jd_impulsive"] = np.nan
+    start = out["jd_start"].fillna(out["jd_peak"] - 10.0 * MINUTE)
+    years = jd_to_datetime(out["jd_peak"]).year
+    for (satellite, year), rows in out.groupby([out["satellite"], years]):
+        try:
+            jd, flux = load_avg1m(int(satellite), int(year), directory)
+        except Exception:  # noqa: BLE001  (a missing year leaves NaN)
+            continue
+        slope = np.full(len(flux), np.nan)
+        slope[1:-1] = (flux[2:] - flux[:-2]) / 2.0
+        for index in rows.index:
+            first, last = np.searchsorted(jd, [start[index] - 0.5 * MINUTE, out.at[index, "jd_peak"] + 0.5 * MINUTE])
+            if last - first >= 2 and np.any(np.isfinite(slope[first:last])):
+                out.at[index, "jd_impulsive"] = jd[first + int(np.nanargmax(slope[first:last]))] + 0.5 * MINUTE
+    return out

@@ -27,9 +27,22 @@ QUANTITIES = (
 SCALE = {"ppt": 1.0e3, "ppm": 1.0e6}
 
 
-def event_table(directory: Path, jd_start: float, jd_peak: float) -> pd.DataFrame:
-    """One row per spectrum of a flare window, with time relative to the flare and the line shape."""
+def event_table(directory: Path, jd_start: float, jd_peak: float, keep_obsjd=None) -> pd.DataFrame:
+    """One row per spectrum of a flare window, with time relative to the flare and the line shape.
+
+    ``keep_obsjd`` is an optional sorted array of exposure start times; spectra not in it (to
+    0.2 s) are dropped. Pass ``quality.stable_obsjd`` to leave out those taken through cloud.
+    """
     table, arrays = spectra.load_window(directory)
+    if keep_obsjd is not None and len(table):
+        keep_obsjd = np.asarray(keep_obsjd, dtype=float)
+        index = np.clip(np.searchsorted(keep_obsjd, table["obsjd"].to_numpy()), 1, len(keep_obsjd) - 1)
+        nearest = np.minimum(
+            np.abs(keep_obsjd[index] - table["obsjd"].to_numpy()), np.abs(keep_obsjd[index - 1] - table["obsjd"].to_numpy())
+        )
+        kept = nearest < 2.0e-6
+        table = table[kept].reset_index(drop=True)
+        arrays = {key: value[kept] for key, value in arrays.items()}
     with np.load(next(Path(directory).glob("neidL2_*.npz"))) as first:
         ccf_start, ccf_step = float(first["ccfstart"]), float(first["ccfstep"])
     table = pd.concat([table, lineshape.measure(arrays["ccf"], ccf_start, ccf_step)], axis=1)
@@ -87,7 +100,13 @@ def event_response(change: pd.DataFrame, window_min: tuple[float, float] = (-8.0
     return out
 
 
-def collect(events: pd.DataFrame, root: Path, window_min: tuple[float, float] = (-8.0, 10.0), detrend: bool = False) -> pd.DataFrame:
+def collect(
+    events: pd.DataFrame,
+    root: Path,
+    window_min: tuple[float, float] = (-8.0, 10.0),
+    detrend: bool = False,
+    keep_obsjd=None,
+) -> pd.DataFrame:
     """Response of every event that has spectra: one row per event.
 
     ``events`` needs the columns ``name``, ``jd_start`` and ``jd_peak``; its other columns
@@ -98,9 +117,11 @@ def collect(events: pd.DataFrame, root: Path, window_min: tuple[float, float] = 
         directory = Path(root) / event.name
         if len(list(directory.glob("neidL2_*.npz"))) < 8:
             continue
-        table = event_table(directory, event.jd_start, event.jd_peak)
+        table = event_table(directory, event.jd_start, event.jd_peak, keep_obsjd)
         row = event._asdict()
         row["n_spectra"] = len(table)
+        if len(table) < 8:
+            continue
         row.update(event_response(changes(table, detrend=detrend), window_min))
         rows.append(row)
     return pd.DataFrame(rows)
