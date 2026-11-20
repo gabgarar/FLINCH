@@ -34,8 +34,11 @@ debajo de 0,07 m/s, menos que los 0,09 m/s que la Tierra imprime en el Sol.
   distintas. Su serie se analizó después, una sola vez, con las decisiones ya tomadas para NEID.
 - **No hay respuestas ocultas de signo variable**: la dispersión de los cambios de las
   fulguraciones (0,40 m/s en NEID, 0,41 en HARPS-N) es igual a la de sus controles.
-- **La mayor desviación de la tabla**, 2,6 sigmas en 11 fulguraciones M5 a M9 con HARPS-N, no
-  se repite en NEID.
+- **Una fila llama la atención**, la de las 11 fulguraciones M5 a M9 con HARPS-N. Esas
+  fulguraciones están menos dispersas de lo habitual (0,29 frente a 0,41 m/s), lo que hace
+  pequeño su error: los conjuntos de 11 controles quedan igual de lejos de cero el 10 % de
+  las veces, y NEID no repite el valor. En las filas con unas diez fulguraciones el propio
+  error es incierto en una cuarta parte.
 
 ![Cambio de velocidad de cada fulguración frente a su clase y a su posición](web/img/two_instruments_events.png)
 

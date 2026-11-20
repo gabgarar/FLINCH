@@ -29,8 +29,10 @@ the Sun.
 - **No trend with the size of the flare or with its position** on the disc.
 - **No hidden responses of varying sign**: the scatter of the changes of the flares (0.40 m/s
   with NEID, 0.41 with HARPS-N) equals that of their controls (0.40 and 0.41).
-- **The largest deviation of the table**, 2.6 sigma for 11 flares between M5 and M9 with
-  HARPS-N, is not repeated by NEID.
+- **One row stands out**, the 11 flares between M5 and M9 with HARPS-N. Those flares happen
+  to scatter less than usual (0.29 against 0.41 m/s), which makes their error small: sets of
+  11 control epochs are as far from zero 10 % of the time, and NEID does not repeat the
+  value. In the rows with about ten flares the error is itself uncertain by a quarter.
 
 ![Velocity change of each flare against its class and its position](img/two_instruments_events.png)
 
