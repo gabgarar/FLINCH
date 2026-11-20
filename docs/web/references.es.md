@@ -47,8 +47,26 @@ petición de un estudio estadístico.
 
 - Karoff, C., & Kjeldsen, H. (2008). Evidence that solar flares drive global oscillations in
   the Sun. *The Astrophysical Journal*, 678, L73.
+- Kumar, B., et al. (2010). On the flare induced high-frequency global waves in the Sun.
+  *The Astrophysical Journal Letters*, 711, L12.
 - Kumar, B., et al. (2017). On the signatures of flare-induced global waves in the Sun: GOLF
-  and VIRGO observations. *Monthly Notices of the Royal Astronomical Society*.
+  and VIRGO observations. *Monthly Notices of the Royal Astronomical Society*, 471, 4677.
+- Richardson, M., Hill, F., & Stassun, K. G. (2012). No evidence supporting flare-driven
+  high-frequency global oscillations. *Solar Physics*, 281, 21.
+
+## Velocidades dentro de la zona de la fulguración
+
+Estos trabajos miran la velocidad allí donde está la fulguración, en imágenes resueltas o en
+simulaciones, no la velocidad de todo el disco.
+
+- Saar, S. H., Palumbo, M. L., Haywood, R. D., & Dupree, A. K. (2018). A first look at the
+  effect of flares on radial velocity jitter in G dwarfs: a punch and a splash? Póster en
+  Cool Stars 20, [doi:10.5281/zenodo.1490103](https://doi.org/10.5281/zenodo.1490103).
+  Los píxeles marcados como fulguración en imágenes de SDO de 2014 están desplazados entre
+  130 y 220 m/s respecto al Sol en calma y cubren el 0,04 % del disco.
+- Monson, A. J., et al. (2021). Flare-induced photospheric velocity diagnostics. *The
+  Astrophysical Journal*, 915, 16. Simulaciones: la emisión cromosférica hace que las líneas
+  fotosféricas de Fe I parezcan desplazadas hasta 40 m/s.
 
 ## Rotación solar
 

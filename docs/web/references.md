@@ -47,8 +47,26 @@ follow-up.
 
 - Karoff, C., & Kjeldsen, H. (2008). Evidence that solar flares drive global oscillations in
   the Sun. *The Astrophysical Journal*, 678, L73.
+- Kumar, B., et al. (2010). On the flare induced high-frequency global waves in the Sun.
+  *The Astrophysical Journal Letters*, 711, L12.
 - Kumar, B., et al. (2017). On the signatures of flare-induced global waves in the Sun: GOLF
-  and VIRGO observations. *Monthly Notices of the Royal Astronomical Society*.
+  and VIRGO observations. *Monthly Notices of the Royal Astronomical Society*, 471, 4677.
+- Richardson, M., Hill, F., & Stassun, K. G. (2012). No evidence supporting flare-driven
+  high-frequency global oscillations. *Solar Physics*, 281, 21.
+
+## Velocities inside the flaring area
+
+These works look at the velocity where the flare is, in resolved images or in simulations, not
+at the velocity of the whole disc.
+
+- Saar, S. H., Palumbo, M. L., Haywood, R. D., & Dupree, A. K. (2018). A first look at the
+  effect of flares on radial velocity jitter in G dwarfs: a punch and a splash? Poster at
+  Cool Stars 20, [doi:10.5281/zenodo.1490103](https://doi.org/10.5281/zenodo.1490103).
+  Pixels flagged as flares in SDO images of 2014 are shifted by 130 to 220 m/s with respect
+  to the quiet Sun and cover 0.04 % of the disc.
+- Monson, A. J., et al. (2021). Flare-induced photospheric velocity diagnostics. *The
+  Astrophysical Journal*, 915, 16. Simulations: chromospheric emission makes photospheric
+  Fe I lines look shifted by up to 40 m/s.
 
 ## Solar rotation
 
