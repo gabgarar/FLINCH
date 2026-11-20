@@ -123,6 +123,14 @@ def cmd_campaign(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_paper_figures(args: argparse.Namespace) -> int:
+    from . import paperfigs
+
+    for path in paperfigs.make_all(args.out, event_name=args.event):
+        print(path)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="flinch", description="FLare-INduced CHanges in solar radial velocities")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -161,6 +169,11 @@ def main(argv: list[str] | None = None) -> int:
     camp.add_argument("--before", type=float, default=30.0, help="minutes fetched before the start of the flare (default 30)")
     camp.add_argument("--after", type=float, default=45.0, help="minutes fetched after the peak of the flare (default 45)")
     camp.set_defaults(run=cmd_campaign)
+
+    figures = commands.add_parser("paper-figures", help="figures of the paper, as PDF in journal style, from the tables in results/")
+    figures.add_argument("--out", default="docs/paper/figuras", help="folder for the PDF files (default docs/paper/figuras)")
+    figures.add_argument("--event", default="20240222_2233_X6.3", help="flare shown in the figure of one event")
+    figures.set_defaults(run=cmd_paper_figures)
     args = parser.parse_args(argv)
     return args.run(args)
 

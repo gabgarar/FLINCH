@@ -130,3 +130,45 @@ def test_clear_sky_needs_steady_spectra_before_the_start_and_around_the_peak():
         ]
     )
     assert list(campaign.clear_sky(events, np.sort(steady))) == [True, False, False]
+
+
+def _is_pdf(path):
+    return path.exists() and path.stat().st_size > 5000 and path.read_bytes()[:5] == b"%PDF-"
+
+
+def test_paper_figures_are_vector_files_at_the_size_of_the_page(tmp_path):
+    from flinch import paperfigs
+
+    rng = np.random.default_rng(2)
+    minutes = np.arange(-57.5, 90, 5.0)
+    profiles = pd.concat(
+        [
+            pd.DataFrame({"subset": subset, "sample": sample, "events": 20, "minutes": minutes, "mean": rng.normal(0, 0.05, len(minutes)), "sem": 0.04, "n": 20})
+            for subset in ("M and X", "M5 and above", "X")
+            for sample in ("flares", "controls")
+        ]
+    )
+    assert _is_pdf(paperfigs.profiles(profiles, tmp_path / "a" / "profiles.pdf"))
+    flares = pd.DataFrame(
+        {"peak_flux": 10 ** rng.uniform(-5, -3.5, 60), "delta": rng.normal(0, 0.4, 60), "x_norm": rng.uniform(-1, 1, 60), "r_norm": rng.uniform(0, 1, 60)}
+    )
+    assert _is_pdf(paperfigs.events(flares, pd.DataFrame({"delta": rng.normal(0, 0.4, 300)}), tmp_path / "events.pdf"))
+    time = np.arange(-30.0, 30.0, 3.0)
+    change = pd.DataFrame({"min_peak": time - 5.0, "min_start": time})
+    for column, _, _ in paperfigs.EVENT_QUANTITIES:
+        change[column] = rng.normal(0, 1, len(time))
+        change[f"{column}_sigma"] = 1.0
+    assert _is_pdf(paperfigs.event(change, tmp_path / "event.pdf"))
+    assert {column for column, _, _ in paperfigs.EVENT_QUANTITIES} <= {column for column, _, _ in response.QUANTITIES}
+    assert paperfigs.style()["font.size"] <= 9 and paperfigs.COLUMN_MM == 88.0 and paperfigs.PAGE_MM == 180.0
+
+
+def test_binned_means_leave_out_sparse_bins():
+    from flinch import paperfigs
+
+    x = np.array([0.1, 0.2, 0.3, 0.4, 1.5, 2.2, 2.4, 2.6])
+    y = np.array([1.0, 2.0, 3.0, 2.0, 9.0, 4.0, 5.0, 6.0])
+    centres, means, errors = paperfigs.binned_means(x, y, np.array([0.0, 1.0, 2.0, 3.0]))
+    # The middle bin has one point only; a bin with positive edges is centred on their geometric mean.
+    assert centres == pytest.approx([0.5, np.sqrt(6.0)])
+    assert list(means) == [2.0, 5.0] and errors[1] == pytest.approx(1.0 / np.sqrt(3.0))
