@@ -141,11 +141,37 @@ Los cortes de calidad se eligieron mirando solo el ruido de los controles y el n
 fulguraciones, nunca el resultado. Las opciones de análisis se fijaron después del primer
 piloto, no antes; la tabla de la sección 2 muestra que el resultado no depende de ellas.
 
-## 6. Lo que falta
+## 6. Comparación con lo publicado
 
-- **Comparar con los análisis publicados** de las fulguraciones en común (por ejemplo la
-  X1.6 del 5 de agosto de 2023, en Otsu et al. 2024).
-- **Leer completos** los artículos de Otsu et al. (2022, 2026) antes de afirmar qué es nuevo
-  en la parte cromosférica.
+Leídos completos los artículos más cercanos (20 de noviembre de 2026):
+
+- **Pietrow et al. 2024** siguieron con HARPS-N las fulguraciones X2.2 y X9.3 del 6 de
+  septiembre de 2017, con un espectro cada 5 minutos. No detectan cambio de velocidad: fijan
+  una cota de 50 cm/s, señalan un pequeño aumento de unas decenas de cm/s y piden un estudio
+  estadístico. La cota de aquí para la respuesta media, 9 cm/s, es cinco veces más baja y
+  sale de 139 fulguraciones. En Ca II H y K ven más de un 1 %, igual en las dos fulguraciones
+  pese a su distinta clase; aquí Ca II H y K también es el índice más sensible (hasta un
+  1,7 %) y la respuesta tampoco sigue a la clase.
+- **Otsu et al. 2022 y 2024 y Ma et al. 2024** usan espectrógrafos de imagen en H alfa.
+  No miden la luz de todo el disco tal cual: integran una región alrededor de la fulguración
+  y normalizan por el disco, porque la señal es difícil de ver en la integral completa. NEID
+  la registra directamente en la luz de todo el disco, y aquí hay además ventanas de control.
+- **Otsu et al. 2026** reúnen 34 fulguraciones, pero miden en imágenes cuándo aparecen los
+  bucles posteriores a la fulguración. No es una estadística de la respuesta en luz
+  integrada, y dicen que ese estudio está por hacer.
+- **La fulguración en común**, la X1.6 del 5 de agosto de 2023 (Otsu et al. 2024), está junto
+  al limbo: aquí Ca II y H beta suben entre 1 y 2 partes por mil, 2 sigmas. NEID dejó de
+  observar 9 minutos después del máximo, antes del segundo máximo de H alfa que ellos ven a
+  los 13 minutos.
+- **Brillo esperado en el visible** (Kretzschmar 2011): 7 partes por millón en el máximo de
+  una fulguración M2 media y 264 en la X17 del 28 de octubre de 2003, es decir, entre 15 y 35
+  para una X1. Con la rotación solar eso son, como mucho, de 3 a 7 cm/s en el limbo: entre
+  cuatro y ocho veces por debajo de la cota de la firma de rotación. Que no aparezca es lo
+  esperado.
+
+## 7. Lo que falta
+
 - **Más fulguraciones con espectros**, para que la dependencia con la energía y la posición
   pase de indicación a medida.
+- **La fase de decaimiento**: los espectros de la mayoría de las fulguraciones llegan hasta
+  40 minutos después del máximo, y la respuesta solo se ha medido hasta 10.

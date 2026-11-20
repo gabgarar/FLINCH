@@ -8,9 +8,14 @@
   precise radial velocity data for the Sun. *Astronomy & Astrophysics*.
 - Ma, Y. L., et al. (2024). Sun-as-a-star study of an X-class solar flare with spectroscopic
   observations of CHASE. *The Astrophysical Journal*, 966, 45.
+- Otsu, T., et al. (2022). Sun-as-a-star analyses of various solar active events using
+  H alpha spectral images taken by SMART/SDDI. *The Astrophysical Journal*, 939, 98.
 - Otsu, T., et al. (2024). Sun-as-a-star analysis of the X1.6 flare on 2023 August 5:
   dynamics of postflare loops in spatially integrated observational data. *The Astrophysical
   Journal Letters*, 974, L13.
+- Otsu, T., et al. (2026). Statistical study of the timing of the appearance of H alpha
+  postflare loops: simple scaling law based on radiative cooling. *The Astrophysical
+  Journal*, 997, 286.
 - Liu, X., et al. (2025). Sun-as-a-star analysis of the solar eruption source region using
   H alpha spectroscopic observations of CHASE. *The Astrophysical Journal*, 993, 126.
 - Yu, H. C., et al. (2025). Sun-as-a-star analysis of simulated solar flares. *Astronomy &
@@ -21,9 +26,19 @@
   filament/prominence eruptions from the Sun-as-a-star H alpha spectrum? *The Astrophysical
   Journal*, 1004, 66.
 
-These are studies of single events or of simulations, most of them in H alpha from imaging
-spectrographs integrated over the disc. Only the first of the list above measures radial
-velocities, for two flares.
+These are studies of single events, of a few events or of simulations, most of them in
+H alpha from imaging spectrographs: the spectra are integrated over a region around the flare
+and normalised by the light of the disc. Otsu et al. (2026) gather 34 flares, but measure in
+images when the postflare loops appear. Only the first of the list above measures radial
+velocities, for two flares: an upper limit of 50 cm/s and a request for a statistical
+follow-up.
+
+## Flares in the brightness of the Sun
+
+- Kretzschmar, M., et al. (2010). The effect of flares on total solar irradiance. *Nature
+  Physics*, 6, 690.
+- Kretzschmar, M. (2011). The Sun as a star: observations of white-light flares. *Astronomy &
+  Astrophysics*, 530, A84.
 
 ## Flares and the global oscillations of the Sun
 
@@ -49,4 +64,5 @@ velocities, for two flares.
   <https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/>.
 
 !!! note
-    This list is a starting point. A full-text literature search is pending.
+    The papers by Pietrow et al. (2024), Otsu et al. (2022, 2024, 2026) and Kretzschmar
+    (2010, 2011) have been read in full; the rest of the list rests on their abstracts.

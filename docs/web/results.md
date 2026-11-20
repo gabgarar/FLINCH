@@ -128,7 +128,31 @@ That flares brighten H alpha in Sun-as-a-star spectra is known (Otsu et al. 2022
 2024; Pietrow et al. 2024; see [References](references.md)). Here it is the check that the
 flares are in the data.
 
+## How this compares with published work
+
+- **Velocity.** Pietrow et al. (2024) followed the X2.2 and X9.3 flares of 6 September 2017
+  with HARPS-N, one spectrum every five minutes. They could not claim a detection: they set
+  an upper limit of 50 cm/s, noted a bump of a few tens of cm/s and asked for a statistical
+  follow-up. The limit found here for the mean response, 9 cm/s, is five times lower and
+  comes from 139 flares.
+- **Chromosphere.** In the same two flares Ca II H and K rose by more than 1 %, alike in both
+  despite their different class. Here Ca II H and K is also the most sensitive index (up to
+  1.7 %) and the response does not follow the class either.
+- **Disc-integrated light.** The H alpha studies with imaging spectrographs (Otsu et al.
+  2022, 2024; Ma et al. 2024) integrate a region around the flare and normalise by the disc,
+  because the signal is hard to see in the full integral. NEID records it in the light of
+  the whole disc, and the flare-free control windows give its noise floor.
+- **The flare in common**, the X1.6 of 5 August 2023 near the limb (Otsu et al. 2024): here
+  Ca II and H beta rise by 1 to 2 parts per thousand, 2 sigma. NEID stopped observing 9
+  minutes after the peak, before the second H alpha maximum they report at 13 minutes.
+- **Expected brightening.** The total irradiance rises by 7 parts per million at the peak of
+  an average M2 flare and rose by 264 in the X17 flare of 28 October 2003 (Kretzschmar 2011):
+  15 to 35 for an X1 flare. With the rotation of the Sun that is at most 3 to 7 cm/s at the
+  limb, four to eight times below the limit on the rotation term. Its absence is the expected
+  result.
+
 ## What is left
 
-- A comparison with the published analyses of the flares in common.
 - Spectra of more flares, to turn the dependence on energy and position into a measurement.
+- The decay phase: most flares have spectra up to 40 minutes after the peak, and the response
+  is measured only up to 10.
