@@ -45,14 +45,25 @@ def signal_window(events: pd.DataFrame, estimator: str) -> tuple[np.ndarray, np.
     raise ValueError(estimator)
 
 
-def window_delta(events: pd.DataFrame, series: epoch.Series, estimator: str) -> np.ndarray:
-    """Mean in the signal window minus mean in the pre-flare window (NaN when under-sampled)."""
+def window_delta(
+    events: pd.DataFrame,
+    series: epoch.Series,
+    estimator: str,
+    cadence_s: float = 83.0,
+    min_pre: int = MIN_PRE,
+    min_signal: int = MIN_SIGNAL,
+) -> np.ndarray:
+    """Mean in the signal window minus mean in the pre-flare window (NaN when under-sampled).
+
+    A window counts when it holds at least 70 % of the points expected at the cadence
+    ``cadence_s`` of the instrument, and never fewer than ``min_pre`` or ``min_signal``.
+    """
     start, _ = epoch.event_times(events)
     low, high = signal_window(events, estimator)
     n_pre, pre = series.window(start + PRE[0] * MINUTE, start + PRE[1] * MINUTE)
     n_signal, signal = series.window(low, high)
-    expected = 0.7 * (high - low) * 86400.0 / 83.0
-    ok = (n_pre >= max(MIN_PRE, 0.7 * (PRE[1] - PRE[0]) * 60.0 / 83.0)) & (n_signal >= np.maximum(MIN_SIGNAL, expected))
+    expected = 0.7 * (high - low) * 86400.0 / cadence_s
+    ok = (n_pre >= max(min_pre, 0.7 * (PRE[1] - PRE[0]) * 60.0 / cadence_s)) & (n_signal >= np.maximum(min_signal, expected))
     return np.where(ok, signal - pre, np.nan)
 
 

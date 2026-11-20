@@ -175,3 +175,32 @@ def write_l2(path, obsjd, halpha=0.20, hbeta_depth=0.6, rv_kms=-0.64) -> None:
         fits.ImageHDU(flux, name="SCIVARSTITCH"),
     ]
     fits.HDUList(hdus).writeto(path, overwrite=True)
+
+
+def harpsn_series(days=40, per_day=70, noise=0.4, seed=5) -> pd.DataFrame:
+    """A table like the HARPS-N solar release: 300 s exposures every 324 s from 16:30 UT, a daily trend and white noise."""
+    rng = np.random.default_rng(seed)
+    blocks = []
+    for d in range(days):
+        start = DAY0 + d + 16.5 / 24.0 + np.arange(per_day) * 324.0 / 86400.0
+        hours = (start - start.mean()) * 24.0
+        rv = 100.0 + rng.normal(0.0, 0.3) * hours - 0.1 * hours**2 + rng.normal(0.0, noise, per_day)
+        stamps = pd.to_datetime(start - 2440587.5, unit="D", origin="unix").strftime("%Y-%m-%dT%H-%M-%S.%f").str[:-3]
+        blocks.append(pd.DataFrame({"file_root": "HARPN." + stamps, "obsjd_true": start, "rv": rv / 1000.0}))
+    table = pd.concat(blocks, ignore_index=True)
+    table["texp"], table["rv_err"], table["obs_quality"], table["data_quality"] = 300.0, 0.00025, 0.999, 1.0
+    table["bjd"] = table["obsjd_true"] - 2400000.0 - 7.0 / 1440.0  # barycentric: not to be used
+    return table
+
+
+def write_harpsn(root, flares: pd.DataFrame, signal_ms: float = 0.0, days=40) -> pd.DataFrame:
+    """Write the synthetic HARPS-N series where ``flinch.harpsn`` looks for it, with a box added during each flare."""
+    table = harpsn_series(days)
+    mid = table["obsjd_true"] + 150.0 / 86400.0
+    for row in flares.itertuples():
+        inside = (mid >= row.jd_start) & (mid <= row.jd_peak + 2 * MINUTE)
+        table.loc[inside, "rv"] += signal_ms / 1000.0
+    folder = root / "harpsn"
+    folder.mkdir(parents=True, exist_ok=True)
+    table.to_csv(folder / "harpn_sun_release_timeseries_2015-2025.csv", index=False)
+    return table

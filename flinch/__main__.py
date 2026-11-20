@@ -123,6 +123,27 @@ def cmd_campaign(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_replication(args: argparse.Namespace) -> int:
+    from . import replication
+
+    out = replication.run()
+    columns = ["instrument", "band", "flares", "mean", "mean_err", "limit_95", "per_X1", "per_X1_err", "rotation", "rotation_err", "flare_std", "control_std"]
+    with pd.option_context("display.width", 220, "display.float_format", "{:.3f}".format):
+        print("Velocity change during flares, paired with controls (m/s):")
+        print(out["table"][columns].to_string(index=False))
+        print()
+        print("Mean residual from 60 to 50 min before the X-ray peak (m/s):")
+        print(out["early_window"].to_string(index=False))
+    for name, value in out["numbers"].items():
+        print(f"{name}: {value}")
+    directory = results_dir()
+    out["table"].to_csv(directory / "velocity_by_instrument.csv", index=False)
+    out["profiles"].to_csv(directory / "replication_profiles.csv", index=False)
+    out["events"].to_csv(directory / "replication_events.csv", index=False)
+    out["early_window"].to_csv(directory / "early_window.csv", index=False)
+    return 0
+
+
 def cmd_paper_figures(args: argparse.Namespace) -> int:
     from . import paperfigs
 
@@ -170,9 +191,12 @@ def main(argv: list[str] | None = None) -> int:
     camp.add_argument("--after", type=float, default=45.0, help="minutes fetched after the peak of the flare (default 45)")
     camp.set_defaults(run=cmd_campaign)
 
+    again = commands.add_parser("replication", help="the velocity response measured with NEID and with HARPS-N, and both combined")
+    again.set_defaults(run=cmd_replication)
+
     figures = commands.add_parser("paper-figures", help="figures of the paper, as PDF in journal style, from the tables in results/")
     figures.add_argument("--out", default="docs/paper/figuras", help="folder for the PDF files (default docs/paper/figuras)")
-    figures.add_argument("--event", default="20240222_2233_X6.3", help="flare shown in the figure of one event")
+    figures.add_argument("--event", default=None, help="also draw the figure of this single flare, e.g. 20240222_2233_X6.3")
     figures.set_defaults(run=cmd_paper_figures)
     args = parser.parse_args(argv)
     return args.run(args)

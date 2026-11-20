@@ -72,7 +72,14 @@ def test_campaign_fetches_flares_then_controls_and_the_analysis_measures_them(ar
     assert "controls" in set(pd.read_csv(root / "events.csv")["kind"])
     capsys.readouterr()
 
-    # 4. Joint analysis: the flare shows the 5 % step (50 parts per thousand); its control shows nothing.
+    # 4. Stacked light curves: the step appears at the start of the flare and not in the control.
+    curves = chromosphere.light_curves(min_class="M1.0")
+    halpha = curves[curves["quantity"] == "Ha06_1_tellcorr"].set_index(["group", "minutes"])["mean"]
+    assert halpha.xs("disc flares").loc[5.0:].dropna().to_numpy() == pytest.approx(50.0, abs=0.01)
+    assert halpha.xs("disc flares").loc[:-25.0].dropna().abs().max() < 0.01
+    assert halpha.xs("controls").dropna().abs().max() < 0.01
+
+    # 5. Joint analysis: the flare shows the 5 % step (50 parts per thousand); its control shows nothing.
     out = chromosphere.run()
     events = out["events"].set_index("name")
     flare = events.loc[name]

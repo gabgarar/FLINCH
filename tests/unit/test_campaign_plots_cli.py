@@ -140,19 +140,33 @@ def test_paper_figures_are_vector_files_at_the_size_of_the_page(tmp_path):
     from flinch import paperfigs
 
     rng = np.random.default_rng(2)
-    minutes = np.arange(-57.5, 90, 5.0)
+    minutes = np.arange(-55.0, 90, 10.0)
     profiles = pd.concat(
         [
-            pd.DataFrame({"subset": subset, "sample": sample, "events": 20, "minutes": minutes, "mean": rng.normal(0, 0.05, len(minutes)), "sem": 0.04, "n": 20})
-            for subset in ("M and X", "M5 and above", "X")
+            pd.DataFrame({"instrument": instrument, "subset": subset, "sample": sample, "events": 20, "minutes": minutes,
+                          "mean": rng.normal(0, 0.05, len(minutes)), "sem": 0.04, "n": 20})
+            for instrument in ("NEID", "HARPS-N")
+            for subset in ("M and X", "X")
             for sample in ("flares", "controls")
         ]
     )
     assert _is_pdf(paperfigs.profiles(profiles, tmp_path / "a" / "profiles.pdf"))
+    assert _is_pdf(paperfigs.profiles(profiles, tmp_path / "a" / "profiles_x.pdf", subset="X"))
     flares = pd.DataFrame(
-        {"peak_flux": 10 ** rng.uniform(-5, -3.5, 60), "delta": rng.normal(0, 0.4, 60), "x_norm": rng.uniform(-1, 1, 60), "r_norm": rng.uniform(0, 1, 60)}
+        {"instrument": np.where(rng.random(60) < 0.5, "NEID", "HARPS-N"), "sample": "flare", "peak_flux": 10 ** rng.uniform(-5, -3.0, 60),
+         "d": rng.normal(0, 0.4, 60), "delta": rng.normal(0, 0.4, 60), "x_norm": rng.uniform(-1, 1, 60), "r_norm": rng.uniform(0, 1, 60)}
     )
-    assert _is_pdf(paperfigs.events(flares, pd.DataFrame({"delta": rng.normal(0, 0.4, 300)}), tmp_path / "events.pdf"))
+    controls = pd.DataFrame({"instrument": "NEID", "sample": "control", "delta": rng.normal(0, 0.4, 300)})
+    assert _is_pdf(paperfigs.events(pd.concat([flares, controls], ignore_index=True), tmp_path / "events.pdf"))
+    curves = pd.concat(
+        [
+            pd.DataFrame({"group": group, "quantity": column, "events": 8, "minutes": np.arange(-37.0, 45, 6.0),
+                          "mean": rng.normal(0, 1, 14), "sem": 0.5, "n": 8})
+            for group in ("disc flares", "limb flares", "controls")
+            for column, _ in paperfigs.CURVE_PANELS
+        ]
+    )
+    assert _is_pdf(paperfigs.light_curves(curves, tmp_path / "curves.pdf"))
     time = np.arange(-30.0, 30.0, 3.0)
     change = pd.DataFrame({"min_peak": time - 5.0, "min_start": time})
     for column, _, _ in paperfigs.EVENT_QUANTITIES:

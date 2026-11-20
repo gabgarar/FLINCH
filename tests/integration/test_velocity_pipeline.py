@@ -76,3 +76,30 @@ def test_command_line_runs_the_pilot_and_the_robustness(archive_with_signal, cap
     table = pd.read_csv(results / "robustness.csv")
     assert len(table) == 10 and np.isfinite(table["mean"]).sum() >= 9
     assert len(pd.read_csv(results / "injections.csv")) == 4
+
+
+def test_two_instruments_measure_the_same_injected_signal(archive_with_signal, monkeypatch, capsys):
+    """The NEID-like archive and a HARPS-N-like series carry 1.5 m/s during every flare: both give it back."""
+    import helpers
+    from flinch import _http, replication
+    from flinch.__main__ import main
+
+    helpers.write_harpsn(archive_with_signal["root"] / "data", archive_with_signal["flares"], signal_ms=1.5)
+    monkeypatch.setattr(_http, "download", lambda *a, **k: pytest.fail("the network must not be used"))
+    out = replication.run()
+    table = out["table"].set_index(["instrument", "band"])
+    for instrument in ("NEID", "HARPS-N", "Both"):
+        row = table.loc[(instrument, "M and X")]
+        assert row["mean"] == pytest.approx(1.5, abs=4.0 * row["mean_err"]) and row["mean_err"] < 0.2
+    assert table.loc[("Both", "M and X"), "flares"] == table.loc[("NEID", "M and X"), "flares"] + table.loc[("HARPS-N", "M and X"), "flares"]
+    assert table.loc[("Both", "M and X"), "mean_err"] < table.loc[("NEID", "M and X"), "mean_err"]
+    for instrument in ("NEID", "HARPS-N"):
+        assert out["numbers"][instrument]["injection_efficiency"] == pytest.approx(1.0, abs=0.1)
+    profiles = out["profiles"]
+    assert set(profiles["instrument"]) == {"NEID", "HARPS-N"} and set(profiles["sample"]) == {"flares", "controls"}
+    assert out["numbers"]["flares_in_both"] > 0  # the synthetic instruments watch the same flares
+
+    assert main(["replication"]) == 0
+    assert "Both" in capsys.readouterr().out
+    for name in ("velocity_by_instrument", "replication_profiles", "replication_events", "early_window"):
+        assert (archive_with_signal["root"] / "results" / f"{name}.csv").stat().st_size > 100

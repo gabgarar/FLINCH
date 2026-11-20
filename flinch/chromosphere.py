@@ -195,3 +195,49 @@ def run(
             "rv_per_halpha_rotation_err": slope_error,
         },
     }
+
+
+CURVE_EDGES_MIN = np.arange(-40.0, 46.1, 6.0)
+CURVE_COLUMNS = ("CaIIHK", "Ha06_1_tellcorr", "CaI_1_tellcorr", "rv_ms")
+
+
+def light_curves(
+    min_class: str = "X1.0", max_class: str | None = None, edges_min=CURVE_EDGES_MIN, columns=CURVE_COLUMNS, disc_radius: float = 0.9
+) -> pd.DataFrame:
+    """Mean change of each quantity against time, for the usable flares and for the control windows.
+
+    Every event contributes its mean change in each time bin (minutes from the X-ray peak, with
+    respect to its spectra before the start); the table gives the mean over the events of each
+    group and its standard error. Groups: "disc flares" (within ``disc_radius`` solar radii of
+    the centre), "limb flares" and "controls".
+    """
+    root = data_dir() / "spectra"
+    keep = quality.stable_obsjd(neid.read_solar_table())
+    events = run(min_class=min_class, max_class=max_class)["events"]
+    edges = np.asarray(edges_min, dtype=float)
+    centres = 0.5 * (edges[:-1] + edges[1:])
+    curves: dict[str, list[pd.DataFrame]] = {"disc flares": [], "limb flares": [], "controls": []}
+    usable = events[events["usable"]] if len(events) else events
+    for event in usable.itertuples():
+        change = response.changes(response.event_table(root / event.name, event.jd_start, event.jd_peak, keep))
+        bins = pd.cut(change["min_peak"], edges, labels=centres, right=False)
+        binned = change.groupby(bins, observed=False)[list(columns)].mean()
+        group = "controls" if event.kind == "control" else ("disc flares" if event.r_norm < disc_radius else "limb flares")
+        curves[group].append(binned)
+    rows = []
+    for group, members in curves.items():
+        for column in columns:
+            if not members:
+                continue
+            stack = pd.concat([member[column] for member in members], axis=1).to_numpy(dtype=float)
+            count = np.sum(np.isfinite(stack), axis=1)
+            with np.errstate(invalid="ignore"):
+                mean = np.nanmean(stack, axis=1)
+                sem = np.nanstd(stack, axis=1, ddof=1) / np.sqrt(np.maximum(count, 1))
+            rows.append(
+                pd.DataFrame({"group": group, "quantity": column, "events": len(members), "minutes": centres, "mean": mean, "sem": sem, "n": count})
+            )
+    if not rows:
+        return pd.DataFrame(columns=["group", "quantity", "events", "minutes", "mean", "sem", "n"])
+    return pd.concat(rows, ignore_index=True)
+

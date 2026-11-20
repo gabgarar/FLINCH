@@ -38,6 +38,56 @@ def matches(obsjd, keep_obsjd, tolerance: float = 2.0e-6) -> np.ndarray:
     return nearest < tolerance
 
 
+def detrend_days(
+    jd: np.ndarray,
+    rv: np.ndarray,
+    days: np.ndarray,
+    good: np.ndarray,
+    order: int = 2,
+    clip: float = 5.0,
+    min_points: int = 40,
+    max_day_sigma: float = 1.5,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Subtract a polynomial from the velocities of each day; the arrays must be sorted in time.
+
+    The polynomial of degree ``order`` is fitted to the good points of the day, dropping those
+    beyond ``clip`` robust sigmas until the selection settles. Days left with fewer than
+    ``min_points`` good points, or with a robust scatter above ``max_day_sigma``, are dropped
+    whole. Returns the residuals (NaN on dropped days), the scatter of each day and the updated
+    mask of good points.
+    """
+    good = np.array(good, dtype=bool)  # writable copy
+    residual = np.full(len(jd), np.nan)
+    day_sigma = np.full(len(jd), np.nan)
+    boundaries = np.flatnonzero(np.diff(days)) + 1
+    for lo, hi in zip(np.r_[0, boundaries], np.r_[boundaries, len(days)]):
+        mask = good[lo:hi].copy()
+        if mask.sum() < min_points:
+            good[lo:hi] = False
+            continue
+        hours = (jd[lo:hi] - jd[lo:hi][mask].mean()) * 24.0
+        velocity = rv[lo:hi]
+        for _ in range(6):
+            fit = np.polyfit(hours[mask], velocity[mask], order)
+            r = velocity - np.polyval(fit, hours)
+            sigma = robust_sigma(r[mask])
+            updated = good[lo:hi] & (np.abs(r) < clip * sigma)
+            if updated.sum() < min_points or np.array_equal(updated, mask):
+                mask = updated
+                break
+            mask = updated
+        if mask.sum() < min_points:
+            good[lo:hi] = False
+            continue
+        day_sigma[lo:hi] = robust_sigma(r[mask])
+        if day_sigma[lo] > max_day_sigma:
+            good[lo:hi] = False
+            continue
+        residual[lo:hi] = r
+        good[lo:hi] = mask
+    return residual, day_sigma, good
+
+
 def prepare(
     table: pd.DataFrame,
     snr_window: int = 31,
@@ -84,37 +134,9 @@ def prepare(
     out["snr_rel"] = snr / reference
     good = np.array(valid & ((out["snr_rel"] - 1.0).abs() <= snr_tolerance), dtype=bool)  # writable copy
 
-    jd = out["jd"].to_numpy()
-    rv = out["rv_ms"].to_numpy()
-    residual = np.full(len(out), np.nan)
-    day_sigma = np.full(len(out), np.nan)
-    days = out["day"].to_numpy()
-    boundaries = np.flatnonzero(np.diff(days)) + 1
-    for lo, hi in zip(np.r_[0, boundaries], np.r_[boundaries, len(days)]):
-        mask = good[lo:hi].copy()
-        if mask.sum() < min_points:
-            good[lo:hi] = False
-            continue
-        hours = (jd[lo:hi] - jd[lo:hi][mask].mean()) * 24.0
-        velocity = rv[lo:hi]
-        for _ in range(6):
-            fit = np.polyfit(hours[mask], velocity[mask], order)
-            r = velocity - np.polyval(fit, hours)
-            sigma = robust_sigma(r[mask])
-            updated = good[lo:hi] & (np.abs(r) < clip * sigma)
-            if updated.sum() < min_points or np.array_equal(updated, mask):
-                mask = updated
-                break
-            mask = updated
-        if mask.sum() < min_points:
-            good[lo:hi] = False
-            continue
-        day_sigma[lo:hi] = robust_sigma(r[mask])
-        if day_sigma[lo] > max_day_sigma:
-            good[lo:hi] = False
-            continue
-        residual[lo:hi] = r
-        good[lo:hi] = mask
+    residual, day_sigma, good = detrend_days(
+        out["jd"].to_numpy(), out["rv_ms"].to_numpy(), out["day"].to_numpy(), good, order, clip, min_points, max_day_sigma
+    )
     out["res"] = residual
     out["day_sigma"] = day_sigma
     out["good"] = good

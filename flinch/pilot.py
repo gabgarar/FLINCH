@@ -88,7 +88,8 @@ def stacked_profile(events: pd.DataFrame, series: epoch.Series, subset: str, sam
 def inject(observations: pd.DataFrame, events: pd.DataFrame, amplitude_ms: float) -> pd.DataFrame:
     """Copy of the raw table with a box of ``amplitude_ms`` added in the signal window of each event."""
     out = observations.copy()
-    jd = (out["obsjd"] + 0.5 * quality.DEFAULT_EXPOSURE_S / 86400.0).to_numpy()
+    exposure = out["exptime"].where(out["exptime"] > 0, quality.DEFAULT_EXPOSURE_S) if "exptime" in out else quality.DEFAULT_EXPOSURE_S
+    jd = (out["obsjd"] + 0.5 * exposure / 86400.0).to_numpy()
     order = np.argsort(jd)
     start, peak = epoch.event_times(events)
     first = np.searchsorted(jd[order], start, side="left")

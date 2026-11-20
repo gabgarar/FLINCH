@@ -20,14 +20,14 @@ from matplotlib.ticker import NullLocator  # noqa: E402
 COLUMN_MM = 88.0
 PAGE_MM = 180.0
 # Two colours checked together for colour-vision deficiencies; the two samples also differ in
-# the kind of mark (points with error bars against a band), so the figure reads in grey.
+# the kind of mark (points with error bars against a band, circles against triangles), so the
+# figures read in grey.
 FLARES = "#1f5fa8"
 CONTROLS = "#c8501e"
 GUIDE = "0.45"  # reference lines
 BAND = "0.87"  # scatter bands
 EARTH_SIGNAL_MS = 0.09  # reflex velocity of the Sun due to the Earth
-
-SUBSET_LABELS = {"M and X": "M- and X-class flares", "M5 and above": "M5 and above", "X": "X-class flares"}
+INSTRUMENT_MARKS = {"NEID": (FLARES, "o"), "HARPS-N": (CONTROLS, "^")}
 
 # The quantities of the figure of one flare: four columns by three rows.
 EVENT_QUANTITIES = (
@@ -43,6 +43,13 @@ EVENT_QUANTITIES = (
     ("ccf_fwhm_kms", "Width of the mean line", "ppm"),
     ("ccf_bis_ms", "Bisector span", r"m s$^{-1}$"),
     ("rv_ms", "Radial velocity", r"m s$^{-1}$"),
+)
+# The panels of the figure of the stacked response of the spectra.
+CURVE_PANELS = (
+    ("CaIIHK", "Ca II H and K (ppt)"),
+    ("Ha06_1_tellcorr", r"H$\alpha$ core (ppt)"),
+    ("CaI_1_tellcorr", "Ca I 6573 Å, reference (ppt)"),
+    ("rv_ms", r"Radial velocity (m s$^{-1}$)"),
 )
 
 
@@ -124,76 +131,92 @@ def binned_means(x, y, edges) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     return np.array(centres), np.array(means), np.array(errors)
 
 
-def profiles(table: pd.DataFrame, path: Path) -> Path:
-    """Mean velocity around the X-ray peak, flares against controls: one panel per subset, one column wide.
+def _flares_and_controls(ax, flares: pd.DataFrame, controls: pd.DataFrame) -> None:
+    """Flares as points with error bars, controls as a line with a band of one standard error."""
+    ax.fill_between(
+        controls["minutes"], controls["mean"] - controls["sem"], controls["mean"] + controls["sem"],
+        color=CONTROLS, alpha=0.25, linewidth=0, zorder=2,
+    )
+    ax.plot(controls["minutes"], controls["mean"], color=CONTROLS, linewidth=0.9, zorder=3,
+            label=f"Controls ({int(controls['events'].max())})" if len(controls) else None)
+    ax.errorbar(
+        flares["minutes"], flares["mean"], yerr=flares["sem"], color=FLARES, marker="o", linewidth=0.6, elinewidth=0.7,
+        zorder=4, label=f"Flares ({int(flares['events'].max())})" if len(flares) else None,
+    )
 
-    Each panel has its own vertical scale, because the noise grows as the subset shrinks; the
-    dotted lines at plus and minus 9 cm/s (the reflex velocity due to the Earth) give the scale.
+
+def profiles(table: pd.DataFrame, path: Path, subset: str = "M and X") -> Path:
+    """Mean velocity around the X-ray peak, flares against controls: one panel per instrument, one column wide.
+
+    ``table`` is the output of ``replication.stacked_profiles`` for every instrument. The panels
+    share the vertical scale; the dotted lines at plus and minus 9 cm/s (the reflex velocity
+    due to the Earth) give its size.
     """
-    subsets = list(dict.fromkeys(table["subset"]))
+    table = table[table["subset"] == subset]
+    instruments = list(dict.fromkeys(table["instrument"]))
+    height = 16.0 + 40.0 * len(instruments)
     with plt.rc_context(style()):
-        fig, axes = plt.subplots(len(subsets), 1, figsize=_inches(COLUMN_MM, 30.0 + 34.0 * len(subsets)), sharex=True)
+        fig, axes = plt.subplots(len(instruments), 1, figsize=_inches(COLUMN_MM, height), sharex=True, sharey=True)
         axes = np.atleast_1d(axes)
-        for ax, subset in zip(axes, subsets):
-            chosen = table[table["subset"] == subset]
-            controls = chosen[chosen["sample"] == "controls"]
+        extent = 0.0
+        for ax, instrument in zip(axes, instruments):
+            chosen = table[table["instrument"] == instrument]
             flares = chosen[chosen["sample"] == "flares"]
             ax.axhline(0.0, color=GUIDE, linewidth=0.5, zorder=1)
             for level in (-EARTH_SIGNAL_MS, EARTH_SIGNAL_MS):
                 ax.axhline(level, color=GUIDE, linewidth=0.6, linestyle=(0, (1, 2)), zorder=1)
             ax.axvline(0.0, color=GUIDE, linewidth=0.6, linestyle=(0, (4, 2)), zorder=1)
-            ax.fill_between(
-                controls["minutes"], controls["mean"] - controls["sem"], controls["mean"] + controls["sem"],
-                color=CONTROLS, alpha=0.25, linewidth=0, zorder=2,
-            )
-            ax.plot(controls["minutes"], controls["mean"], color=CONTROLS, linewidth=0.9, zorder=3,
-                    label=f"Controls ({int(controls['events'].iloc[0])})")
-            ax.errorbar(
-                flares["minutes"], flares["mean"], yerr=flares["sem"], color=FLARES, marker="o", linewidth=0.6,
-                elinewidth=0.7, zorder=4, label=f"Flares ({int(flares['events'].iloc[0])})",
-            )
-            extent = float(np.nanmax(np.abs(np.concatenate([flares["mean"] + flares["sem"], flares["mean"] - flares["sem"]]))))
-            limit = _round_up(max(1.25 * extent, 0.2), 0.1)
-            ax.set_ylim(-limit, limit)
-            ax.text(0.025, 0.93, SUBSET_LABELS.get(subset, str(subset)), transform=ax.transAxes, va="top", ha="left")
+            _flares_and_controls(ax, flares, chosen[chosen["sample"] == "controls"])
+            edge = np.abs(np.concatenate([flares["mean"] + flares["sem"], flares["mean"] - flares["sem"]]))
+            extent = max(extent, float(np.nanmax(edge)))
+            ax.text(0.025, 0.93, str(instrument), transform=ax.transAxes, va="top", ha="left")
             ax.legend(loc="lower left", ncol=2, columnspacing=1.2, handletextpad=0.5)
-        axes[0].text(
-            88.0, EARTH_SIGNAL_MS, r"$\pm$9 cm s$^{-1}$", va="bottom", ha="right", fontsize=7.0, color="0.25",
-        )
+        limit = _round_up(max(1.35 * extent, 0.2), 0.1)
+        axes[0].set_ylim(-limit, limit)
+        axes[0].text(88.0, EARTH_SIGNAL_MS, r"$\pm$9 cm s$^{-1}$", va="bottom", ha="right", fontsize=7.0, color="0.25")
         axes[-1].set_xlabel("Time from the X-ray peak (min)")
         axes[-1].set_xlim(-60.0, 90.0)
         axes[-1].set_xticks(np.arange(-60, 91, 30))
         fig.supylabel(r"Velocity change (m s$^{-1}$)", fontsize=8.0, x=0.02)
-        fig.subplots_adjust(left=0.155, right=0.985, top=0.99, bottom=0.085, hspace=0.07)
+        fig.subplots_adjust(left=0.155, right=0.985, top=1.0 - 1.5 / height, bottom=9.5 / height, hspace=0.07)
         return _save(fig, path)
 
 
-def events(flares: pd.DataFrame, controls: pd.DataFrame, path: Path) -> Path:
-    """Velocity change of each flare against its class and its position across the disc, one page wide."""
-    sigma = float(controls["delta"].std(ddof=1))
-    centre = float(controls["delta"].mean())
-    flux = flares["peak_flux"].to_numpy()
-    delta = flares["delta"].to_numpy()
+def events(table: pd.DataFrame, path: Path) -> Path:
+    """Velocity change of each flare against its class and its position across the disc, one page wide.
+
+    ``table`` is the event table of ``replication.run``: the flares of every instrument with
+    their paired change ``d``, and the controls with their change ``delta``, whose scatter is
+    drawn as a band. The squares are the means of all the flares in bins.
+    """
+    flares = table[(table["sample"] == "flare") & np.isfinite(table["d"])]
+    sigma = float(table.loc[table["sample"] == "control", "delta"].std(ddof=1))
+    flux, delta = flares["peak_flux"].to_numpy(), flares["d"].to_numpy()
     on_disc = (flares["r_norm"] < 1.05).to_numpy()
     position = flares["x_norm"].to_numpy()
     with plt.rc_context(style()):
         fig, (left, right) = plt.subplots(1, 2, figsize=_inches(PAGE_MM, 68.0), sharey=True)
         for ax in (left, right):
-            ax.axhspan(centre - sigma, centre + sigma, color=CONTROLS, alpha=0.16, linewidth=0, zorder=1,
-                       label=r"Controls, mean $\pm$ 1 standard deviation")
-            ax.axhline(centre, color=CONTROLS, linewidth=0.9, zorder=2)
-        left.scatter(flux, delta, s=7.0, facecolor="none", edgecolor=FLARES, linewidth=0.6, zorder=3, label="One flare")
-        x, mean, error = binned_means(flux, delta, np.array([1e-5, 2e-5, 5e-5, 1e-4, 1e-3]))
+            ax.axhspan(-sigma, sigma, color=BAND, linewidth=0, zorder=1, label="Scatter of the controls")
+            ax.axhline(0.0, color=GUIDE, linewidth=0.5, zorder=2)
+        for instrument in dict.fromkeys(flares["instrument"]):
+            colour, marker = INSTRUMENT_MARKS.get(instrument, ("0.3", "D"))
+            chosen = (flares["instrument"] == instrument).to_numpy()
+            mark = {"s": 8.0, "facecolor": "none", "edgecolor": colour, "linewidth": 0.6, "marker": marker, "zorder": 3}
+            left.scatter(flux[chosen], delta[chosen], label=f"{instrument} ({int(chosen.sum())})", **mark)
+            right.scatter(position[chosen & on_disc], delta[chosen & on_disc], **mark)
+        top = max(1.0e-3, 1.3 * float(np.nanmax(flux)))
+        x, mean, error = binned_means(flux, delta, np.array([1e-5, 2e-5, 5e-5, 1e-4, top]))
         left.errorbar(x, mean, yerr=error, fmt="s", color="black", markersize=3.4, elinewidth=0.9, zorder=5, label="Mean in each bin")
         left.set_xscale("log")
-        left.set_xlim(8.5e-6, 9.0e-4)
-        left.set_xticks([1e-5, 2e-5, 5e-5, 1e-4, 2e-4, 5e-4])
-        left.set_xticklabels(["M1", "M2", "M5", "X1", "X2", "X5"])
+        left.set_xlim(8.5e-6, top)
+        ticks = [(1e-5, "M1"), (2e-5, "M2"), (5e-5, "M5"), (1e-4, "X1"), (2e-4, "X2"), (5e-4, "X5"), (1e-3, "X10")]
+        left.set_xticks([value for value, _ in ticks if value < top])
+        left.set_xticklabels([label for value, label in ticks if value < top])
         left.xaxis.set_minor_locator(NullLocator())
         left.set_xlabel("GOES class")
         left.set_ylabel(r"Velocity change (m s$^{-1}$)")
 
-        right.scatter(position[on_disc], delta[on_disc], s=7.0, facecolor="none", edgecolor=FLARES, linewidth=0.6, zorder=3)
         x, mean, error = binned_means(position[on_disc], delta[on_disc], np.linspace(-1.0, 1.0, 6))
         right.errorbar(x, mean, yerr=error, fmt="s", color="black", markersize=3.4, elinewidth=0.9, zorder=5)
         right.set_xlim(-1.1, 1.1)
@@ -204,10 +227,35 @@ def events(flares: pd.DataFrame, controls: pd.DataFrame, path: Path) -> Path:
         right.text(0.02, 0.04, "east limb, approaching", transform=right.transAxes, ha="left", va="bottom", fontsize=7.0, color="0.25")
         right.text(0.98, 0.04, "west limb, receding", transform=right.transAxes, ha="right", va="bottom", fontsize=7.0, color="0.25")
         handles, labels = left.get_legend_handles_labels()
-        order = [labels.index(name) for name in ("One flare", "Mean in each bin", r"Controls, mean $\pm$ 1 standard deviation")]
-        fig.legend([handles[i] for i in order], [labels[i] for i in order], loc="upper center", ncol=3, columnspacing=2.5,
+        order = [i for i, name in enumerate(labels) if not name.startswith(("Mean", "Scatter"))]
+        order += [i for i, name in enumerate(labels) if name.startswith("Mean")] + [i for i, name in enumerate(labels) if name.startswith("Scatter")]
+        fig.legend([handles[i] for i in order], [labels[i] for i in order], loc="upper center", ncol=len(order), columnspacing=2.2,
                    bbox_to_anchor=(0.53, 1.0))
         fig.subplots_adjust(left=0.07, right=0.99, top=0.915, bottom=0.145, wspace=0.04)
+        return _save(fig, path)
+
+
+def light_curves(table: pd.DataFrame, path: Path, panels=CURVE_PANELS) -> Path:
+    """Mean change of chromospheric indices and of the velocity through the flares, against the controls; one page wide.
+
+    ``table`` is the output of ``chromosphere.light_curves``: one row per group ("disc flares",
+    "controls"), quantity and time bin, with the mean over the events and its standard error.
+    """
+    with plt.rc_context(style()):
+        fig, axes = plt.subplots(1, len(panels), figsize=_inches(PAGE_MM, 56.0), sharex=True)
+        axes = np.atleast_1d(axes)
+        for ax, (column, label) in zip(axes, panels):
+            chosen = table[table["quantity"] == column]
+            ax.axhline(0.0, color=GUIDE, linewidth=0.5, zorder=1)
+            ax.axvline(0.0, color=GUIDE, linewidth=0.6, linestyle=(0, (4, 2)), zorder=1)
+            _flares_and_controls(ax, chosen[chosen["group"] == "disc flares"], chosen[chosen["group"] == "controls"])
+            ax.set_title(label)
+            ax.set_xlabel("Time from the X-ray peak (min)")
+            ax.margins(y=0.14)
+        low, high = axes[0].get_ylim()
+        axes[0].set_ylim(low, high + 0.2 * (high - low))  # room for the legend above the curves
+        axes[0].legend(loc="upper left", ncol=2, columnspacing=1.2, handletextpad=0.5)
+        fig.subplots_adjust(left=0.04, right=0.995, top=0.915, bottom=0.175, wspace=0.22)
         return _save(fig, path)
 
 
@@ -216,8 +264,9 @@ def event(changes: pd.DataFrame, path: Path, quantities=EVENT_QUANTITIES, column
     rows = int(np.ceil(len(quantities) / columns))
     time = changes["min_peak"].to_numpy()
     start_min = float((changes["min_peak"] - changes["min_start"]).iloc[0])  # start of the flare, minutes from the peak
+    height = 12.0 + 33.0 * rows
     with plt.rc_context(style()):
-        fig, axes = plt.subplots(rows, columns, figsize=_inches(PAGE_MM, 12.0 + 33.0 * rows), sharex=True)
+        fig, axes = plt.subplots(rows, columns, figsize=_inches(PAGE_MM, height), sharex=True)
         axes = np.atleast_1d(axes).ravel()
         for ax, (column, label, unit) in zip(axes, quantities):
             sigma = float(changes[f"{column}_sigma"].iloc[0])
@@ -236,30 +285,35 @@ def event(changes: pd.DataFrame, path: Path, quantities=EVENT_QUANTITIES, column
             ax.tick_params(labelbottom=True)
         axes[0].set_xlim(float(np.nanmin(time)) - 2.0, max(float(np.nanmax(time)), 0.0) + 2.0)
         low, high = axes[0].get_ylim()
-        height = high - low
-        axes[0].set_ylim(low, high + 0.16 * height)
-        axes[0].text(start_min, high + 0.14 * height, " start", fontsize=7.0, color="0.25", va="top", ha="left")
-        axes[0].text(0.0, high + 0.14 * height, "peak ", fontsize=7.0, color="0.25", va="top", ha="right")
-        fig.subplots_adjust(left=0.05, right=0.99, top=1.0 - 4.5 / (12.0 + 33.0 * rows), bottom=10.5 / (12.0 + 33.0 * rows), wspace=0.24, hspace=0.3)
+        span = high - low
+        axes[0].set_ylim(low, high + 0.16 * span)
+        axes[0].text(start_min, high + 0.14 * span, " start", fontsize=7.0, color="0.25", va="top", ha="left")
+        axes[0].text(0.0, high + 0.14 * span, "peak ", fontsize=7.0, color="0.25", va="top", ha="right")
+        fig.subplots_adjust(left=0.05, right=0.99, top=1.0 - 4.5 / height, bottom=10.5 / height, wspace=0.24, hspace=0.3)
         return _save(fig, path)
 
 
-def make_all(directory: Path, event_name: str = "20240222_2233_X6.3") -> list[Path]:
-    """Write the figures of the paper from the tables in ``results/`` and the spectra of one flare."""
-    from . import neid, quality, response
+def make_all(directory: Path, event_name: str | None = None) -> list[Path]:
+    """Write the figures of the paper from the tables in ``results/`` (see ``flinch replication``) and the spectra on disk.
+
+    With ``event_name`` the figure of that single flare is written as well.
+    """
+    from . import chromosphere, neid, quality, response
     from .config import data_dir, results_dir
 
     directory = Path(directory)
     results = results_dir()
-    written = [profiles(pd.read_csv(results / "pilot_profiles.csv"), directory / "profiles.pdf")]
-    flares = pd.read_csv(results / "pilot_flares.csv")
-    controls = pd.read_csv(results / "pilot_controls.csv")
-    flares = flares[flares["measured"] & flares["delta"].notna()]
-    controls = controls[controls["measured"] & controls["delta"].notna()]
-    written.append(events(flares, controls, directory / "events.pdf"))
-    manifest = pd.read_csv(data_dir() / "spectra" / "events.csv").set_index("name")
-    row = manifest.loc[event_name]
-    keep = quality.stable_obsjd(neid.read_solar_table())
-    table = response.event_table(data_dir() / "spectra" / event_name, row["jd_start"], row["jd_peak"], keep_obsjd=keep)
-    written.append(event(response.changes(table), directory / f"event_{event_name}.pdf"))
+    stacked = pd.read_csv(results / "replication_profiles.csv")
+    written = [
+        profiles(stacked, directory / "profiles.pdf"),
+        profiles(stacked, directory / "profiles_x.pdf", subset="X"),
+        events(pd.read_csv(results / "replication_events.csv"), directory / "events.pdf"),
+        light_curves(chromosphere.light_curves(min_class="X1.0"), directory / "light_curves.pdf"),
+    ]
+    if event_name:
+        manifest = pd.read_csv(data_dir() / "spectra" / "events.csv").set_index("name")
+        row = manifest.loc[event_name]
+        keep = quality.stable_obsjd(neid.read_solar_table())
+        table = response.event_table(data_dir() / "spectra" / event_name, row["jd_start"], row["jd_peak"], keep_obsjd=keep)
+        written.append(event(response.changes(table), directory / f"event_{event_name}.pdf"))
     return written
