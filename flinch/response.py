@@ -18,6 +18,15 @@ QUANTITIES = (
     ("NaI_tellcorr", "Na I D", "ppt"),
     ("CaIRT2_tellcorr", "Ca II 8542", "ppt"),
     ("CaI_1_tellcorr", "Ca I 6573 (photospheric reference)", "ppt"),
+    ("Ha16_1_tellcorr", "H alpha, 1.6 A band", "ppt"),
+    ("CaIRT1_tellcorr", "Ca II 8498", "ppt"),
+    ("CaIRT3_tellcorr", "Ca II 8662", "ppt"),
+    ("NaINIR_tellcorr", "Na I 8183 and 8195", "ppt"),
+    ("PaDelta_tellcorr", "Paschen delta", "ppt"),
+    ("Mn539_tellcorr", "Mn I 5395", "ppt"),
+    ("Hbeta_core", "H beta core (own index)", "ppt"),
+    ("MgIb2_core", "Mg I b2 core (own index)", "ppt"),
+    ("CaIIK_core", "Ca II K core (own index)", "ppt"),
     ("ccf_depth", "Depth of the mean line", "ppm"),
     ("ccf_fwhm_kms", "Width of the mean line", "ppm"),
     ("ccf_area_kms", "Area of the mean line", "ppm"),
@@ -25,6 +34,28 @@ QUANTITIES = (
     ("rv_ms", "Radial velocity", "m/s"),
 )
 SCALE = {"ppt": 1.0e3, "ppm": 1.0e6}
+# Own indices from the saved line windows: window, line centre and half-width of the core, and the
+# two reference bands (vacuum wavelengths in Angstrom). Index = mean core flux / mean reference flux.
+OWN_INDICES = {
+    "Hbeta_core": ("Hbeta", 4862.68, 0.25, (4856.5, 4858.5), (4866.5, 4868.5)),
+    "MgIb2_core": ("MgI_b", 5174.13, 0.15, (5176.0, 5178.0), (5180.0, 5182.0)),
+    "CaIIK_core": ("CaII_HK", 3934.78, 0.50, (3950.0, 3955.0), (3958.0, 3962.0)),
+}
+
+
+def own_indices(arrays: dict) -> pd.DataFrame:
+    """Line-core indices measured on the saved windows of the stitched spectra."""
+    out = {}
+    for name, (window, centre, half, first, second) in OWN_INDICES.items():
+        flux = arrays[f"{window}_flux"]
+        if len(flux) == 0:  # every spectrum of the window was rejected
+            out[name] = np.array([])
+            continue
+        wave = arrays[f"{window}_wave"][0]
+        core = np.abs(wave - centre) <= half
+        reference = ((wave >= first[0]) & (wave <= first[1])) | ((wave >= second[0]) & (wave <= second[1]))
+        out[name] = flux[:, core].mean(axis=1) / flux[:, reference].mean(axis=1)
+    return pd.DataFrame(out)
 
 
 def event_table(directory: Path, jd_start: float, jd_peak: float, keep_obsjd=None) -> pd.DataFrame:
@@ -45,7 +76,7 @@ def event_table(directory: Path, jd_start: float, jd_peak: float, keep_obsjd=Non
         arrays = {key: value[kept] for key, value in arrays.items()}
     with np.load(next(Path(directory).glob("neidL2_*.npz"))) as first:
         ccf_start, ccf_step = float(first["ccfstart"]), float(first["ccfstep"])
-    table = pd.concat([table, lineshape.measure(arrays["ccf"], ccf_start, ccf_step)], axis=1)
+    table = pd.concat([table, lineshape.measure(arrays["ccf"], ccf_start, ccf_step), own_indices(arrays)], axis=1)
     table["min_peak"] = (table["jd"] - jd_peak) / MINUTE
     table["min_start"] = (table["jd"] - jd_start) / MINUTE
     return table

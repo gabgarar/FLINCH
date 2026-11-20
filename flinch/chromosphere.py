@@ -17,6 +17,15 @@ INDICES = (
     ("HeI_1_tellcorr", "He I D3"),
     ("NaI_tellcorr", "Na I D"),
     ("CaI_1_tellcorr", "Ca I 6573 (reference)"),
+    ("Ha16_1_tellcorr", "H alpha, 1.6 A band"),
+    ("CaIRT1_tellcorr", "Ca II 8498"),
+    ("CaIRT3_tellcorr", "Ca II 8662"),
+    ("NaINIR_tellcorr", "Na I 8183 and 8195"),
+    ("PaDelta_tellcorr", "Paschen delta"),
+    ("Mn539_tellcorr", "Mn I 5395"),
+    ("Hbeta_core", "H beta core (own)"),
+    ("MgIb2_core", "Mg I b2 core (own)"),
+    ("CaIIK_core", "Ca II K core (own)"),
 )
 
 
