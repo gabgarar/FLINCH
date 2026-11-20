@@ -154,7 +154,7 @@ def profiles(table: pd.DataFrame, path: Path, subset: str = "M and X") -> Path:
     """
     table = table[table["subset"] == subset]
     instruments = list(dict.fromkeys(table["instrument"]))
-    height = 16.0 + 40.0 * len(instruments)
+    height = 16.0 + 34.0 * len(instruments)
     with plt.rc_context(style()):
         fig, axes = plt.subplots(len(instruments), 1, figsize=_inches(COLUMN_MM, height), sharex=True, sharey=True)
         axes = np.atleast_1d(axes)
@@ -195,7 +195,7 @@ def events(table: pd.DataFrame, path: Path) -> Path:
     on_disc = (flares["r_norm"] < 1.05).to_numpy()
     position = flares["x_norm"].to_numpy()
     with plt.rc_context(style()):
-        fig, (left, right) = plt.subplots(1, 2, figsize=_inches(PAGE_MM, 68.0), sharey=True)
+        fig, (left, right) = plt.subplots(1, 2, figsize=_inches(PAGE_MM, 60.0), sharey=True)
         for ax in (left, right):
             ax.axhspan(-sigma, sigma, color=BAND, linewidth=0, zorder=1, label="Scatter of the controls")
             ax.axhline(0.0, color=GUIDE, linewidth=0.5, zorder=2)
@@ -231,7 +231,7 @@ def events(table: pd.DataFrame, path: Path) -> Path:
         order += [i for i, name in enumerate(labels) if name.startswith("Mean")] + [i for i, name in enumerate(labels) if name.startswith("Scatter")]
         fig.legend([handles[i] for i in order], [labels[i] for i in order], loc="upper center", ncol=len(order), columnspacing=2.2,
                    bbox_to_anchor=(0.53, 1.0))
-        fig.subplots_adjust(left=0.07, right=0.99, top=0.915, bottom=0.145, wspace=0.04)
+        fig.subplots_adjust(left=0.07, right=0.99, top=0.903, bottom=0.165, wspace=0.04)
         return _save(fig, path)
 
 
@@ -302,7 +302,7 @@ def method_example(example: dict, path: Path) -> Path:
     and ``during`` (pairs of minutes), ``start_min`` and ``title``.
     """
     with plt.rc_context(style()):
-        fig, axes = plt.subplots(2, 2, figsize=_inches(PAGE_MM, 84.0), sharex=True, sharey="row", height_ratios=(1.0, 1.5))
+        fig, axes = plt.subplots(2, 2, figsize=_inches(PAGE_MM, 74.0), sharex=True, sharey="row", height_ratios=(1.0, 1.5))
         for column, key in enumerate(("flare", "control")):
             day = example[key]
             top, bottom = axes[0, column], axes[1, column]
@@ -332,7 +332,7 @@ def method_example(example: dict, path: Path) -> Path:
         before, during = example["flare"]["before"], example["flare"]["during"]
         axes[1, 0].text(0.5 * sum(before), 0.93 * limit, "before", ha="center", va="top", fontsize=7.5)
         axes[1, 0].text(0.5 * sum(during), 0.93 * limit, "during", ha="center", va="top", fontsize=7.5, color=FLARES)
-        fig.subplots_adjust(left=0.07, right=0.99, top=0.945, bottom=0.12, wspace=0.04, hspace=0.08)
+        fig.subplots_adjust(left=0.07, right=0.99, top=0.938, bottom=0.136, wspace=0.04, hspace=0.08)
         return _save(fig, path)
 
 

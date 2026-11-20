@@ -67,4 +67,7 @@ follow-up.
 
 !!! note
     The papers by Pietrow et al. (2024), Otsu et al. (2022, 2024, 2026), Kretzschmar
-    (2010, 2011) and Dumusque et al. (2026) have been read in full; the rest of the list rests on their abstracts.
+    (2010, 2011) and Dumusque et al. (2026) have been read in full. Two more were checked for
+    the one thing they are cited for: the rotation rate in Table 1 of Snodgrass & Ulrich (1990),
+    and the quality flag in Sect. 2.3 of Collier Cameron et al. (2019). The rest of the list
+    rests on their abstracts.

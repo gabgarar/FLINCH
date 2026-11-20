@@ -33,7 +33,7 @@ artefacto de un instrumento, no.
 | Paso | Qué se hace |
 |---|---|
 | Tiempo | La marca de tiempo UTC del nombre de cada archivo es el inicio de la exposición; se le suma media exposición. La fecha baricéntrica de la tabla es unos siete minutos anterior y no se usa. |
-| Nubes | Se descartan las exposiciones con el indicador de calidad de la publicación por debajo de 0,99, o marcadas por su cadena de reducción. |
+| Nubes | Se descartan las exposiciones con el indicador de calidad de la publicación por debajo de 0,99, o marcadas por su cadena de reducción. La publicación recomienda 0,9; con ese valor el resultado es el mismo (−0,005 ± 0,038 m/s en 126 fulguraciones). |
 | Tendencia diaria | Un polinomio de grado 2 por día, con el mismo recorte y el mismo corte en la dispersión del día que en NEID. Un día necesita 20 exposiciones conservadas. |
 | Resultado | 93 593 velocidades en 1671 días. |
 | Fulguraciones | Las de las listas de GOES-16 y GOES-18, que empiezan en febrero de 2017: 1750 de clase M o X, de las que 122 tienen las ventanas completas y 115 al menos tres controles. |

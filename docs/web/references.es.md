@@ -67,5 +67,7 @@ petición de un estudio estadístico.
 
 !!! note "Nota"
     Los artículos de Pietrow et al. (2024), Otsu et al. (2022, 2024, 2026), Kretzschmar
-    (2010, 2011) y Dumusque et al. (2026) se han leído completos; el resto de la lista se
-    apoya en sus resúmenes.
+    (2010, 2011) y Dumusque et al. (2026) se han leído completos. En otros dos se ha
+    comprobado aquello por lo que se citan: la velocidad de rotación en la Tabla 1 de
+    Snodgrass y Ulrich (1990) y el indicador de calidad en la Sect. 2.3 de Collier Cameron et
+    al. (2019). El resto de la lista se apoya en sus resúmenes.
