@@ -4,8 +4,14 @@
 *¿Se inmuta el Sol cuando fulgura?*
 
 Estado a 20 de noviembre de 2026: fases 0 a 3 hechas para la velocidad (resultado nulo, con
-controles, robustez e inyecciones) y fase 4 empezada (primeras detecciones en líneas
-cromosféricas). Los resultados están en [resultados.md](resultados.md).
+controles, robustez e inyecciones) y fase 4 avanzada (12 fulguraciones X con espectros).
+Los resultados están en [resultados.md](resultados.md).
+
+**Enfoque del artículo, decidido el 20-11-2026:** el resultado principal es la velocidad,
+que es lo que no ha hecho nadie para el Sol (solo hay dos fulguraciones publicadas, en
+Pietrow et al. 2024). La respuesta cromosférica ya se conoce por trabajos con otros
+instrumentos y pasa a ser el apoyo: demuestra que los mismos espectros sí ven las
+fulguraciones.
 
 ## 1. La pregunta
 
@@ -203,7 +209,7 @@ Una revisión del plan pidió reforzar seis puntos. Estado de cada uno:
 | El análisis con signo como eje, no como comprobación | El ajuste frente a flujo × rotación proyectada es uno de los tres resultados principales. |
 | Escala física explícita | Se formula como ΔRV ≈ (ΔF/F) · v_rot · K y la cota se da sobre K · ΔF/F. |
 | Fijar el modelo de fondo | Opciones por defecto escritas y tabla de robustez variándolas. Se fijaron tras el primer piloto, no antes. |
-| Sucesos no independientes | Bootstrap por día de observación. Falta agrupar por región activa. |
+| Sucesos no independientes | Bootstrap por día de observación y, como comprobación, por región activa (81 grupos): los errores cambian menos de un 2 %. |
 | Controles falsos más exigentes | Inyección a 5, 10, 20 y 50 cm/s y permutación de posiciones. Los controles del mismo día solo existen para 8 fulguraciones. |
 
 ## 10. Referencias de partida

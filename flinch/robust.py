@@ -104,6 +104,39 @@ def paired(flare_delta: np.ndarray, controls: pd.DataFrame, control_delta: np.nd
     return flare_delta - reference
 
 
+def region_groups(flares: pd.DataFrame, lon_deg: float = 10.0, lat_deg: float = 8.0, days: float = 14.0) -> np.ndarray:
+    """Label of the active region of each flare, from positions alone.
+
+    Two flares belong to the same region when they are within ``days`` of each other and within
+    ``lon_deg`` in Carrington longitude and ``lat_deg`` in latitude; flares without heliographic
+    coordinates (at the limb) are grouped with the flares of their day. Groups are closed under
+    these links, so a region followed across the disc stays one group.
+    """
+    jd = flares["jd_peak"].to_numpy(dtype=float)
+    lon = flares["car_lon"].to_numpy(dtype=float)
+    lat = flares["lat"].to_numpy(dtype=float)
+    day = np.floor(jd - 0.5)
+    label = np.arange(len(flares))
+
+    def find(i):
+        while label[i] != i:
+            label[i] = label[label[i]]
+            i = label[i]
+        return i
+
+    for i in range(len(flares)):
+        for j in range(i + 1, len(flares)):
+            located = np.isfinite(lon[i]) and np.isfinite(lon[j]) and np.isfinite(lat[i]) and np.isfinite(lat[j])
+            if located:
+                apart = abs(lon[i] - lon[j]) % 360.0
+                same = abs(jd[i] - jd[j]) < days and min(apart, 360.0 - apart) < lon_deg and abs(lat[i] - lat[j]) < lat_deg
+            else:
+                same = day[i] == day[j]
+            if same:
+                label[find(i)] = find(j)
+    return np.array([find(i) for i in range(len(flares))])
+
+
 def day_bootstrap(values: dict[str, np.ndarray], days: np.ndarray, statistics: dict, draws: int = 4000, seed: int = 0) -> dict:
     """Value and standard error of each statistic, resampling observing days with replacement."""
     rng = np.random.default_rng(seed)
@@ -131,11 +164,17 @@ STATISTICS = {
 }
 
 
-def analyse(flares: pd.DataFrame, d: np.ndarray, label: str, seed: int = 0) -> dict:
-    """One row of the robustness table for the paired changes ``d``."""
+def analyse(flares: pd.DataFrame, d: np.ndarray, label: str, seed: int = 0, by_region: bool = False) -> dict:
+    """One row of the robustness table for the paired changes ``d``.
+
+    The bootstrap resamples observing days, or active regions with ``by_region`` (the column
+    ``days`` then counts regions).
+    """
     keep = np.isfinite(d)
     values = {"d": d[keep], "flux": pilot.flux_weight(flares)[keep], "rot": rotation_fraction(flares)[keep]}
     days = np.floor(flares["jd_peak"].to_numpy()[keep] - 0.5)
+    if by_region:
+        days = region_groups(flares)[keep]
     result = day_bootstrap(values, days, STATISTICS, seed=seed)
     row = {"configuration": label, "flares": int(keep.sum()), "days": int(len(np.unique(days)))}
     for name, (value, error) in result.items():
@@ -199,6 +238,7 @@ def run(seed: int = 0) -> dict:
     rows.append(analyse(flares, d, "Background: straight line fitted locally on both sides", seed))
     d = paired(window_delta(flares, base, "rise"), same_day, window_delta(same_day, base, "rise"))
     rows.append(analyse(flares, d, "Controls: same day, 2 and 3 hours away", seed))
+    rows.append(analyse(flares, default, "Default, bootstrap over active regions instead of days", seed, by_region=True))
     x_class = (flares["peak_flux"] >= 1.0e-4).to_numpy()
     rows.append(analyse(flares[x_class].reset_index(drop=True), default[x_class], "Default, X-class flares only", seed))
     table = pd.DataFrame(rows)

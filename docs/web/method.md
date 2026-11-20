@@ -72,8 +72,9 @@ Snodgrass and Ulrich (1990), with the sine of the latitude taken as the height o
 
 Flares of the same day share the sky, the instrument and the active regions; up to 6 flares
 of the sample fall on one day. Errors come from a bootstrap that resamples whole observing
-days, 4000 times. For the rotation term, a permutation test shuffles the positions among the
-flares.
+days, 4000 times. Resampling active regions instead (81 groups of flares close in time and
+in Carrington coordinates) changes the errors by less than 2 %. For the rotation term, a
+permutation test shuffles the positions among the flares.
 
 ## Sensitivity
 

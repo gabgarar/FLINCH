@@ -62,15 +62,18 @@ def read_flloc(path: Path) -> pd.DataFrame:
     ``x_norm`` and ``y_norm`` are helioprojective coordinates in units of the solar radius
     (x positive towards the west limb, the receding one). ``r_norm`` is the distance to the disc
     centre. Positions come from the quadrant diode of the X-ray sensor and are unreliable for
-    weak flares; entries without a position are NaN.
+    weak flares; entries without a position are NaN. ``car_lon`` is the Carrington longitude,
+    which stays fixed for a region as the Sun rotates.
     """
     with h5py.File(path, "r") as handle:
         xy = handle["flloc_xy"][:].astype(float)
         radius = handle["solar_radius"][:].astype(float)
         hg = handle["flloc_hg"][:].astype(float)
+        carrington = handle["flloc_car"][:].astype(float)
         flare_id = handle["flare_id"][:]
     xy[xy < -9000.0] = np.nan
     hg[hg < -9000.0] = np.nan
+    carrington[carrington < -9000.0] = np.nan
     table = pd.DataFrame(
         {
             "flare_id": flare_id,
@@ -78,6 +81,7 @@ def read_flloc(path: Path) -> pd.DataFrame:
             "y_norm": xy[:, 1] / radius,
             "lon": hg[:, 0],
             "lat": hg[:, 1],
+            "car_lon": carrington[:, 0],
         }
     )
     table["r_norm"] = np.hypot(table["x_norm"], table["y_norm"])

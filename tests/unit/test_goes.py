@@ -79,3 +79,20 @@ def test_merge_drops_a_peak_inside_a_primary_flare_window():
     )
     merged = goes.merge_flare_lists(primary, secondary)
     assert list(merged["goes_class"]) == ["M2.0", "C5.0"]
+
+
+def test_region_groups_follow_a_region_across_days():
+    from flinch import robust
+
+    flares = pd.DataFrame(
+        {
+            "jd_peak": [100.3, 101.3, 104.3, 104.4, 140.3, 104.35],
+            "car_lon": [200.0, 203.0, 198.0, 20.0, 201.0, np.nan],
+            "lat": [15.0, 16.0, 14.0, -10.0, 15.0, np.nan],
+        }
+    )
+    groups = robust.region_groups(flares)
+    # the first three are one region; the fourth is elsewhere, but the limb flare of the same day
+    # (no coordinates) ties it to the third; the fifth is the same place five weeks later
+    assert groups[0] == groups[1] == groups[2] == groups[3] == groups[5]
+    assert groups[4] != groups[0]

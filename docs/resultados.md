@@ -47,6 +47,7 @@ K · ΔF/F < 1,2 × 10⁻⁴ por fulguración X1.
 | Ventana: primeros 10 min desde el inicio | 134 | −0,040 ± 0,035 | +0,006 ± 0,045 | −0,004 ± 0,080 |
 | Ventana: ±5 min del máximo en rayos X | 126 | −0,021 ± 0,042 | −0,111 ± 0,085 | −0,134 ± 0,154 |
 | Fondo: recta ajustada a ambos lados | 93 | −0,008 ± 0,040 | −0,032 ± 0,070 | −0,002 ± 0,113 |
+| Bootstrap por 81 regiones activas en vez de 111 días | 139 | −0,035 ± 0,035 | −0,010 ± 0,061 | −0,106 ± 0,082 |
 | Solo clase X | 11 | −0,060 ± 0,088 | +0,011 ± 0,065 | −0,051 ± 0,104 |
 
 Todo en m/s. "Por defecto" es: polinomio de grado 2 por día, ventana desde el inicio hasta
@@ -82,39 +83,40 @@ la misma en los 35 minutos posteriores al máximo que en los 35 anteriores al in
 En amplitud, un aumento medio superior al 8 % queda descartado. Es una prueba de la propuesta
 de Karoff y Kjeldsen (2008), con la limitación de que la cadencia de 83 s solo llega a 6 mHz.
 
-## 4. Las líneas cromosféricas sí responden (preliminar)
+## 4. Los mismos espectros sí ven las fulguraciones (preliminar)
 
-Los espectros completos de las fulguraciones más intensas muestran lo contrario que la
-velocidad: los índices cromosféricos suben con claridad cuando la fulguración está sobre el
-disco.
+Esta parte es el apoyo del resultado principal: demuestra que el resultado nulo en velocidad
+no se debe a que los espectros no capten las fulguraciones. Que H alfa responda a las
+fulguraciones en luz integrada ya se conoce (Otsu et al. 2022; Ma et al. 2024; Pietrow et
+al. 2024).
 
 ![Respuesta espectral a la fulguración X6.3 del 22 de febrero de 2024](web/img/event_20240222_2233_X6.3.png)
 
-Cambio medio entre 8 minutos antes y 10 después del máximo, respecto a los espectros previos
-al inicio, en partes por mil (velocidad en m/s):
+Cambio medio entre 8 minutos antes y 10 después del máximo, en partes por mil, para las 12
+fulguraciones X con espectros utilizables:
 
-| Fulguración | Posición | H alfa (núcleo) | Ca II H y K | Ca II 8542 | Velocidad |
-|---|---|---|---|---|---|
-| X6.3, 22-02-2024 | disco (r = 0,59) | +5,3 ± 0,5 | +6,9 ± 1,2 | +2,3 ± 0,6 | +1,0 ± 0,4 |
-| X2.8, 14-12-2023 | disco (r = 0,76) | +1,57 ± 0,09 | +4,0 ± 1,4 | +1,7 ± 0,3 | −0,4 ± 0,2 |
-| X8.6, 14-05-2024 | limbo (r = 1,00) | +0,6 ± 0,6 | +1,1 ± 0,8 | +0,7 ± 0,5 | −0,3 ± 0,7 |
-| X1.9, 23-02-2025 | casi limbo (r = 0,96) | −1,4 ± 0,4 | +0,2 ± 0,8 | +0,4 ± 0,4 | +0,3 ± 0,6 |
+| Índice | Detectadas a más de 3 sigmas | Media en el disco (8) | Media cerca del limbo (4) | Dispersión de los controles (3) |
+|---|---|---|---|---|
+| H alfa, núcleo de 0,6 Å | 9 | +3,3 | +0,8 | 0,6 |
+| Ca II H y K | 9 | +5,3 | +1,7 | 0,6 |
+| H beta, núcleo (índice propio) | 9 | +2,2 | +0,9 | 0,14 |
+| H alfa, banda de 1,6 Å | 8 | +1,1 | +0,4 | 0,12 |
+| Ca II 8542 | 8 | +2,2 | +0,9 | 1,0 |
+| Ca I 6573 (referencia fotosférica) | 1 | 0,0 | +0,2 | 0,17 |
 
-Lo que se ve hasta ahora:
+- **Las ocho fulguraciones sobre el disco se detectan en H alfa**, de +1,0 a +10,9 partes
+  por mil. Cerca del limbo la respuesta es débil o nula.
+- **La respuesta sigue a la energía y a la posición, no a la clase**: correlación de rangos
+  de 0,6 a 0,8 con la fluencia por el escorzo, y negativa con la clase GOES. Con 12 puntos
+  es una indicación.
+- **H beta es el índice más limpio.** El triplete infrarrojo del Ca II deriva tanto como
+  responde. He I D3, Na I D, Paschen delta, Mn I 5395 y Mg I b2 no responden.
+- **La velocidad no sigue a la respuesta cromosférica**: 0,06 ± 0,07 m/s por parte por mil
+  de H alfa multiplicada por la rotación.
+- **Nueve de las 12 tienen una eyección candidata** en el catálogo de LASCO; las que no,
+  también responden.
 
-- **Sobre el disco, detección clara.** H alfa sube entre 0,6 y 0,8 partes por mil por cada
-  unidad de clase X, con significación de 10 a 17 sigmas.
-- **En el limbo, nada.** La emisión de los pies de la fulguración queda oculta o muy
-  escorzada.
-- **La velocidad sigue sin moverse** en los mismos espectros.
-
-Avisos:
-
-- Son cuatro fulguraciones. Otras tres ya descargadas se pierden por nubes o cielo inestable.
-- Falta la muestra de control para los espectros: el valor negativo de la X1.9 puede ser una
-  deriva lenta con la altura del Sol, y sin controles no se puede distinguir.
-- El error de cada valor sale de la dispersión de los espectros previos y no incluye esa
-  deriva.
+La tabla fulguración a fulguración está en `results/spectral_response.csv` y en la web.
 
 ## 5. Cómo se ha medido la velocidad
 
@@ -133,7 +135,9 @@ piloto, no antes; la tabla de la sección 2 muestra que el resultado no depende 
 
 ## 6. Lo que falta
 
-- **Más espectros.** Terminar la descarga de las fulguraciones más intensas y de sus
-  controles, y medir cómo escala la respuesta cromosférica con la clase y con la posición.
-- **Eruptivas frente a confinadas.** Falta cruzar con el catálogo de eyecciones.
-- **Búsqueda bibliográfica a texto completo** antes de escribir.
+- **Controles espectrales.** Hay 3 ventanas utilizables; faltan las de las otras
+  fulguraciones. La descarga depende de la velocidad de la conexión.
+- **Comparar con los análisis publicados** de las fulguraciones en común (por ejemplo la
+  X1.6 del 5 de agosto de 2023, en Otsu et al. 2024).
+- **Leer completos** los artículos de Otsu et al. (2022, 2026) antes de afirmar qué es nuevo
+  en la parte cromosférica.
