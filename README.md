@@ -20,15 +20,15 @@ size, and what that implies for planet searches around other Sun-like stars.
 
 ## Results so far
 
-Work in progress (November 2026). The velocity analysis is complete; the spectral one is
-preliminary.
+Work in progress (November 2026). The velocity analysis is complete; the spectral one rests
+on 12 flares and nine control windows.
 
 | Question | Answer |
 |---|---|
 | Does the velocity change during a flare? | No: −0.035 ± 0.035 m/s for 139 M and X flares against their own controls (95 % limit 0.09 m/s, the size of the signal of the Earth) |
 | Is there a rotation signature? | No: −0.11 ± 0.08 m/s per X1 flare at the limb |
 | Do flares excite the five-minute oscillations? | No, within 8 % in amplitude |
-| Do the same spectra see the flares? | Yes: H alpha rises in all 8 X flares on the disc with usable spectra, by 1 to 11 parts per thousand (preliminary) |
+| Do the same spectra see the flares? | Yes: Ca II H and K rise in all 8 X flares on the disc with usable spectra (+5.3 ± 0.4 parts per thousand on average), against no change in 9 control windows |
 
 ![Mean velocity around the flare peak](docs/web/img/pilot_profiles.png)
 

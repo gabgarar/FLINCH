@@ -2,7 +2,7 @@
 
 Estado a 20 de noviembre de 2026. Las secciones 1 a 3 se reproducen con `python -m flinch
 pilot` y `python -m flinch robustness`; las tablas quedan en `results/` y las figuras en
-`docs/web/img/`. La sección 4 es preliminar: la descarga de espectros sigue en curso.
+`docs/web/img/`. La sección 4 se apoya en 12 fulguraciones y 9 ventanas de control.
 
 ## 1. La velocidad del Sol no cambia durante las fulguraciones
 
@@ -83,7 +83,7 @@ la misma en los 35 minutos posteriores al máximo que en los 35 anteriores al in
 En amplitud, un aumento medio superior al 8 % queda descartado. Es una prueba de la propuesta
 de Karoff y Kjeldsen (2008), con la limitación de que la cadencia de 83 s solo llega a 6 mHz.
 
-## 4. Los mismos espectros sí ven las fulguraciones (preliminar)
+## 4. Los mismos espectros sí ven las fulguraciones
 
 Esta parte es el apoyo del resultado principal: demuestra que el resultado nulo en velocidad
 no se debe a que los espectros no capten las fulguraciones. Que H alfa responda a las
@@ -92,29 +92,37 @@ al. 2024).
 
 ![Respuesta espectral a la fulguración X6.3 del 22 de febrero de 2024](web/img/event_20240222_2233_X6.3.png)
 
-Cambio medio entre 8 minutos antes y 10 después del máximo, en partes por mil, para las 12
-fulguraciones X con espectros utilizables:
+Hay 12 fulguraciones X con espectros utilizables y 9 ventanas de control sin fulguración,
+medidas igual. La respuesta es el cambio medio entre 8 minutos antes y 10 después del máximo,
+en partes por mil. El error de cada fulguración suma en cuadratura la dispersión de sus
+propios espectros previos y la dispersión de los controles, que recoge las derivas lentas.
 
-| Índice | Detectadas a más de 3 sigmas | Media en el disco (8) | Media cerca del limbo (4) | Dispersión de los controles (3) |
+| Índice | Detectadas a más de 3 sigmas (de 12) | Media en el disco (8) | Media cerca del limbo (4) | Dispersión de los controles (9) |
 |---|---|---|---|---|
-| H alfa, núcleo de 0,6 Å | 9 | +3,3 | +0,8 | 0,6 |
-| Ca II H y K | 9 | +5,3 | +1,7 | 0,6 |
-| H beta, núcleo (índice propio) | 9 | +2,2 | +0,9 | 0,14 |
-| H alfa, banda de 1,6 Å | 8 | +1,1 | +0,4 | 0,12 |
-| Ca II 8542 | 8 | +2,2 | +0,9 | 1,0 |
-| Ca I 6573 (referencia fotosférica) | 1 | 0,0 | +0,2 | 0,17 |
+| Ca II H y K | 7 | +5,3 ± 1,7 | +1,7 ± 0,9 | 0,66 ± 0,16 |
+| H alfa, núcleo de 0,6 Å | 4 | +3,3 ± 1,1 | +0,8 ± 0,6 | 0,63 ± 0,16 |
+| H beta, núcleo (índice propio) | 3 | +2,2 ± 0,5 | +0,9 ± 0,5 | 0,60 ± 0,15 |
+| Ca II 8542 | 3 | +2,2 ± 0,7 | +0,9 ± 0,4 | 0,56 ± 0,14 |
+| H alfa, banda de 1,6 Å | 2 | +1,1 ± 0,3 | +0,4 ± 0,2 | 0,32 ± 0,08 |
+| Ca I 6573 (referencia fotosférica) | 0 | 0,0 ± 0,2 | +0,2 ± 0,3 | 0,21 ± 0,05 |
+| Velocidad radial (m/s) | 0 | −0,11 ± 0,21 | −0,06 ± 0,08 | 0,81 ± 0,20 |
 
-- **Las ocho fulguraciones sobre el disco se detectan en H alfa**, de +1,0 a +10,9 partes
-  por mil. Cerca del limbo la respuesta es débil o nula.
+- **Las ocho fulguraciones sobre el disco se abrillantan**, en Ca II H y K y en H alfa. Seis
+  superan las 3 sigmas por sí solas en Ca II H y K y cuatro en H alfa. Juntas, su media es de
+  +5,3 ± 0,4 y +3,3 ± 0,2 con solo los errores de medida, frente a −0,02 y −0,06 en los
+  controles.
+- **Ca II H y K es el índice más sensible.** Cerca del limbo la respuesta es débil o nula.
 - **La respuesta sigue a la energía y a la posición, no a la clase**: correlación de rangos
   de 0,6 a 0,8 con la fluencia por el escorzo, y negativa con la clase GOES. Con 12 puntos
   es una indicación.
-- **H beta es el índice más limpio.** El triplete infrarrojo del Ca II deriva tanto como
-  responde. He I D3, Na I D, Paschen delta, Mn I 5395 y Mg I b2 no responden.
-- **La velocidad no sigue a la respuesta cromosférica**: 0,06 ± 0,07 m/s por parte por mil
-  de H alfa multiplicada por la rotación.
+- **La velocidad no sigue a la respuesta cromosférica**: 0,18 ± 0,18 m/s por parte por mil
+  de H alfa multiplicada por la rotación. Con el error completo, los −1,4 m/s de la
+  fulguración que más responde son 1,5 sigmas.
 - **Nueve de las 12 tienen una eyección candidata** en el catálogo de LASCO; las que no,
   también responden.
+
+Con solo el error propio de cada fulguración salían 9 detecciones de 12 en H alfa: era
+optimista, porque ese error no incluye las derivas lentas.
 
 La tabla fulguración a fulguración está en `results/spectral_response.csv` y en la web.
 
@@ -135,9 +143,9 @@ piloto, no antes; la tabla de la sección 2 muestra que el resultado no depende 
 
 ## 6. Lo que falta
 
-- **Controles espectrales.** Hay 3 ventanas utilizables; faltan las de las otras
-  fulguraciones. La descarga depende de la velocidad de la conexión.
 - **Comparar con los análisis publicados** de las fulguraciones en común (por ejemplo la
   X1.6 del 5 de agosto de 2023, en Otsu et al. 2024).
 - **Leer completos** los artículos de Otsu et al. (2022, 2026) antes de afirmar qué es nuevo
   en la parte cromosférica.
+- **Más fulguraciones con espectros**, para que la dependencia con la energía y la posición
+  pase de indicación a medida.

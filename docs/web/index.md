@@ -19,15 +19,15 @@ The yardstick is the reflex velocity that the Earth imprints on the Sun: 9 cm/s.
 ## Results so far
 
 !!! note "Status: work in progress (November 2026)"
-    The velocity analysis is complete. The spectral analysis is preliminary: twelve flares
-    and three flare-free control windows.
+    The velocity analysis is complete. The spectral analysis rests on twelve flares and
+    nine flare-free control windows.
 
 | Question | Answer | Evidence |
 |---|---|---|
 | Does the velocity change during a flare? | No, within 9 cm/s | 139 M and X flares against their own controls: −0.035 ± 0.035 m/s |
 | Is there a rotation signature (opposite sign east and west)? | No | −0.11 ± 0.08 m/s per X1 flare at the limb |
 | Do flares excite the five-minute oscillations? | No, within 8 % in amplitude | Power after against before, 140 flares |
-| Do the same spectra see the flares? | Yes: the chromospheric lines brighten | H alpha rises in all 8 X flares on the disc with usable spectra |
+| Do the same spectra see the flares? | Yes: the chromospheric lines brighten | Ca II H and K rise in all 8 X flares on the disc, 6 of them above 3 sigma |
 
 The Sun does not flinch, but it blushes: the chromospheric lines brighten while the velocity
 stays put. See [Results](results.md).

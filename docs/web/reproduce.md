@@ -43,8 +43,10 @@ A single window:
 python -m flinch spectra --start 2024-02-22T21:37 --end 2024-02-22T22:45 --name 20240222_2233_X6.3
 ```
 
-The response of each flare is computed with `flinch.response.collect` and written to
-`results/spectral_response.csv`.
+The joint analysis is `flinch.chromosphere.run()`. It writes the response of every flare and
+control, with their own and total errors, to `results/spectral_response.csv`, and the summary
+of each index (detections, means with their errors, scatter of the controls with its
+uncertainty) to `results/spectral_indices.csv`.
 
 ## Versions
 
