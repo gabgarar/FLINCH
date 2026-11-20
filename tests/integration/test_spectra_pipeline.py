@@ -107,3 +107,36 @@ def test_fetch_window_reports_failures_and_can_be_repeated(archive, fake_neid, m
     spectra.fetch_window(jd_from, jd_to, "window", workers=2)
     assert len(list(directory.glob("neidL2_*.npz"))) == 12  # the rerun fetches only the missing one
     assert fake_neid.count(broken) == 1
+
+
+def test_clear_only_campaign_leaves_out_cloudy_flares_and_cloudy_spectra(archive, fake_neid, monkeypatch, capsys):
+    from flinch import quality
+
+    root = archive["root"] / "data" / "spectra"
+    events = campaign.select_events(min_class="M1.0", max_class="X1.0")
+    first, second, third = (events.iloc[i] for i in range(3))
+    obsjd = np.sort(archive["table"]["obsjd"].to_numpy())
+    # Cloud over the whole second flare, and over three spectra shortly before the first.
+    cloudy = (obsjd > second.jd_start - 40 * MINUTE) & (obsjd < second.jd_peak + 20 * MINUTE)
+    cloudy[np.flatnonzero((obsjd > first.jd_start - 20 * MINUTE) & (obsjd < first.jd_start - 5 * MINUTE))[:3]] = True
+    monkeypatch.setattr(quality, "stable_obsjd", lambda table: obsjd[~cloudy])
+
+    campaign.run(
+        hours=1.0, max_files=30, step=2, workers=2, min_class="M1.0", max_class="X1.0", clear_only=True,
+        before_min=26.0, after_min=10.0, core_before_min=-1.0e9, core_after_min=-1.0e9,
+    )
+    capsys.readouterr()
+    assert (root / campaign.event_name(first)).is_dir() and (root / campaign.event_name(third)).is_dir()
+    assert not (root / campaign.event_name(second)).exists()  # the cloudy flare is not fetched at all
+    table = archive["table"].set_index("l2filename")
+    fetched = table.loc[fake_neid, "obsjd"].to_numpy()
+    assert len(fetched) == 30 and not quality.matches(fetched, obsjd[cloudy]).any()  # no cloudy spectrum downloaded
+    in_first = (fetched > first.jd_start - 26 * MINUTE) & (fetched < first.jd_peak + 10 * MINUTE)
+    assert 12 <= in_first.sum() <= 18  # every second clear spectrum of a 46-minute window
+    manifest = pd.read_csv(root / "events.csv")
+    assert manifest["goes_class"].str[0].eq("M").all()
+
+    # The joint analysis can be limited to a band of classes; nothing of class X was fetched here.
+    assert len(chromosphere.run(min_class="X1.0")["events"]) == 0
+    band = chromosphere.run(min_class="M1.0", max_class="X1.0")["events"]
+    assert set(band["name"]) >= {campaign.event_name(first)} and band["goes_class"].str[0].eq("M").all()

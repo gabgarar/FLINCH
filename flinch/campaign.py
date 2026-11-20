@@ -12,7 +12,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import coverage, goes, neid, spectra
+from . import coverage, goes, neid, quality, spectra
 from .config import data_dir, results_dir
 from .timeutil import MINUTE, jd_to_datetime
 
@@ -22,13 +22,20 @@ def event_name(row) -> str:
     return f"{jd_to_datetime(row.jd_peak):%Y%m%d_%H%M}_{row.goes_class}"
 
 
-def select_events(min_class: str = "M1.0") -> pd.DataFrame:
-    """Flares observed at the peak or during the rise, strongest first."""
+def select_events(min_class: str = "M1.0", max_class: str | None = None) -> pd.DataFrame:
+    """Flares observed at the peak or during the rise, strongest first.
+
+    ``max_class`` is exclusive: ``select_events("M5.0", "X1.0")`` gives the flares from M5.0 up
+    to, but not including, X1.0.
+    """
     observations = neid.read_solar_table()
     jd = np.sort(observations["obsjd"].to_numpy())
     flares = goes.load_flares()
     flares = flares[(flares["jd_peak"] >= jd.min()) & (flares["jd_peak"] <= jd.max())]
-    flares = flares[flares["peak_flux"] >= goes.class_to_flux(min_class)].reset_index(drop=True)
+    flares = flares[flares["peak_flux"] >= goes.class_to_flux(min_class)]
+    if max_class is not None:
+        flares = flares[flares["peak_flux"] < goes.class_to_flux(max_class)]
+    flares = flares.reset_index(drop=True)
     covered = coverage.add_coverage(flares, jd)
     # Spectra between the start and the peak: a flare peaking just after the end of the
     # observing day still has its impulsive phase on record.
@@ -36,6 +43,29 @@ def select_events(min_class: str = "M1.0") -> pd.DataFrame:
     covered["n_rise"] = coverage.count_between(jd, start.to_numpy(), covered["jd_peak"].to_numpy())
     covered = covered[covered["at_peak"] | (covered["n_rise"] >= 3)]
     return covered.sort_values("peak_flux", ascending=False, ignore_index=True)
+
+
+def clear_sky(
+    events: pd.DataFrame,
+    steady_obsjd: np.ndarray,
+    before_min: float = 26.0,
+    window_min: tuple[float, float] = (-8.0, 10.0),
+    min_before: int = 12,
+    min_window: int = 9,
+) -> pd.Series:
+    """Flares with a steady, clear sky before their start and around their peak.
+
+    Counts the spectra of ``steady_obsjd`` (see ``quality.stable_obsjd``) from ``before_min`` to
+    2 min before the start of the flare, and in ``window_min`` around its peak. The criterion
+    uses the signal-to-noise ratio of the spectra alone, never their content, so it can be
+    applied before any spectrum is downloaded.
+    """
+    steady_obsjd = np.asarray(steady_obsjd, dtype=float)
+    start = events["jd_start"].fillna(events["jd_peak"] - 10.0 * MINUTE).to_numpy()
+    peak = events["jd_peak"].to_numpy()
+    before = coverage.count_between(steady_obsjd, start - before_min * MINUTE, start - 2.0 * MINUTE)
+    window = coverage.count_between(steady_obsjd, peak + window_min[0] * MINUTE, peak + window_min[1] * MINUTE)
+    return pd.Series((before >= min_before) & (window >= min_window), index=events.index)
 
 
 def control_events(events: pd.DataFrame, max_shift_days: int = 12, margin_min: float = 60.0) -> pd.DataFrame:
@@ -104,6 +134,8 @@ def run(
     core_after_min: float = 15.0,
     kind: str = "flares",
     usable_only: bool = False,
+    max_class: str | None = None,
+    clear_only: bool = False,
 ) -> None:
     """Fetch spectrum extracts flare by flare until the time or the file budget runs out.
 
@@ -116,9 +148,16 @@ def run(
     With ``kind`` = "controls" the same windows are fetched on a flare-free day for every
     flare that already has spectra (see ``control_events``). With ``usable_only`` the controls
     are limited to the flares marked as usable in ``results/spectral_response.csv``.
+
+    ``max_class`` (exclusive) limits the flares from above. With ``clear_only`` only the flares
+    that pass ``clear_sky`` are fetched, and of them only the spectra taken through a steady
+    sky: the others would be discarded by the analysis anyway, and each costs 113 MB.
     """
     deadline = time.monotonic() + hours * 3600.0
-    events = select_events(min_class)
+    events = select_events(min_class, max_class)
+    steady = quality.stable_obsjd(neid.read_solar_table()) if clear_only else None
+    if clear_only and kind == "flares":
+        events = events[clear_sky(events, steady)].reset_index(drop=True)
     root = data_dir() / "spectra"
     if kind == "controls":
         fetched_flares = [len(list((root / event_name(r)).glob("neidL2_*.npz"))) >= 10 for r in events.itertuples()]
@@ -142,7 +181,9 @@ def run(
             start = row.jd_start if row.jd_start == row.jd_start else row.jd_peak - 10.0 * MINUTE
             try:
                 files = spectra.list_files(start - before_min * MINUTE, row.jd_peak + after_min * MINUTE)
-                core = (files["obsjd"] >= start - core_before_min * MINUTE) & (
+                if steady is not None:
+                    files = files[quality.matches(files["obsjd"].to_numpy(), steady)].reset_index(drop=True)
+                core =(files["obsjd"] >= start - core_before_min * MINUTE) & (
                     files["obsjd"] <= row.jd_peak + core_after_min * MINUTE
                 )
                 files = files[core | (np.arange(len(files)) % step == 0)]

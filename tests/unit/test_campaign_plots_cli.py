@@ -109,3 +109,24 @@ def test_coverage_command_writes_the_sample(archive, capsys):
     assert f"M and X flares in the NEID era: {len(archive['flares'])}" in printed
     sample = pd.read_csv(archive["root"] / "results" / "flare_sample.csv")
     assert len(sample) == len(archive["flares"]) and sample["well_covered"].all()
+
+
+def test_select_events_with_a_class_ceiling(archive):
+    below = campaign.select_events(min_class="M1.0", max_class="X1.0")
+    above = campaign.select_events(min_class="X1.0")
+    assert len(below) and below["goes_class"].str[0].eq("M").all()
+    assert len(below) + len(above) == len(campaign.select_events())
+
+
+def test_clear_sky_needs_steady_spectra_before_the_start_and_around_the_peak():
+    cadence = 83.0 / 86400.0
+    start, peak = 2460000.5, 2460000.5 + 12 * MINUTE
+    events = pd.DataFrame({"jd_start": [start, start + 1.0, np.nan], "jd_peak": [peak, peak + 1.0, peak + 2.0]})
+    steady = np.concatenate(
+        [
+            np.arange(start - 30 * MINUTE, peak + 15 * MINUTE, cadence),  # first flare: clear throughout
+            np.arange(start + 1.0 - 30 * MINUTE, start + 1.0, cadence),  # second: cloud from its start on
+            np.arange(peak + 2.0 - 3 * MINUTE, peak + 2.0 + 15 * MINUTE, cadence),  # third (no start time): nothing before
+        ]
+    )
+    assert list(campaign.clear_sky(events, np.sort(steady))) == [True, False, False]

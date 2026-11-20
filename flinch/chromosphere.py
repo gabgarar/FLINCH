@@ -116,13 +116,28 @@ def total_error(own_error, control_scatter: float) -> np.ndarray:
     return np.hypot(own_error, control_scatter)
 
 
-def run(window_min: tuple[float, float] = (-8.0, 10.0)) -> dict:
+def run(
+    window_min: tuple[float, float] = (-8.0, 10.0), min_class: str = "M1.0", max_class: str | None = None
+) -> dict:
+    """Response of the flares with spectra, of the control windows, and their summary by index.
+
+    ``min_class`` and ``max_class`` (exclusive) select the flares of one band, e.g. ``"X1.0"``
+    alone for the X-class flares or ``"M5.0", "X1.0"`` for the strongest M-class ones. The
+    control windows are always all of them: their scatter is the noise floor of any flare.
+    """
     root = data_dir() / "spectra"
     keep = quality.stable_obsjd(neid.read_solar_table())
-    flares = flare_events()
+    every_flare = flare_events()
+    in_band = every_flare["peak_flux"] >= goes.class_to_flux(min_class)
+    if max_class is not None:
+        in_band &= every_flare["peak_flux"] < goes.class_to_flux(max_class)
+    flares = every_flare[in_band]
     columns = ["name", "kind", "parent", "jd_start", "jd_peak", "goes_class", "peak_flux", "fluence", "x_norm", "y_norm", "r_norm"]
     measured = response.collect(flares[columns], root, window_min, keep_obsjd=keep)
-    controls = control_events(flares, root)
+    if len(measured) == 0:  # no flare of this band has spectra
+        numbers = {"flares_with_spectra": 0, "flares_usable": 0, "controls_usable": 0}
+        return {"events": pd.DataFrame(), "indices": pd.DataFrame(), "numbers": numbers}
+    controls = control_events(every_flare, root)
     if len(controls):
         measured = pd.concat([measured, response.collect(controls[columns], root, window_min, keep_obsjd=keep)], ignore_index=True)
     measured["usable"] = usable(measured)

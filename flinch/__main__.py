@@ -117,6 +117,8 @@ def cmd_campaign(args: argparse.Namespace) -> int:
     campaign.run(
         hours=args.hours, max_files=args.max_files, step=args.step, workers=args.workers, kind=args.kind,
         usable_only=args.usable_only, core_before_min=core[0], core_after_min=core[1],
+        min_class=args.min_class, max_class=args.max_class, clear_only=args.clear_only,
+        before_min=args.before, after_min=args.after,
     )
     return 0
 
@@ -153,6 +155,11 @@ def main(argv: list[str] | None = None) -> int:
     camp.add_argument("--kind", choices=["flares", "controls"], default="flares", help="flare windows, or flare-free windows for the flares already fetched")
     camp.add_argument("--usable-only", action="store_true", help="controls only for the flares with usable spectra")
     camp.add_argument("--sparse", action="store_true", help="every n-th spectrum throughout, without the full-cadence core")
+    camp.add_argument("--min-class", default="M1.0", help="weakest flare class to fetch (default M1.0)")
+    camp.add_argument("--max-class", default=None, help="flares below this class only, e.g. X1.0 (default: no limit)")
+    camp.add_argument("--clear-only", action="store_true", help="only flares, and spectra, with a steady clear sky")
+    camp.add_argument("--before", type=float, default=30.0, help="minutes fetched before the start of the flare (default 30)")
+    camp.add_argument("--after", type=float, default=45.0, help="minutes fetched after the peak of the flare (default 45)")
     camp.set_defaults(run=cmd_campaign)
     args = parser.parse_args(argv)
     return args.run(args)

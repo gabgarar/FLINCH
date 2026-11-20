@@ -55,3 +55,10 @@ def test_prepare_drops_days_with_large_scatter():
     assert out.loc[first_day, "good"].all()
     assert not out.loc[~first_day, "good"].any()
     assert out.loc[~first_day, "day_sigma"].iloc[0] > 1.5
+
+
+def test_matches_finds_exposures_to_a_fraction_of_a_second():
+    keep = np.array([10.0, 10.001, 10.002])
+    found = quality.matches([10.0 + 1e-6, 10.0005, 10.002 - 1e-6, 9.0, 11.0], keep)
+    assert list(found) == [True, False, True, False, False]
+    assert not quality.matches([10.0], np.array([])).any()  # nothing to match against

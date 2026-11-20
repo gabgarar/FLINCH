@@ -26,6 +26,18 @@ def stable_obsjd(table: pd.DataFrame, snr_tolerance: float = 0.01) -> np.ndarray
     return np.sort(prepared.loc[steady, "obsjd"].to_numpy())
 
 
+def matches(obsjd, keep_obsjd, tolerance: float = 2.0e-6) -> np.ndarray:
+    """Which exposure start times are in the sorted array ``keep_obsjd``, to 0.2 s by default."""
+    obsjd = np.asarray(obsjd, dtype=float)
+    keep_obsjd = np.asarray(keep_obsjd, dtype=float)
+    if len(keep_obsjd) == 0:
+        return np.zeros(len(obsjd), dtype=bool)
+    after = np.clip(np.searchsorted(keep_obsjd, obsjd), 0, len(keep_obsjd) - 1)
+    before = np.clip(after - 1, 0, len(keep_obsjd) - 1)
+    nearest = np.minimum(np.abs(keep_obsjd[after] - obsjd), np.abs(keep_obsjd[before] - obsjd))
+    return nearest < tolerance
+
+
 def prepare(
     table: pd.DataFrame,
     snr_window: int = 31,

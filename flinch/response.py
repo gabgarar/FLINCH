@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import lineshape, spectra
+from . import lineshape, quality, spectra
 from .timeutil import MINUTE
 
 # Quantities followed through a flare: column, label, and unit of the plotted change.
@@ -66,12 +66,7 @@ def event_table(directory: Path, jd_start: float, jd_peak: float, keep_obsjd=Non
     """
     table, arrays = spectra.load_window(directory)
     if keep_obsjd is not None and len(table):
-        keep_obsjd = np.asarray(keep_obsjd, dtype=float)
-        index = np.clip(np.searchsorted(keep_obsjd, table["obsjd"].to_numpy()), 1, len(keep_obsjd) - 1)
-        nearest = np.minimum(
-            np.abs(keep_obsjd[index] - table["obsjd"].to_numpy()), np.abs(keep_obsjd[index - 1] - table["obsjd"].to_numpy())
-        )
-        kept = nearest < 2.0e-6
+        kept = quality.matches(table["obsjd"].to_numpy(), keep_obsjd)
         table = table[kept].reset_index(drop=True)
         arrays = {key: value[kept] for key, value in arrays.items()}
     with np.load(next(Path(directory).glob("neidL2_*.npz"))) as first:
