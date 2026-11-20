@@ -24,3 +24,6 @@ desktop.ini
 
 # Editor settings are machine specific
 .vscode/
+
+# The paper drafts live in their own private repository at docs/paper/
+/docs/paper/
