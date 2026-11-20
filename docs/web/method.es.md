@@ -87,7 +87,7 @@ mancha brillante sobre un disco que gira, así que debería desplazar la velocid
 **desplazamiento ≈ (ΔF / F) · v_rot · K**
 
 donde ΔF / F es la fracción en que la fulguración abrillanta el Sol en luz visible, v_rot la
-velocidad de rotación en la fulguración (hasta 1983 m/s en el limbo) y K un factor entre 0 y
+velocidad de rotación en la fulguración (hasta 1845 m/s en el limbo, visto desde la Tierra) y K un factor entre 0 y
 1. K vale 1 si la luz añadida lleva las mismas líneas de absorción que la superficie que
 tiene debajo, y 0 si es luz sin líneas, que solo hace menos profundas las líneas del resto
 del disco.

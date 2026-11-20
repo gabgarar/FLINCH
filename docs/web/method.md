@@ -84,7 +84,7 @@ rotating disc, so it should shift the velocity by
 **shift ≈ (ΔF / F) · v_rot · K**
 
 where ΔF / F is the fraction by which the flare brightens the Sun in visible light, v_rot the
-rotation velocity at the flare (up to 1983 m/s at the limb) and K a factor between 0 and 1. K
+rotation velocity at the flare (up to 1845 m/s at the limb, as seen from the Earth) and K a factor between 0 and 1. K
 is 1 if the extra light carries the same absorption lines as the surface under it, and 0 if
 it is light without lines, which only makes the lines of the rest of the disc shallower.
 

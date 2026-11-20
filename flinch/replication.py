@@ -239,7 +239,7 @@ def run(seed: int = 0) -> dict:
     columns = ["instrument", "sample", "jd_start", "jd_peak", "goes_class", "peak_flux", "x_norm", "y_norm", "r_norm", "delta", "d"]
     table = pd.concat([*tables, combine(tables)], ignore_index=True)
     both = table[(table["instrument"] == "Both") & (table["band"] == "M and X")].iloc[0]
-    numbers["optical_contrast_limit_per_X1"] = float((abs(both["rotation"]) + 1.645 * both["rotation_err"]) / robust.V_EQUATOR_MS)
+    numbers["optical_contrast_limit_per_X1"] = float((abs(both["rotation"]) + 1.645 * both["rotation_err"]) / robust.V_LIMB_FROM_EARTH_MS)
     numbers["detection_probability_10cm"] = robust.detection_probability(0.10, float(both["mean_err"]))
     return {
         "table": table,

@@ -21,18 +21,21 @@ paréntesis, el número de fulguraciones):
 | Término de rotación, *R* | −0,106 ± 0,082 | +0,022 ± 0,043 | −0,006 ± 0,038 | 0,07 |
 
 Juntos, el cambio medio queda por debajo de 0,07 m/s, menos que los 0,09 m/s que la Tierra
-imprime en el Sol. Una fulguración está en las dos muestras. Con tan pocas fulguraciones como
+imprime en el Sol. Las 254 medidas son de 253 fulguraciones distintas: una la observaron los
+dos instrumentos. Las fulguraciones usadas son una muestra representativa de todas las M y X:
+sus clases y sus posiciones en el disco se distribuyen como las de la lista completa (pruebas
+de Kolmogórov-Smirnov, p entre 0,08 y 0,96). Con tan pocas fulguraciones como
 en la fila de la clase X, el propio error es incierto en una cuarta parte.
 
 Tres comprobaciones más dan la misma respuesta:
 
-- **Las fulguraciones mayores no desplazan más la velocidad.** Para las 18 de clase X el
-  cambio queda por debajo de 0,19 m/s.
+- **Las fulguraciones mayores no desplazan más la velocidad.** En las 18 de clase X tampoco
+  se encuentra ningún cambio, pero la cota, 0,19 m/s, es el doble de la señal de la Tierra.
 - **No hay desplazamientos de signo opuesto que se cancelen en la media.** Los cambios de las
   fulguraciones están tan dispersos como los de los controles: 0,40 m/s en ambos con NEID,
   0,41 con HARPS-N.
 - **No hay firma de rotación.** El término de rotación queda por debajo de 0,07 m/s para una
-  X1 en el limbo, lo que equivale a K · ΔF / F < 3,5 × 10⁻⁵ por fulguración X1 (véase
+  X1 en el limbo, lo que equivale a K · ΔF / F < 3,7 × 10⁻⁵ por fulguración X1 (véase
   [Método](method.md#three-estimates)).
 
 ![Cambio de velocidad de cada fulguración frente a su clase y a su posición](img/two_instruments_events.png)
@@ -107,10 +110,13 @@ espectro solar de ese día:
 - **¿Cuánto brilla una fulguración en luz visible?** En el máximo de una fulguración M2 media
   el Sol se abrillanta 7 partes por millón, y en la X17 del 28 de octubre de 2003 se abrillantó
   264 (Kretzschmar 2011). Esas clases están en la escala antigua de GOES, que llevaba un factor
-  0,7; en la escala de aquí son entre 11 y 23 partes por millón para una X1.
-- **¿Cuánto mueve esa luz la velocidad?** Como mucho de 2 a 5 cm/s para una X1 en el limbo
+  0,7; en la escala de aquí son entre 11 y 23 partes por millón para una X1. Los dos valores
+  coinciden dentro de un factor dos aunque las fulguraciones difieren en un factor sesenta en
+  clase: en promedio el abrillantamiento visible crece con la clase en rayos X, aunque no
+  fulguración a fulguración.
+- **¿Cuánto mueve esa luz la velocidad?** Como mucho de 2 a 4 cm/s para una X1 en el limbo
   (K = 1), y menos en el resto.
-- **¿Cuánto nos acercamos?** La cota de los dos instrumentos juntos es entre 1,5 y 3 veces
+- **¿Cuánto nos acercamos?** La cota de los dos instrumentos juntos es entre 1,5 y 3,5 veces
   eso. La ausencia de firma de rotación es lo que predice la física; ahora está medida.
 
 ## La respuesta
@@ -118,11 +124,13 @@ espectro solar de ese día:
 Las fulguraciones solares no contaminan significativamente la detección de análogos terrestres
 por velocidad radial, por dos razones:
 
-- **Mueven muy poco la velocidad**: menos de 7 cm/s de media hasta la clase X, y menos de unos
-  20 cm/s las de clase X solas.
+- **Mueven muy poco la velocidad**: menos de 7 cm/s de media hasta la clase X. En las de clase
+  X solas tampoco se encuentra ningún cambio, pero la cota es de unos 20 cm/s, el doble de la
+  señal de la Tierra.
 - **Ocupan poco tiempo**: en el máximo del ciclo 25 el Sol produjo 358 fulguraciones de clase
-  M o X al año, 18 de ellas de clase X, y pasó el 1,5 % del tiempo en alguna de ellas (el
-  0,1 % en las de clase X).
+  M o X al año, 18 de ellas de clase X. Contando cada fulguración desde su inicio hasta su
+  final en la lista de GOES (19 minutos en la mediana), el Sol pasó el 1,6 % del tiempo en
+  alguna de ellas (el 0,1 % en las de clase X).
 
 Esto se ha demostrado para el Sol, no para las estrellas de tipo solar en general: las
 estrellas más activas que el Sol, con fulguraciones mayores y más frecuentes, son otro asunto.
@@ -131,7 +139,7 @@ estrellas más activas que el Sol, con fulguraciones mayores y más frecuentes, 
 
 - **Velocidad.** Pietrow et al. (2024) siguieron con HARPS-N dos fulguraciones de clase X del
   6 de septiembre de 2017. No pudieron afirmar una detección: fijaron una cota de 50 cm/s y
-  pidieron un estudio estadístico. Aquí el cambio medio de 254 fulguraciones vistas por dos
+  pidieron un estudio estadístico. Aquí el cambio medio de 253 fulguraciones vistas por dos
   instrumentos queda por debajo de 7 cm/s. La mayor de sus dos fulguraciones está en la
   muestra de HARPS-N: su cambio es de −0,01 m/s, con un error de 0,41 m/s por ser una sola.
 - **Cromosfera.** En esas dos fulguraciones Ca II H y K subió más de un 1 %. Aquí Ca II H y K
@@ -149,9 +157,10 @@ En los diez minutos que van de 60 a 50 minutos antes del máximo en rayos X, las
 de clase X observadas por NEID están 0,44 ± 0,11 m/s por encima de la tendencia de su día (19
 fulguraciones con datos en ese momento, 17 de ellas positivas). Se vio en las velocidades
 medias, no se predijo. No aparece en las fulguraciones de clase M de NEID (0,00 ± 0,03 m/s)
-ni en los controles, y HARPS-N no lo muestra: −0,12 ± 0,11 m/s en sus diez fulguraciones X.
-Un cambio en el Sol lo verían los dos instrumentos, así que no se atribuye al Sol; queda sin
-explicar.
+ni en los controles, y HARPS-N no lo muestra en sus diez fulguraciones X, que son otras:
+−0,12 ± 0,11 m/s. El origen del rasgo no está claro. Si fuera una propiedad general de las
+fulguraciones X, la muestra de HARPS-N también debería mostrarlo; que no aparezca apunta al
+instrumento o al azar, aunque no puede excluirse un origen solar.
 
 ### Las fulguraciones no aumentan la amplitud de las oscilaciones solares
 

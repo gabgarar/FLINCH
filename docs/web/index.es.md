@@ -26,12 +26,12 @@ general.
 
 | Pregunta | Respuesta | Prueba |
 |---|---|---|
-| ¿Cambia la velocidad durante una fulguración? | No, dentro de 7 cm/s | 254 fulguraciones de clase M y X: −0,029 ± 0,026 m/s. Solo NEID: −0,035 ± 0,035 (139). Solo HARPS-N: −0,021 ± 0,039 (115) |
-| ¿La mueven más las fulguraciones mayores? | No | 18 fulguraciones de clase X: −0,074 ± 0,072 m/s, por debajo de 0,2 m/s |
-| ¿Hay firma de rotación (signo opuesto al este y al oeste)? | No | −0,006 ± 0,038 m/s para una X1 en el limbo, a un factor entre 1,5 y 3 del mayor desplazamiento esperado |
+| ¿Cambia la velocidad durante una fulguración? | No, dentro de 7 cm/s | 254 medidas de 253 fulguraciones de clase M y X: −0,029 ± 0,026 m/s. Solo NEID: −0,035 ± 0,035 (139). Solo HARPS-N: −0,021 ± 0,039 (115) |
+| ¿La mueven más las fulguraciones mayores? | No | 18 fulguraciones de clase X: −0,074 ± 0,072 m/s. Ningún cambio, pero la cota, 0,2 m/s, es el doble de la señal de la Tierra |
+| ¿Hay firma de rotación (signo opuesto al este y al oeste)? | No | −0,006 ± 0,038 m/s para una X1 en el limbo, a un factor entre 1,5 y 3,5 del mayor desplazamiento esperado |
 | ¿Se habría visto una señal? | Sí | Se recupera el 98 % de un desplazamiento añadido a los datos |
 | ¿Ven los espectros las fulguraciones? | Sí | Ca II H y K y H alfa se abrillantan en las 14 fulguraciones del disco con espectros, entre 2 y 5 partes por mil |
-| ¿Cuánto tiempo pasa el Sol en fulguración? | El 1,5 % | 358 fulguraciones de clase M o X al año en el máximo del ciclo 25 |
+| ¿Cuánto tiempo pasa el Sol en fulguración? | El 1,6 % | 358 fulguraciones de clase M o X al año en el máximo del ciclo 25, contadas de inicio a final (19 minutos en la mediana) |
 
 El Sol no se inmuta, pero se sonroja: las líneas cromosféricas se abrillantan mientras la
 velocidad no se mueve. Véase [Resultados](results.md).

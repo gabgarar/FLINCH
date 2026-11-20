@@ -21,16 +21,16 @@ solar en general.
 
 | Resultado | Valor |
 |---|---|
-| Cambio medio de velocidad durante una fulguración M o X, dos instrumentos (254 fulguraciones) | −0,029 ± 0,026 m/s; por debajo de 0,07 m/s al 95 % |
+| Cambio medio de velocidad durante una fulguración M o X, dos instrumentos (254 medidas de 253 fulguraciones) | −0,029 ± 0,026 m/s; por debajo de 0,07 m/s al 95 % |
 | Solo NEID (139) | −0,035 ± 0,035 m/s |
 | Solo HARPS-N (115) | −0,021 ± 0,039 m/s |
-| Clase X (18) | −0,074 ± 0,072 m/s; por debajo de 0,19 m/s |
+| Clase X (18) | −0,074 ± 0,072 m/s; ningún cambio, pero la cota, 0,19 m/s, es el doble de la señal de la Tierra |
 | Término de rotación, para una X1 en el limbo | −0,006 ± 0,038 m/s; por debajo de 0,07 m/s |
-| Cota de la luz de la fulguración | K · ΔF/F < 3,5 × 10⁻⁵ por X1, entre 1,5 y 3 veces lo máximo esperado |
+| Cota de la luz de la fulguración | K · ΔF/F < 3,7 × 10⁻⁵ por X1, entre 1,5 y 3,5 veces lo máximo esperado |
 | Señal añadida que se recupera | 98 % en los dos instrumentos |
 | Respuesta de Ca II H y K, fulguraciones del disco | +5,3 ± 1,7 ‰ (8 de clase X), +2,2 ± 0,4 ‰ (6 de M5 a M9), 0,0 ± 0,2 ‰ (9 controles) |
 | Respuesta del núcleo de H alfa | +3,3 ± 1,1 ‰, +2,0 ± 0,2 ‰, −0,1 ± 0,2 ‰ |
-| Tiempo que el Sol pasa en fulguraciones M o X en el máximo del ciclo 25 | 1,5 % (0,1 % en las de clase X) |
+| Tiempo que el Sol pasa en fulguraciones M o X en el máximo del ciclo 25 | 1,6 % (0,1 % en las de clase X), contando cada fulguración de inicio a final |
 
 ## Cómo se reproduce
 
@@ -49,6 +49,7 @@ Las tablas quedan en `results/`. Los detalles de cada orden están en
 
 - **Un rasgo sin explicar.** De 60 a 50 minutos antes del máximo, las fulguraciones X de NEID
   están 0,44 ± 0,11 m/s por encima de la tendencia de su día (19 fulguraciones, 17 positivas).
-  No aparece en las M ni en los controles, y HARPS-N no lo ve (−0,12 ± 0,11 en diez X). No se
-  atribuye al Sol. En el artículo va en un apéndice.
+  No aparece en las M ni en los controles, y HARPS-N no lo ve en sus diez X, que son otras
+  (−0,12 ± 0,11). Su origen no está claro: apunta al instrumento o al azar, aunque no puede
+  excluirse un origen solar. En el artículo va en un apéndice.
 - **Textos de agradecimiento** que piden NEID, WIYN, HARPS-N/TNG y DACE.

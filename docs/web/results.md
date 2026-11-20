@@ -21,17 +21,20 @@ number of flares):
 | Rotation term, *R* | −0.106 ± 0.082 | +0.022 ± 0.043 | −0.006 ± 0.038 | 0.07 |
 
 Together the mean change is below 0.07 m/s, less than the 0.09 m/s that the Earth imprints on
-the Sun. One flare is in both samples. With as few flares as in the X-class row, the error is
+the Sun. The 254 measurements are of 253 different flares: one was observed by both
+instruments. The flares used are a fair sample of all the M and X flares: their classes and
+their positions on the disc are distributed like those of the full list (Kolmogorov-Smirnov
+tests, p between 0.08 and 0.96). With as few flares as in the X-class row, the error is
 itself uncertain by a quarter.
 
 Three further checks give the same answer:
 
-- **Larger flares do not shift the velocity more.** For the 18 flares of class X the change
-  is below 0.19 m/s.
+- **Larger flares do not shift the velocity more.** For the 18 flares of class X no change
+  is found either, but the limit, 0.19 m/s, is twice the signal of the Earth.
 - **There are no shifts of opposite sign that cancel in the mean.** The changes of the flares
   scatter as much as those of the controls: 0.40 m/s for both with NEID, 0.41 with HARPS-N.
 - **There is no rotation signature.** The rotation term is below 0.07 m/s for an X1 flare at
-  the limb, which means K · ΔF / F < 3.5 × 10⁻⁵ per X1 flare (see
+  the limb, which means K · ΔF / F < 3.7 × 10⁻⁵ per X1 flare (see
   [Method](method.md#three-estimates)).
 
 ![Velocity change of each flare against its class and its position](img/two_instruments_events.png)
@@ -102,10 +105,12 @@ The table flare by flare is `results/spectral_response.csv`. One flare in detail
 - **How bright is a flare in visible light?** At the peak of an average M2 flare the Sun
   brightens by 7 parts per million, and in the X17 flare of 28 October 2003 it brightened by
   264 (Kretzschmar 2011). Those classes are on the old GOES scale, which carried a factor
-  0.7; on the scale used here they give 11 to 23 parts per million for an X1 flare.
-- **How much does that light move the velocity?** At most 2 to 5 cm/s for an X1 flare at the
+  0.7; on the scale used here they give 11 to 23 parts per million for an X1 flare. The two
+  agree within a factor of two although the flares differ by a factor of sixty in class: on
+  average the visible brightening grows with the X-ray class, though not flare by flare.
+- **How much does that light move the velocity?** At most 2 to 4 cm/s for an X1 flare at the
   limb (K = 1), and less elsewhere.
-- **How close do we get?** The limit of the two instruments together is 1.5 to 3 times that.
+- **How close do we get?** The limit of the two instruments together is 1.5 to 3.5 times that.
   The absence of a rotation signal is what the physics predicts; it is now measured.
 
 ## The answer
@@ -113,11 +118,13 @@ The table flare by flare is `results/spectral_response.csv`. One flare in detail
 Solar flares do not significantly contaminate the detection of Earth analogues by radial
 velocity, for two reasons:
 
-- **They move the velocity very little**: less than 7 cm/s on average up to class X, and less
-  than about 20 cm/s for class X alone.
+- **They move the velocity very little**: less than 7 cm/s on average up to class X. For class
+  X alone no change is found either, but the limit is about 20 cm/s, twice the signal of the
+  Earth.
 - **They take up little of the time**: at the maximum of cycle 25 the Sun produced 358 flares
-  of class M or X per year, 18 of them of class X, and spent 1.5 % of the time in one of them
-  (0.1 % for class X).
+  of class M or X per year, 18 of them of class X. Counting each flare from its start to its
+  end in the GOES list (19 minutes in the median), the Sun spent 1.6 % of the time in one of
+  them (0.1 % for class X).
 
 This has been shown for the Sun, not for Sun-like stars in general: stars more active than
 the Sun, with larger and more frequent flares, are another matter.
@@ -126,7 +133,7 @@ the Sun, with larger and more frequent flares, are another matter.
 
 - **Velocity.** Pietrow et al. (2024) followed two X-class flares of 6 September 2017 with
   HARPS-N. They could not claim a detection: they set an upper limit of 50 cm/s and asked for
-  a statistical follow-up. Here the mean change of 254 flares seen by two instruments is below
+  a statistical follow-up. Here the mean change of 253 flares seen by two instruments is below
   7 cm/s. The larger of their two flares is in the HARPS-N sample: its change is −0.01 m/s,
   with a single-flare error of 0.41 m/s.
 - **Chromosphere.** In the same two flares Ca II H and K rose by more than 1 %. Here Ca II H
@@ -144,8 +151,10 @@ In the ten minutes from 60 to 50 minutes before the X-ray peak, the X-class flar
 NEID sit 0.44 ± 0.11 m/s above the trend of their day (19 flares with data at that time, 17 of
 them positive). It was noticed in the mean velocities, not predicted. It is absent in the
 M-class flares of NEID (0.00 ± 0.03 m/s) and in the controls, and HARPS-N does not show it:
-−0.12 ± 0.11 m/s for its ten X-class flares. A change on the Sun would be seen by both
-instruments, so it is not attributed to the Sun; it is unexplained.
+−0.12 ± 0.11 m/s for its ten X-class flares, which are other flares. The origin of the
+feature is unclear. If it were a general property of X-class flares, the HARPS-N sample should
+show it too; its absence there points to the instrument or to chance, although a solar origin
+cannot be excluded.
 
 ### Flares do not raise the amplitude of the solar oscillations
 

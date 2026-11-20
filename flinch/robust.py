@@ -14,7 +14,10 @@ import pandas as pd
 from . import epoch, goes, neid, pilot, quality
 from .timeutil import MINUTE
 
-V_EQUATOR_MS = 1983.0  # equatorial rotation velocity of the photosphere (Snodgrass & Ulrich 1990)
+V_EQUATOR_MS = 1983.0  # equatorial rotation velocity of the photosphere (Snodgrass & Ulrich 1990), sidereal
+# The same as seen from the Earth, which moves around the Sun in the sense of the rotation: the
+# line-of-sight velocity of the limb is smaller by the orbital angular velocity times the solar radius.
+V_LIMB_FROM_EARTH_MS = 1845.0
 MIN_PRE, MIN_SIGNAL, MIN_CONTROLS = 10, 3, 3
 PRE = (-40.0, -5.0)  # baseline window, minutes from the flare start
 
@@ -289,6 +292,6 @@ def run(seed: int = 0) -> dict:
             "flares": len(flares),
             "flares_per_day_max": int(pd.Series(np.floor(flares["jd_peak"] - 0.5)).value_counts().max()),
             "rotation_permutation_p": p_rotation,
-            "optical_contrast_limit_per_X1": (abs(table.loc[0, "rotation"]) + 1.645 * table.loc[0, "rotation_err"]) / V_EQUATOR_MS,
+            "optical_contrast_limit_per_X1": (abs(table.loc[0, "rotation"]) + 1.645 * table.loc[0, "rotation_err"]) / V_LIMB_FROM_EARTH_MS,
         },
     }
