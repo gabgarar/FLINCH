@@ -1,34 +1,49 @@
 # Results
 
-Status: November 2026. The velocity results are complete; the spectral results rest on 12
-flares and nine control windows.
+Status: November 2026. The velocity is measured with two instruments; the spectral results
+rest on 12 flares and nine control windows of NEID.
 
 ## The velocity of the Sun does not change during flares
 
-With 139 M and X flares, the radial velocity of the Sun seen as a star does not change
-detectably during a flare.
+Two instruments that watched different flares give the same answer: the radial velocity of the
+Sun seen as a star does not change during a flare.
 
-![Mean velocity around the flare peak](img/pilot_profiles.png)
+![Mean velocity around the flare peak, NEID and HARPS-N](img/two_instruments_profiles.png)
 
-| Quantity | Value (m/s) | 95 % limit (m/s) |
-|---|---|---|
-| Mean change of an M or X flare | −0.035 ± 0.035 | 0.09 |
-| Change per X1 flare (scaled with the flux) | −0.010 ± 0.061 | 0.11 |
-| Rotation term per X1 flare at the equatorial limb | −0.106 ± 0.082 | 0.24 |
+Change of the velocity during the flare, minus that of its controls, in m/s:
 
-The limit on the mean change is of the order of the 0.09 m/s that the Earth imprints on the
-Sun.
+| Flares | NEID | HARPS-N | Both | 95 % limit |
+|---|---|---|---|---|
+| M and X | −0.035 ± 0.035 (139) | −0.021 ± 0.039 (115) | −0.029 ± 0.026 (254) | 0.07 |
+| M1 to M4 | −0.039 ± 0.041 (116) | +0.006 ± 0.044 (97) | −0.018 ± 0.030 (213) | 0.07 |
+| M5 to M9 | +0.035 ± 0.086 (12) | −0.206 ± 0.078 (11) | −0.098 ± 0.058 (23) | 0.19 |
+| X | −0.060 ± 0.088 (11) | −0.104 ± 0.127 (7) | −0.074 ± 0.072 (18) | 0.19 |
+| Shift per X1 flare | −0.010 ± 0.061 | −0.005 ± 0.040 | −0.006 ± 0.033 | 0.06 |
+| Rotation term per X1 flare at the limb | −0.106 ± 0.082 | +0.022 ± 0.043 | −0.006 ± 0.038 | 0.07 |
 
-There is no trend with the size of the flare or with its position on the disc. Shuffling the
-positions among the flares gives a rotation term this large 10 % of the time.
+In brackets, the number of flares. "Both" weights each instrument by the inverse of its
+variance; one flare is in both samples. The limit is the absolute value plus 1.645 errors.
+Together the mean change is below 0.07 m/s, less than the 0.09 m/s that the Earth imprints on
+the Sun.
 
-![Velocity change of each flare against its class and its position](img/pilot_events.png)
+- **No trend with the size of the flare or with its position** on the disc.
+- **No hidden responses of varying sign**: the scatter of the changes of the flares (0.40 m/s
+  with NEID, 0.41 with HARPS-N) equals that of their controls (0.40 and 0.41).
+- **The largest deviation of the table**, 2.6 sigma for 11 flares between M5 and M9 with
+  HARPS-N, is not repeated by NEID.
 
-In physical terms the limit on the rotation term means K · ΔF / F < 1.2 × 10⁻⁴ per X1
-flare, with ΔF / F the relative brightening in the visible and K the response of the line
-mask (see [Method](method.md#three-estimates)).
+![Velocity change of each flare against its class and its position](img/two_instruments_events.png)
+
+In physical terms the limit on the rotation term means K · ΔF / F < 3.5 × 10⁻⁵ per X1 flare,
+with ΔF / F the relative brightening in the visible and K a factor between 0 (the extra light
+is a continuum without lines, which does not shift the lines of the rest of the disc) and 1
+(it carries the lines of the photosphere under it). See [Method](method.md#three-estimates).
+
+Reproduce it with `python -m flinch replication`.
 
 ## The result does not depend on the analysis choices
+
+With NEID, where the choices were made (HARPS-N was analysed afterwards, once, with them):
 
 | Variant | Flares | Mean change | Per X1 | Rotation per X1 |
 |---|---|---|---|---|
@@ -54,6 +69,10 @@ and say nothing: +0.07 ± 0.17 m/s.
 | 20 cm/s | 19.5 cm/s | 100 % |
 | 50 cm/s | 48.8 cm/s | 100 % |
 
+With HARPS-N the same injection test recovers 98 % of the signal. With the error of the two
+instruments together, a shift of 10 cm/s common to all flares would have been detected with a
+probability of 98 %.
+
 ## Flares do not raise the amplitude of the solar oscillations
 
 | Quantity | Flares | Null samples | 95 % limit on the excess |
@@ -61,14 +80,29 @@ and say nothing: +0.07 ± 0.17 m/s.
 | ln(power after / before) | −0.068 | 0.001 ± 0.053 | 0.16 |
 | The same, weighting high frequencies | −0.013 | −0.009 ± 0.060 | 0.10 |
 
-A mean increase above 8 % in amplitude is ruled out. This tests the proposal of Karoff and
-Kjeldsen (2008), with the limitation that the 83 s cadence reaches only 6 mHz.
+A mean increase above 8 % in amplitude is ruled out (NEID). This tests the proposal of Karoff
+and Kjeldsen (2008), with the limitation that the 83 s cadence reaches only 6 mHz. This test is
+not part of the paper, which keeps to the velocity and the spectra.
+
+## An excess before the X-class flares of NEID that HARPS-N does not see
+
+In the ten minutes from 60 to 50 minutes before the X-ray peak, the X-class flares observed by
+NEID sit 0.44 ± 0.11 m/s above the trend of their day (19 flares with data at that time, 17 of
+them positive). It was noticed in the stacked velocities, not predicted. It is absent in the
+M-class flares of NEID (0.00 ± 0.03 m/s) and in the controls, and HARPS-N does not show it:
+−0.12 ± 0.11 m/s for its ten X-class flares. A change on the Sun would be seen by both
+instruments, so it is not attributed to the Sun; it is unexplained.
 
 ## The same spectra do see the flares
 
 The null result in velocity is not due to spectra that miss the flares. In the spectra of
 the strongest flares the chromospheric indices rise when the flare is on the disc, while the
 velocity of the same spectra stays flat.
+
+![Mean response of the spectra to the X-class flares on the disc, against the controls](img/light_curves.png)
+
+The indices rise with the X-ray flux, peak a few minutes after the X-ray peak and are still
+high 40 minutes later; the controls stay flat. One flare in detail:
 
 ![Spectral response to the X6.3 flare of 22 February 2024](img/event_20240222_2233_X6.3.png)
 
@@ -130,11 +164,11 @@ flares are in the data.
 
 ## How this compares with published work
 
-- **Velocity.** Pietrow et al. (2024) followed the X2.2 and X9.3 flares of 6 September 2017
-  with HARPS-N, one spectrum every five minutes. They could not claim a detection: they set
-  an upper limit of 50 cm/s, noted a bump of a few tens of cm/s and asked for a statistical
-  follow-up. The limit found here for the mean response, 9 cm/s, is five times lower and
-  comes from 139 flares.
+- **Velocity.** Pietrow et al. (2024) followed two X-class flares of 6 September 2017 with
+  HARPS-N. They could not claim a detection: they set an upper limit of 50 cm/s and asked for
+  a statistical follow-up. Here the mean change of 254 flares seen by two instruments is below
+  7 cm/s. The larger of their two flares is in the HARPS-N sample: its change is −0.01 m/s,
+  with a single-flare error of 0.41 m/s.
 - **Chromosphere.** In the same two flares Ca II H and K rose by more than 1 %, alike in both
   despite their different class. Here Ca II H and K is also the most sensitive index (up to
   1.7 %) and the response does not follow the class either.
@@ -146,10 +180,11 @@ flares are in the data.
   Ca II and H beta rise by 1 to 2 parts per thousand, 2 sigma. NEID stopped observing 9
   minutes after the peak, before the second H alpha maximum they report at 13 minutes.
 - **Expected brightening.** The total irradiance rises by 7 parts per million at the peak of
-  an average M2 flare and rose by 264 in the X17 flare of 28 October 2003 (Kretzschmar 2011):
-  15 to 35 for an X1 flare. With the rotation of the Sun that is at most 3 to 7 cm/s at the
-  limb, four to eight times below the limit on the rotation term. Its absence is the expected
-  result.
+  an average M2 flare and rose by 264 in the X17 flare of 28 October 2003 (Kretzschmar 2011).
+  Those classes are on the old GOES scale, which carried a factor 0.7; on the scale used here
+  they give 11 to 23 parts per million for an X1 flare. With the rotation of the Sun that is at
+  most 2 to 5 cm/s at the limb. The limit of the two instruments together is 1.5 to 3 times
+  that: the absence of a rotation signal is the expected result, now measured.
 
 ## What is left
 

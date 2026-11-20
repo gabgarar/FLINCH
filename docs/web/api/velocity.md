@@ -9,3 +9,7 @@ Quality cuts, superposed epoch measurement, the pilot and its robustness.
 ::: flinch.pilot
 
 ::: flinch.robust
+
+::: flinch.harpsn
+
+::: flinch.replication

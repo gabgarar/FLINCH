@@ -1,42 +1,54 @@
 # FLINCH: resultados
 
-Estado a 20 de noviembre de 2026. Las secciones 1 a 3 se reproducen con `python -m flinch
-pilot` y `python -m flinch robustness`; las tablas quedan en `results/` y las figuras en
-`docs/web/img/`. La sección 4 se apoya en 12 fulguraciones y 9 ventanas de control.
+Estado a 20 de noviembre de 2026. La sección 1 se reproduce con `python -m flinch
+replication`, las secciones 2 y 3 con `python -m flinch robustness` y `python -m flinch pilot`;
+las tablas quedan en `results/` y las figuras en `docs/web/img/`. La sección 4 se apoya en 12
+fulguraciones y 9 ventanas de control de NEID.
 
 ## 1. La velocidad del Sol no cambia durante las fulguraciones
 
-Con 139 fulguraciones de clase M y X, la velocidad radial del Sol visto como estrella no
-cambia de forma detectable durante la fulguración.
+Dos instrumentos que observaron fulguraciones distintas dan la misma respuesta: la velocidad
+radial del Sol visto como estrella no cambia durante una fulguración.
 
-![Velocidad media alrededor del máximo de la fulguración](web/img/pilot_profiles.png)
+![Velocidad media alrededor del máximo, NEID y HARPS-N](web/img/two_instruments_profiles.png)
 
 Cada fulguración se compara con sus propios controles (misma hora, otros días, sin
-fulguraciones). Los errores salen de un bootstrap que remuestrea días enteros, porque las
-fulguraciones de un mismo día (hasta 6) no son independientes.
+fulguraciones). Los errores salen de un remuestreo de días enteros, porque las fulguraciones
+de un mismo día no son independientes. Cambio de velocidad en m/s:
 
-| Magnitud | Valor (m/s) | Cota al 95 % (m/s) |
-|---|---|---|
-| Cambio medio de una fulguración M o X | −0,035 ± 0,035 | 0,09 |
-| Cambio por fulguración de clase X1 (escalado con el flujo) | −0,010 ± 0,061 | 0,11 |
-| Término de rotación por X1 en el limbo ecuatorial | −0,106 ± 0,082 | 0,24 |
+| Fulguraciones | NEID | HARPS-N | Ambos | Cota al 95 % |
+|---|---|---|---|---|
+| M y X | −0,035 ± 0,035 (139) | −0,021 ± 0,039 (115) | −0,029 ± 0,026 (254) | 0,07 |
+| M1 a M4 | −0,039 ± 0,041 (116) | +0,006 ± 0,044 (97) | −0,018 ± 0,030 (213) | 0,07 |
+| M5 a M9 | +0,035 ± 0,086 (12) | −0,206 ± 0,078 (11) | −0,098 ± 0,058 (23) | 0,19 |
+| X | −0,060 ± 0,088 (11) | −0,104 ± 0,127 (7) | −0,074 ± 0,072 (18) | 0,19 |
+| Desplazamiento por X1 | −0,010 ± 0,061 | −0,005 ± 0,040 | −0,006 ± 0,033 | 0,06 |
+| Término de rotación por X1 en el limbo | −0,106 ± 0,082 | +0,022 ± 0,043 | −0,006 ± 0,038 | 0,07 |
 
-La cota del cambio medio es del orden de los 0,09 m/s que la Tierra imprime en el Sol.
+Entre paréntesis, el número de fulguraciones. «Ambos» pesa cada instrumento con el inverso
+de su varianza; una fulguración está en las dos muestras. Juntos, el cambio medio queda por
+debajo de 0,07 m/s, menos que los 0,09 m/s que la Tierra imprime en el Sol.
 
-El término de rotación es el análisis con signo: se ajusta el cambio de velocidad frente al
-flujo de la fulguración multiplicado por la velocidad de rotación proyectada en su posición.
-Una mancha brillante en la mitad del disco que se acerca debería bajar la velocidad y en la
-que se aleja subirla; el promedio simple cancelaría esa señal y este ajuste no. Tampoco
-aparece: permutando las posiciones entre fulguraciones, un valor así sale el 10 % de las veces.
+- **HARPS-N** (La Palma, 9 a 17 UT, exposiciones de 5 minutos, datos públicos de Dumusque et
+  al. 2026) observa en el día europeo y NEID en la tarde americana: ven fulguraciones
+  distintas. Su serie se analizó después, una sola vez, con las decisiones ya tomadas para NEID.
+- **No hay respuestas ocultas de signo variable**: la dispersión de los cambios de las
+  fulguraciones (0,40 m/s en NEID, 0,41 en HARPS-N) es igual a la de sus controles.
+- **La mayor desviación de la tabla**, 2,6 sigmas en 11 fulguraciones M5 a M9 con HARPS-N, no
+  se repite en NEID.
 
-![Cambio de velocidad de cada fulguración frente a su clase y a su posición](web/img/pilot_events.png)
+![Cambio de velocidad de cada fulguración frente a su clase y a su posición](web/img/two_instruments_events.png)
 
-En términos físicos, el cambio esperado es ΔRV ≈ (ΔF/F) · v_rot · K, con ΔF/F el aumento
-relativo de brillo en el visible, v_rot la rotación proyectada (hasta 1983 m/s) y K la
-respuesta de la máscara de líneas. La cota del término de rotación equivale a
-K · ΔF/F < 1,2 × 10⁻⁴ por fulguración X1.
+El término de rotación es el análisis con signo: una mancha brillante en la mitad del disco
+que se acerca debería bajar la velocidad y en la que se aleja subirla. El cambio esperado es
+ΔRV ≈ (ΔF/F) · v_rot · K, con ΔF/F el aumento relativo de brillo en el visible, v_rot la
+rotación proyectada (hasta 1983 m/s) y K un factor entre 0 (la luz añadida es un continuo sin
+líneas, que no desplaza las líneas del resto del disco) y 1 (lleva las líneas de la fotosfera
+que tiene debajo). La cota equivale a K · ΔF/F < 3,5 × 10⁻⁵ por fulguración X1.
 
 ## 2. El resultado no depende de las decisiones de análisis
+
+Con NEID, donde se tomaron las decisiones:
 
 | Variante | Fulguraciones | Cambio medio | Por X1 | Rotación por X1 |
 |---|---|---|---|---|
@@ -149,7 +161,8 @@ Leídos completos los artículos más cercanos (20 de noviembre de 2026):
   septiembre de 2017, con un espectro cada 5 minutos. No detectan cambio de velocidad: fijan
   una cota de 50 cm/s, señalan un pequeño aumento de unas decenas de cm/s y piden un estudio
   estadístico. La cota de aquí para la respuesta media, 9 cm/s, es cinco veces más baja y
-  sale de 139 fulguraciones. En Ca II H y K ven más de un 1 %, igual en las dos fulguraciones
+  sale de 139 fulguraciones; con HARPS-N, 7 cm/s y 254. La mayor de sus dos fulguraciones está
+  en la muestra de HARPS-N: su cambio es de −0,01 m/s, con un error de 0,41 por ser una sola. En Ca II H y K ven más de un 1 %, igual en las dos fulguraciones
   pese a su distinta clase; aquí Ca II H y K también es el índice más sensible (hasta un
   1,7 %) y la respuesta tampoco sigue a la clase.
 - **Otsu et al. 2022 y 2024 y Ma et al. 2024** usan espectrógrafos de imagen en H alfa.
@@ -164,10 +177,16 @@ Leídos completos los artículos más cercanos (20 de noviembre de 2026):
   observar 9 minutos después del máximo, antes del segundo máximo de H alfa que ellos ven a
   los 13 minutos.
 - **Brillo esperado en el visible** (Kretzschmar 2011): 7 partes por millón en el máximo de
-  una fulguración M2 media y 264 en la X17 del 28 de octubre de 2003, es decir, entre 15 y 35
-  para una X1. Con la rotación solar eso son, como mucho, de 3 a 7 cm/s en el limbo: entre
-  cuatro y ocho veces por debajo de la cota de la firma de rotación. Que no aparezca es lo
-  esperado.
+  una fulguración M2 media y 264 en la X17 del 28 de octubre de 2003. Esas clases están en la
+  escala antigua de GOES, que llevaba un factor 0,7; en la escala de aquí son entre 11 y 23
+  partes por millón para una X1. Con la rotación solar eso son, como mucho, de 2 a 5 cm/s en
+  el limbo. La cota de los dos instrumentos juntos es entre 1,5 y 3 veces eso: que no aparezca
+  la firma de rotación es lo esperado, y ahora está medido.
+- **Un exceso antes de las X de NEID que HARPS-N no ve**: de 60 a 50 minutos antes del máximo,
+  las fulguraciones X de NEID están 0,44 ± 0,11 m/s por encima de la tendencia de su día (19
+  con datos, 17 positivas). No aparece en las M ni en los controles, y HARPS-N da −0,12 ± 0,11
+  en sus diez X. Un cambio en el Sol lo verían los dos, así que no se atribuye al Sol; queda
+  sin explicar.
 
 ## 7. Lo que falta
 

@@ -24,8 +24,8 @@ The yardstick is the reflex velocity that the Earth imprints on the Sun: 9 cm/s.
 
 | Question | Answer | Evidence |
 |---|---|---|
-| Does the velocity change during a flare? | No, within 9 cm/s | 139 M and X flares against their own controls: −0.035 ± 0.035 m/s |
-| Is there a rotation signature (opposite sign east and west)? | No | −0.11 ± 0.08 m/s per X1 flare at the limb |
+| Does the velocity change during a flare? | No, within 7 cm/s | Two instruments that saw different flares: −0.035 ± 0.035 m/s for 139 flares with NEID, −0.021 ± 0.039 m/s for 115 with HARPS-N |
+| Is there a rotation signature (opposite sign east and west)? | No | −0.01 ± 0.04 m/s per X1 flare at the limb, both instruments together |
 | Do flares excite the five-minute oscillations? | No, within 8 % in amplitude | Power after against before, 140 flares |
 | Do the same spectra see the flares? | Yes: the chromospheric lines brighten | Ca II H and K rise in all 8 X flares on the disc, 6 of them above 3 sigma |
 
@@ -42,6 +42,7 @@ stays put. See [Results](results.md).
 | [GOES flares](data/goes.md) | The flare lists: what they contain, an example, how they are processed |
 | [NEID velocities](data/neid-velocities.md) | The velocity table: columns, quality cuts, daily trend |
 | [NEID spectra](data/neid-spectra.md) | The spectra: what is extracted from each 113 MB file |
+| [HARPS-N velocities](data/harpsn.md) | The second instrument: what it is and how it is processed |
 | [Method](method.md) | Sample, controls, estimators and error bars |
 | [Results](results.md) | Tables and figures |
 | [Reproducing the results](reproduce.md) | Which command makes which table and figure |

@@ -42,6 +42,7 @@ nav:
       - GOES flares: data/goes.md
       - NEID velocities: data/neid-velocities.md
       - NEID spectra: data/neid-spectra.md
+      - HARPS-N velocities: data/harpsn.md
   - Method: method.md
   - Results: results.md
   - Reproducing the results: reproduce.md
