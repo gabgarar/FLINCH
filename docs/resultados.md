@@ -51,6 +51,4 @@ Las tablas quedan en `results/`. Los detalles de cada orden están en
   están 0,44 ± 0,11 m/s por encima de la tendencia de su día (19 fulguraciones, 17 positivas).
   No aparece en las M ni en los controles, y HARPS-N no lo ve (−0,12 ± 0,11 en diez X). No se
   atribuye al Sol. En el artículo va en un apéndice.
-- **Espectros de fulguraciones entre M2 y M5**: 36 con cielo despejado, 75 GB de descarga; su
-  respuesta solo puede verse apilando.
 - **Textos de agradecimiento** que piden NEID, WIYN, HARPS-N/TNG y DACE.

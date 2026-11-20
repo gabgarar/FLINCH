@@ -89,6 +89,8 @@ before the X-ray peak to 10 minutes after it:
   class X.
 - **Near the limb the response is weaker**: +1.7 ± 0.9 in Ca II H and K for four X-class
   flares, +1.4 ± 0.5 for five between M5 and M9.
+- **Weaker flares were not fetched.** Between M2 and M5 the response of one flare would be
+  below the noise, and these 14 already show that the spectra see the flares.
 
 The table flare by flare is `results/spectral_response.csv`. One flare in detail, the X6.3 of
 22 February 2024, whose peak came just after the last solar spectrum of that day:
@@ -157,6 +159,5 @@ Karoff and Kjeldsen (2008), with the limitation that the 83 s cadence reaches on
 
 ## What is left
 
-- Spectra of more flares between M2 and M5, where the response can only be seen by stacking.
 - A third instrument, to see whether the excess before the X-class flares is a feature of
   NEID.

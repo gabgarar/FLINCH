@@ -92,6 +92,9 @@ desde 8 minutos antes del máximo en rayos X hasta 10 minutos después:
   las de clase X.
 - **Cerca del limbo la respuesta es más débil**: +1,7 ± 0,9 en Ca II H y K en cuatro
   fulguraciones X, +1,4 ± 0,5 en cinco de M5 a M9.
+- **Las fulguraciones más débiles no se descargaron.** Entre M2 y M5 la respuesta de una
+  sola quedaría por debajo del ruido, y estas 14 ya muestran que los espectros ven las
+  fulguraciones.
 
 La tabla fulguración a fulguración es `results/spectral_response.csv`. Una fulguración en
 detalle, la X6.3 del 22 de febrero de 2024, cuyo máximo llegó justo después del último
@@ -163,5 +166,4 @@ llega a 6 mHz.
 
 ## Lo que falta
 
-- Espectros de más fulguraciones entre M2 y M5, donde la respuesta solo puede verse apilando.
 - Un tercer instrumento, para ver si el exceso anterior a las fulguraciones X es cosa de NEID.
