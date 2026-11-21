@@ -112,6 +112,10 @@ The table flare by flare is `results/spectral_response.csv`. One flare in detail
   limb (K = 1), and less elsewhere.
 - **How close do we get?** The limit of the two instruments together is 1.5 to 3.5 times that.
   The absence of a rotation signal is what the physics predicts; it is now measured.
+- **And the lines of the flaring area itself?** In resolved images they are shifted by up to
+  200 m/s (Saar et al. 2018). A ten-thousandth of the disc shifted by 100 m/s moves the
+  velocity of the whole Sun by about 1 cm/s, so this effect depends on the area of the flare,
+  which has not been estimated here. The limit on the mean change bounds it from the data.
 
 ## The answer
 

@@ -73,8 +73,11 @@ simulaciones, no la velocidad de todo el disco.
 - Saar, S. H., Palumbo, M. L., Haywood, R. D., & Dupree, A. K. (2018). A first look at the
   effect of flares on radial velocity jitter in G dwarfs: a punch and a splash? Póster en
   Cool Stars 20, [doi:10.5281/zenodo.1490103](https://doi.org/10.5281/zenodo.1490103).
-  Los píxeles marcados como fulguración en imágenes de SDO de 2014 están desplazados entre
-  130 y 220 m/s respecto al Sol en calma y cubren el 0,04 % del disco.
+  Los píxeles marcados como fulguración en imágenes de SDO de 2014 (más de cuatro veces el
+  brillo del Sol en calma a 170 nm) están desplazados unos 160 m/s hacia el rojo cerca del
+  centro del disco y entre 130 y 220 m/s hacia el azul cerca del limbo. A lo largo del año
+  ocupan el 0,04 % del disco, y en el modelo tentativo de los autores solo el 29 % sigue a
+  las fulguraciones catalogadas.
 - Monson, A. J., et al. (2021). Flare-induced photospheric velocity diagnostics. *The
   Astrophysical Journal*, 915, 16. Simulaciones: la emisión cromosférica hace que las líneas
   fotosféricas de Fe I parezcan desplazadas hasta 40 m/s.

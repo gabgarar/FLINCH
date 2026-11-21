@@ -118,6 +118,11 @@ espectro solar de ese día:
   (K = 1), y menos en el resto.
 - **¿Cuánto nos acercamos?** La cota de los dos instrumentos juntos es entre 1,5 y 3,5 veces
   eso. La ausencia de firma de rotación es lo que predice la física; ahora está medida.
+- **¿Y las líneas de la propia zona de la fulguración?** En imágenes resueltas están
+  desplazadas hasta 200 m/s (Saar et al. 2018). Una diezmilésima del disco desplazada 100 m/s
+  mueve la velocidad de todo el Sol alrededor de 1 cm/s, así que este efecto depende del área
+  de la fulguración, que aquí no se ha estimado. La cota del cambio medio lo limita a partir
+  de los datos.
 
 ## La respuesta
 

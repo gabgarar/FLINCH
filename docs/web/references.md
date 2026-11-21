@@ -72,8 +72,10 @@ at the velocity of the whole disc.
 - Saar, S. H., Palumbo, M. L., Haywood, R. D., & Dupree, A. K. (2018). A first look at the
   effect of flares on radial velocity jitter in G dwarfs: a punch and a splash? Poster at
   Cool Stars 20, [doi:10.5281/zenodo.1490103](https://doi.org/10.5281/zenodo.1490103).
-  Pixels flagged as flares in SDO images of 2014 are shifted by 130 to 220 m/s with respect
-  to the quiet Sun and cover 0.04 % of the disc.
+  Pixels flagged as flares in SDO images of 2014 (more than four times as bright as the
+  quiet Sun at 170 nm) are shifted by about 160 m/s to the red near the disc centre and by
+  130 to 220 m/s to the blue near the limb. Over the year they cover 0.04 % of the disc, and
+  in the authors' tentative model only 29 % of them follow the catalogued flares.
 - Monson, A. J., et al. (2021). Flare-induced photospheric velocity diagnostics. *The
   Astrophysical Journal*, 915, 16. Simulations: chromospheric emission makes photospheric
   Fe I lines look shifted by up to 40 m/s.
