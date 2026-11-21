@@ -1,11 +1,11 @@
 # Citar
 
-Si usas FLINCH en un trabajo académico, cita por favor el software.
+Si usas `flinch` en un trabajo académico, cita por favor el software.
 
 ## Software
 
-> García, G. (2026). *FLINCH: FLare-INduced CHanges in Sun-as-a-star radial velocities* (v0.1.0).
-> <https://github.com/gabgarar/FLINCH>
+> García, G. (2026). *flinch: solar flares in Sun-as-a-star radial velocities* (v0.1.0).
+> <https://github.com/gabgarar/flinch>
 
 GitHub muestra una cita ya preparada en «Cite this repository», generada a partir de
 `CITATION.cff`. Hay un artículo en preparación que describe los resultados; esta página
@@ -13,8 +13,8 @@ enlazará a él.
 
 ## Licencia
 
-FLINCH se distribuye con la
-[licencia BSD de 3 cláusulas](https://github.com/gabgarar/FLINCH/blob/main/LICENSE): uso,
+El código se distribuye con la
+[licencia BSD de 3 cláusulas](https://github.com/gabgarar/flinch/blob/main/LICENSE): uso,
 modificación y redistribución libres, conservando el aviso de derechos de autor.
 
 ## Agradecimientos
@@ -30,7 +30,7 @@ Estatal de Pensilvania y operado en el Observatorio WIYN por NSF NOIRLab, dentro
 colaboración NN-EXPLORE de la NASA y la National Science Foundation. Se descargaron del
 archivo de NEID en el NASA Exoplanet Science Institute.
 
-FLINCH usa también la publicación de datos solares del espectrógrafo HARPS-N en el
+Este trabajo usa también la publicación de datos solares del espectrógrafo HARPS-N en el
 Telescopio Nazionale Galileo (Dumusque et al. 2026,
 [doi:10.82180/dace-h4s8lp7c](https://doi.org/10.82180/dace-h4s8lp7c)), obtenida de la
 plataforma DACE de la Universidad de Ginebra, y datos de los sensores de rayos X de los
@@ -40,4 +40,11 @@ NOAA.
 Se apoya en NumPy, pandas, h5py, SciPy, Matplotlib y Astropy.
 
 La redacción que piden los observatorios es la de la
-[versión en inglés](https://gabgarar.github.io/FLINCH/cite/) de esta página.
+[versión en inglés](https://gabgarar.github.io/flinch/cite/) de esta página.
+
+## Nota de desarrollo
+
+Se usaron herramientas asistidas por IA como apoyo en el desarrollo del software, el análisis
+de los datos, la documentación técnica y la corrección del idioma. Todas las decisiones
+científicas y metodológicas, la implementación final, las pruebas, la validación y el
+mantenimiento son responsabilidad del autor.

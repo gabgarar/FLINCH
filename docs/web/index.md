@@ -1,12 +1,12 @@
-# FLINCH
+# flinch
 
-**FL**are-**IN**duced **CH**anges in Sun-as-a-star radial velocities.
+Solar flares in Sun-as-a-star radial velocities.
 
 *Do solar flares contaminate the radial-velocity detection of Earth analogues?*
 
 To find a planet like the Earth around a star like the Sun, the velocity of the star has to be
 measured to about 10 cm/s: the Earth moves the Sun by 9 cm/s. Some of the spectrographs built
-for that also observe the Sun every clear day, as if it were a distant star. FLINCH
+for that also observe the Sun every clear day, as if it were a distant star. This project
 cross-matches those solar velocities with the flares recorded by the GOES satellites and asks:
 
 1. Does a flare move the radial velocity of the Sun seen as a star?

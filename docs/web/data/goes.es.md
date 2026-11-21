@@ -24,7 +24,7 @@ Están en
 
 ## Un ejemplo
 
-Cuatro de las fulguraciones del 21 y 22 de febrero de 2024, tal como las lee FLINCH:
+Cuatro de las fulguraciones del 21 y 22 de febrero de 2024, tal como las lee flinch:
 
 | Inicio (UT) | Subida más rápida | Máximo | Final | Clase | Fluencia (J m⁻²) | x | y | Satélite |
 |---|---|---|---|---|---|---|---|---|

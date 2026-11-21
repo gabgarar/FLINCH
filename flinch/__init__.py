@@ -1,4 +1,4 @@
-"""FLINCH: FLare-INduced CHanges in Sun-as-a-star radial velocities.
+"""flinch: solar flares in Sun-as-a-star radial velocities.
 
 Do solar flares contaminate the radial-velocity detection of Earth analogues? This package
 cross-matches solar flares (GOES/XRS) with the Sun-as-a-star radial velocities measured by

@@ -62,7 +62,7 @@ deepen as the Sun sinks towards the horizon: they are not solar.
 
 ## How they are processed
 
-1. **Extract and discard.** From each file FLINCH keeps the activity table, the sum of the
+1. **Extract and discard.** From each file flinch keeps the activity table, the sum of the
    cross-correlation function over orders, and six wavelength windows of the stitched
    spectrum (Ca II H and K, H beta, Mg I b, He I D3 with Na I D, H alpha, Ca II 8542). The
    extract is 0.2 MB; the file is deleted.

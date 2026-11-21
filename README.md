@@ -1,83 +1,78 @@
-# FLINCH
+# flinch
 
-[![tests](https://github.com/gabgarar/FLINCH/actions/workflows/tests.yml/badge.svg)](https://github.com/gabgarar/FLINCH/actions/workflows/tests.yml)
-[![docs](https://github.com/gabgarar/FLINCH/actions/workflows/docs.yml/badge.svg)](https://gabgarar.github.io/FLINCH/)
+[![tests](https://github.com/gabgarar/flinch/actions/workflows/tests.yml/badge.svg)](https://github.com/gabgarar/flinch/actions/workflows/tests.yml)
+[![docs](https://github.com/gabgarar/flinch/actions/workflows/docs.yml/badge.svg)](https://gabgarar.github.io/flinch/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![License: BSD-3-Clause](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg)](LICENSE)
 
-**FL**are-**IN**duced **CH**anges in Sun-as-a-star radial velocities.
+**Do solar flares contaminate the radial-velocity detection of Earth analogues?**
 
-*Do solar flares contaminate the radial-velocity detection of Earth analogues?*
+`flinch` measures what a solar flare does to the radial velocity of the Sun observed as a star.
+It pairs the solar velocities of two planet-search spectrographs, NEID and HARPS-N, with the
+flares recorded by the GOES satellites, and compares every flare with flare-free days at the
+same hour.
 
-**Documentation: <https://gabgarar.github.io/FLINCH/>**
+Documentation, in English and Spanish: **<https://gabgarar.github.io/flinch/>**
 
-Spectrographs built to find exoplanets measure the velocity of a star to a few tens of
-centimetres per second. One of them, NEID (Kitt Peak, Arizona), also observes the Sun every
-clear day as if it were a distant star, one spectrum every 83 seconds. FLINCH cross-matches
-those spectra with the flares recorded by the GOES satellites and measures what a flare does
-to the disc-integrated velocity and spectrum: whether it is detectable, from which flare
-size, and what that implies for planet searches around other Sun-like stars.
+## Result
 
-## Results so far
+- The radial velocity of the Sun does not change during M- and X-class flares. The mean change
+  is −0.029 ± 0.026 m/s over 254 measurements, below 0.07 m/s at 95 % confidence. An Earth
+  analogue moves the Sun by 0.09 m/s.
+- NEID and HARPS-N observed different flares, and they agree.
+- The same NEID spectra do record the flares: Ca II H and K and H alpha brighten in all 14
+  flares on the disc with usable spectra.
 
-Work in progress (November 2026). The velocity is measured with two instruments, NEID and
-HARPS-N; the spectral analysis rests on 23 flares and nine control windows of NEID. Solar
-flares do not significantly contaminate the detection of Earth analogues by radial velocity;
-this has been shown for the Sun, not for Sun-like stars in general.
+This has been shown for the Sun, not for Sun-like stars in general. Figures, tables and
+limitations are on the [results page](https://gabgarar.github.io/flinch/results/).
 
-| Question | Answer |
-|---|---|
-| Does the velocity change during a flare? | No. NEID: −0.035 ± 0.035 m/s for 139 M and X flares against their own controls. HARPS-N, which saw other flares: −0.021 ± 0.039 m/s for 115. Together, below 0.07 m/s (95 %), less than the signal of the Earth |
-| Is there a rotation signature? | No: −0.01 ± 0.04 m/s per X1 flare at the limb with the two instruments, within a factor of 1.5 to 3.5 of the largest shift expected |
-| Do flares excite the five-minute oscillations? | No, within 8 % in amplitude |
-| Do the same spectra see the flares? | Yes: Ca II H and K and H alpha brighten in all 14 flares on the disc with usable spectra (by +5.3 ± 1.7 parts per thousand in Ca II H and K for the 8 of class X, about half for the 6 between M5 and M9), against no change in 9 control windows |
+## Install
 
-![Mean velocity around the flare peak, NEID and HARPS-N](docs/web/img/two_instruments_profiles.png)
+```
+git clone https://github.com/gabgarar/flinch.git
+cd flinch
+python -m venv venv
+venv/Scripts/python -m pip install -e ".[analysis,dev]"
+```
+
+On Linux and macOS the interpreter is `venv/bin/python`. Python 3.10 or later.
+
+## Use
+
+```
+python -m flinch download      # flare lists and NEID velocities into data/ (22 MB)
+python -m flinch replication   # the measurement with NEID and with HARPS-N (downloads 64 MB)
+python -m flinch robustness    # the same under other analysis choices
+python -m pytest               # tests, no network needed
+```
+
+Every command and the table it writes are listed in
+[Reproduce](https://gabgarar.github.io/flinch/reproduce/).
 
 ## Data
 
-Both sources are public and need no registration.
+All sources are public and need no registration.
 
 | Data | Source |
 |---|---|
-| Flare list, positions and one-minute fluxes | GOES-16 and GOES-18 XRS science-quality products, NOAA/NCEI |
+| Flare list, positions and X-ray fluxes | GOES-16 and GOES-18 XRS science-quality products, NOAA/NCEI |
 | Solar radial velocities and spectra | NEID solar archive, NExScI |
 | Solar radial velocities of a second instrument | HARPS-N solar data release (Dumusque et al. 2026), DACE |
 
-## Quick start
-
-```
-python -m venv venv
-venv/Scripts/python -m pip install -e ".[analysis,dev]"
-python -m flinch download     # flare lists and velocity table, 22 MB, into data/
-python -m flinch coverage     # which flares NEID observed
-python -m flinch pilot        # velocity response against controls
-python -m flinch robustness   # the same under other analysis choices
-python -m flinch replication  # the same measurement with NEID and with HARPS-N (downloads 64 MB)
-python -m pytest              # tests, no network needed
-```
-
-The distribution is called `flinch-rv` (the name `flinch` is taken on PyPI); the import name
-is `flinch`.
-
-## Layout
-
-| Path | Content |
-|---|---|
-| `flinch/` | The package: data access, quality cuts, epoch analysis, spectra |
-| `tests/` | Unit tests |
-| `results/` | Derived tables |
-| `docs/web/` | The documentation site and its figures |
-
 ## Cite
 
-If you use FLINCH in academic work, please cite the software:
-
-> García, G. (2026). *FLINCH: FLare-INduced CHanges in Sun-as-a-star radial velocities* (v0.1.0).
-> <https://github.com/gabgarar/FLINCH>
+> García, G. (2026). *flinch: solar flares in Sun-as-a-star radial velocities* (v0.1.0).
+> <https://github.com/gabgarar/flinch>
 
 GitHub shows a ready-made citation under "Cite this repository", generated from
-[CITATION.cff](CITATION.cff). A paper is in preparation.
+[CITATION.cff](CITATION.cff). A paper is in preparation. The acknowledgements that the data
+providers ask for are on the [Cite page](https://gabgarar.github.io/flinch/cite/).
+
+## Development note
+
+AI-assisted tools provided support during software development, data analysis, technical
+documentation, and language editing. All scientific and methodological decisions, final
+implementation, testing, validation, and maintenance remain the responsibility of the author.
 
 ## Licence
 

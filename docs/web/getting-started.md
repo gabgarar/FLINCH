@@ -2,11 +2,11 @@
 
 ## Installation
 
-FLINCH needs Python 3.10 or later.
+The package needs Python 3.10 or later.
 
 ```
-git clone https://github.com/gabgarar/FLINCH.git
-cd FLINCH
+git clone https://github.com/gabgarar/flinch.git
+cd flinch
 python -m venv venv
 venv/Scripts/python -m pip install -e ".[analysis,dev]"     # Windows
 venv/bin/python -m pip install -e ".[analysis,dev]"         # Linux and macOS

@@ -1,8 +1,9 @@
-site_name: FLINCH
+site_name: flinch
 site_description: Do solar flares contaminate the radial-velocity detection of Earth analogues? Solar flares in Sun-as-a-star radial velocities from NEID and HARPS-N
-site_url: https://gabgarar.github.io/FLINCH/
-repo_url: https://github.com/gabgarar/FLINCH
-repo_name: gabgarar/FLINCH
+site_author: Gabriel García
+site_url: https://gabgarar.github.io/flinch/
+repo_url: https://github.com/gabgarar/flinch
+repo_name: gabgarar/flinch
 docs_dir: docs/web
 site_dir: site
 copyright: Copyright &copy; 2026 Gabriel García. BSD 3-Clause license.

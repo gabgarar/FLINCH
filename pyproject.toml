@@ -6,12 +6,19 @@ build-backend = "setuptools.build_meta"
 # "flinch" is taken on PyPI by an unrelated package, hence the distribution name.
 name = "flinch-rv"
 version = "0.1.0"
-description = "FLINCH: FLare-INduced CHanges in Sun-as-a-star radial velocities"
+description = "Solar flares in the radial velocity of the Sun observed as a star (NEID, HARPS-N): do they contaminate the detection of Earth analogues?"
 readme = "README.md"
 license = "BSD-3-Clause"
 license-files = ["LICENSE"]
 authors = [{ name = "Gabriel García" }]
-keywords = ["solar physics", "solar flares", "radial velocity", "Sun-as-a-star", "exoplanets"]
+keywords = ["solar physics", "solar flares", "radial velocity", "Sun-as-a-star", "exoplanets", "Earth analogues", "stellar activity", "NEID", "HARPS-N", "GOES", "astronomy"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Scientific/Engineering :: Physics",
+]
 requires-python = ">=3.10"
 dependencies = [
     "numpy>=1.24",
@@ -26,9 +33,9 @@ dev = ["pytest>=7"]
 docs = ["mkdocs-material>=9.5", "mkdocstrings[python]>=0.25", "mkdocs-static-i18n>=1.2"]  # documentation site (mkdocs serve)
 
 [project.urls]
-Homepage = "https://github.com/gabgarar/FLINCH"
-Documentation = "https://gabgarar.github.io/FLINCH/"
-Issues = "https://github.com/gabgarar/FLINCH/issues"
+Homepage = "https://github.com/gabgarar/flinch"
+Documentation = "https://gabgarar.github.io/flinch/"
+Issues = "https://github.com/gabgarar/flinch/issues"
 
 [tool.setuptools.packages.find]
 include = ["flinch*"]

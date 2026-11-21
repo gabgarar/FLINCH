@@ -1,6 +1,6 @@
-# FLINCH
+# flinch
 
-**FL**are-**IN**duced **CH**anges in Sun-as-a-star radial velocities
+Fulguraciones solares en la velocidad radial del Sol como estrella.
 (cambios inducidos por fulguraciones en la velocidad radial del Sol como estrella).
 
 *¿Contaminan las fulguraciones solares la detección de análogos terrestres por velocidad radial?*
@@ -8,7 +8,7 @@
 Para encontrar un planeta como la Tierra alrededor de una estrella como el Sol hay que medir
 la velocidad de la estrella con una precisión de unos 10 cm/s: la Tierra mueve el Sol 9 cm/s.
 Algunos de los espectrógrafos construidos para eso observan también el Sol cada día despejado,
-como si fuera una estrella lejana. FLINCH cruza esas velocidades solares con las fulguraciones
+como si fuera una estrella lejana. Este proyecto cruza esas velocidades solares con las fulguraciones
 registradas por los satélites GOES y pregunta:
 
 1. ¿Mueve una fulguración la velocidad radial del Sol visto como estrella?

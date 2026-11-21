@@ -23,7 +23,7 @@ They are under
 
 ## An example
 
-Four of the flares of 21 and 22 February 2024, as FLINCH reads them:
+Four of the flares of 21 and 22 February 2024, as flinch reads them:
 
 | Start (UT) | Steepest rise | Peak | End | Class | Fluence (J m⁻²) | x | y | Satellite |
 |---|---|---|---|---|---|---|---|---|

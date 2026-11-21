@@ -65,7 +65,7 @@ solares.
 
 ## Cómo se procesan
 
-1. **Extraer y descartar.** De cada archivo FLINCH conserva la tabla de actividad, la suma de
+1. **Extraer y descartar.** De cada archivo flinch conserva la tabla de actividad, la suma de
    la función de correlación cruzada sobre los órdenes y seis ventanas del espectro cosido
    (Ca II H y K, H beta, Mg I b, He I D3 con Na I D, H alfa, Ca II 8542). El extracto ocupa
    0,2 MB; el archivo se borra.

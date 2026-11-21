@@ -185,7 +185,7 @@ def cmd_paper_figures(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="flinch", description="FLare-INduced CHanges in solar radial velocities")
+    parser = argparse.ArgumentParser(prog="flinch", description="Solar flares in Sun-as-a-star radial velocities")
     commands = parser.add_subparsers(dest="command", required=True)
     download = commands.add_parser("download", help="download the GOES flare lists and the NEID solar table")
     download.add_argument("--overwrite", action="store_true", help="download again files that already exist")
