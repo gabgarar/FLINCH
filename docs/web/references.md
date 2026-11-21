@@ -30,13 +30,21 @@
 - Zhang, J., et al. (2026). Can we distinguish the source region location of
   filament/prominence eruptions from the Sun-as-a-star H alpha spectrum? *The Astrophysical
   Journal*, 1004, 66.
+- Xu, Y., et al. (2022). Sun-as-a-star spectroscopic observations of the line-of-sight
+  velocity of a solar eruption on 2021 October 28. *The Astrophysical Journal*, 931, 76.
+- Lu, H.-P., et al. (2023). Full velocities and propagation directions of coronal mass
+  ejections inferred from simultaneous full-disk imaging and Sun-as-a-star spectroscopic
+  observations. *The Astrophysical Journal*, 953, 68.
 
 These are studies of single events, of a few events or of simulations, most of them in
 H alpha from imaging spectrographs: the spectra are integrated over a region around the flare
 and normalised by the light of the disc. Otsu et al. (2026) gather 34 flares, but measure in
 images when the postflare loops appear. Only the first of the list above measures radial
 velocities, for two flares: an upper limit of 50 cm/s and a request for a statistical
-follow-up.
+follow-up. The last two measure, in extreme-ultraviolet lines, the velocity of the material
+ejected in eruptions (about 400 km/s along the line of sight in the event of Xu et al., and
+eight ejections in twelve years of data in Lu et al.). That is the velocity of the ejecta,
+not of the photospheric spectrum from which the radial velocity of a star is measured.
 
 ## Flares in the brightness of the Sun
 

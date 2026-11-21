@@ -30,13 +30,22 @@
 - Zhang, J., et al. (2026). Can we distinguish the source region location of
   filament/prominence eruptions from the Sun-as-a-star H alpha spectrum? *The Astrophysical
   Journal*, 1004, 66.
+- Xu, Y., et al. (2022). Sun-as-a-star spectroscopic observations of the line-of-sight
+  velocity of a solar eruption on 2021 October 28. *The Astrophysical Journal*, 931, 76.
+- Lu, H.-P., et al. (2023). Full velocities and propagation directions of coronal mass
+  ejections inferred from simultaneous full-disk imaging and Sun-as-a-star spectroscopic
+  observations. *The Astrophysical Journal*, 953, 68.
 
 Son estudios de sucesos sueltos, de unos pocos sucesos o de simulaciones, la mayoría en
 H alfa con espectrógrafos de imagen: los espectros se integran en una región alrededor de la
 fulguración y se normalizan por la luz del disco. Otsu et al. (2026) reúnen 34 fulguraciones,
 pero miden en imágenes cuándo aparecen los bucles posteriores a la fulguración. Solo el primero
 de la lista mide velocidades radiales, en dos fulguraciones: una cota superior de 50 cm/s y la
-petición de un estudio estadístico.
+petición de un estudio estadístico. Los dos últimos miden, en líneas del ultravioleta extremo,
+la velocidad del material que expulsan las erupciones (unos 400 km/s en la línea de visión en
+el suceso de Xu et al., y ocho eyecciones en doce años de datos en Lu et al.). Esa es la
+velocidad del material expulsado, no la del espectro fotosférico con el que se mide la
+velocidad radial de una estrella.
 
 ## Fulguraciones en el brillo del Sol
 
