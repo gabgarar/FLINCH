@@ -27,3 +27,7 @@ desktop.ini
 
 # The paper drafts live in their own private repository at docs/paper/
 /docs/paper/
+
+# Working notes stay on the author's machine
+/docs/plan.md
+/docs/resultados.md

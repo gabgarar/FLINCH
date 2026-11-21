@@ -68,7 +68,6 @@ is `flinch`.
 | `tests/` | Unit tests |
 | `results/` | Derived tables |
 | `docs/web/` | The documentation site and its figures |
-| `docs/plan.md`, `docs/resultados.md` | Working documents, in Spanish |
 
 ## Cite
 
